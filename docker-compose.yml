@@ -22,15 +22,20 @@ services:
       - "8000"                          # 내부 네트워크에서만 보이는 포트
     depends_on:
       - db
+    environment:
+      DB_NAME: yonsei
+      DB_USER: yonsei
+      DB_PASSWORD: yonsei
+      DB_HOST: db        # ← 서비스 이름
+      DB_PORT: 5432
     networks:
       - dmz_net                         # web ↔ api
       - internal_net                    # api ↔ db
 
   db:
-    build:
-      context: ./data/db
-      dockerfile: ../../docker/db/Dockerfile
+    image: postgres:17                  # ← 공식 PostgreSQL 이미지 사용
     container_name: yonsei-db
+    restart: always
     environment:
       POSTGRES_DB: yonsei
       POSTGRES_USER: yonsei
@@ -38,7 +43,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     expose:
-      - "5432"
+      - "5432"                          # 내부망에서만 접근 가능
     networks:
       - internal_net                    # api만 접근 가능
 
