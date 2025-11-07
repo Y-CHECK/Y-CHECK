@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  web:
+    build:
+      context: ./data/web               # html, nginx.conf 있는 곳
+      dockerfile: ../../docker/web/Dockerfile
+    container_name: yonsei-web
+    ports:
+      - "80:80"                         # 외부에서 접속하는 포트
+    depends_on:
+      - api
+    networks:
+      - dmz_net                         # web ↔ api
+
+  api:
+    build:
+      context: ./data/api               # manage.py, config/ 있는 곳
+      dockerfile: ../../docker/api/Dockerfile
+    container_name: yonsei-api
+    expose:
+      - "8000"                          # 내부 네트워크에서만 보이는 포트
+    depends_on:
+      - db
+    networks:
+      - dmz_net                         # web ↔ api
+      - internal_net                    # api ↔ db
+
+  db:
+    build:
+      context: ./data/db
+      dockerfile: ../../docker/db/Dockerfile
+    container_name: yonsei-db
+    environment:
+      POSTGRES_DB: yonsei
+      POSTGRES_USER: yonsei
+      POSTGRES_PASSWORD: yonsei
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    networks:
+      - internal_net                    # api만 접근 가능
+
+networks:
+  dmz_net:
+  internal_net:
+
+volumes:
+  db-data:

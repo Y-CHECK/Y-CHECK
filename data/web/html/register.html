@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+</head>
+<body>
+<h1>회원가입</h1>
+
+<form id="registerForm">
+    <input type="text" name="username" placeholder="아이디" required>
+    <input type="password" name="password" placeholder="비밀번호" required>
+    <input type="email" name="email" placeholder="이메일" required>
+    <button type="submit">회원가입</button>
+</form>
+
+<p id="result"></p>
+
+<script>
+    const form = document.getElementById('registerForm');
+    const result = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+
+        try {
+            const res = await fetch('/api/register/', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const data = await res.json();
+            result.textContent = data.message || '응답 받음';
+
+            if (res.ok) {
+                // TODO: 회원가입 성공 시 이동할 페이지
+                // location.href = '/login.html';
+            }
+        } catch (err) {
+            console.error(err);
+            result.textContent = '요청 중 오류가 발생했습니다.';
+        }
+    });
+</script>
+</body>
+</html>
