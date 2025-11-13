@@ -1,0 +1,58 @@
+<!-- templates/users/mypage.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+</head>
+<body>
+    <h2>마이페이지</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div>
+            <label>ID</label><br>
+            {{ form.username }}
+        </div>
+
+        <div>
+            <label>비밀번호</label><br>
+            {{ form.password }}
+        </div>
+
+        <div>
+            <label>이름 (수정 가능)</label><br>
+            {{ form.name }}
+        </div>
+
+        <div>
+            <label>학번</label><br>
+            {{ form.student_id }}
+        </div>
+
+        <div>
+            <label>이메일 (수정 가능)</label><br>
+            {{ form.email }}
+        </div>
+
+        <div>
+            <label>현재 학기/학년 (수정 가능)</label><br>
+            {{ form.current_grade }}
+        </div>
+
+        <div>
+            <label>관심 전공 분야 (수정 가능)</label><br>
+            {{ form.interest_field }}
+        </div>
+
+        <div>
+            <label>데이터 사용 동의</label><br>
+            {{ form.agree_data }}
+        </div>
+
+        <button type="submit">정보 수정하기</button>
+    </form>
+
+</body>
+</html>
