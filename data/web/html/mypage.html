@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+    <style>
+        body { max-width: 480px; margin: 30px auto; font-family: sans-serif; }
+        h1 { text-align: center; }
+        label { display: block; margin-top: 12px; font-weight: 600; }
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 4px;
+            box-sizing: border-box;
+        }
+        .readonly { background-color: #f3f3f3; }
+        .checkbox-row {
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .hint { font-size: 12px; color: #666; margin-top: 2px; }
+    </style>
+</head>
+<body>
+<h1>마이페이지</h1>
+
+<form method="post" action="">
+    {% csrf_token %}
+
+    <!-- 아이디 (수정 불가) -->
+    <label>
+        아이디
+        <input type="text" value="{{ user_obj.username }}" class="readonly" readonly>
+    </label>
+
+    <!-- 학번 (수정 불가) -->
+    <label>
+        학번
+        <input type="text" value="{{ profile.student_id }}" class="readonly" readonly>
+    </label>
+
+    <!-- 이름 (실명, 수정 불가) -->
+    <label>
+        이름(실명)
+        <input type="text" value="{{ profile.real_name }}" class="readonly" readonly>
+    </label>
+
+    <!-- 비밀번호 변경 -->
+    <label>
+        비밀번호 변경
+        <input type="password" name="password">
+        <div class="hint">비밀번호를 변경하지 않으려면 비워두세요.</div>
+    </label>
+
+    <!-- 이메일 (수정 가능) -->
+    <label>
+        이메일
+        <input type="email" name="email" value="{{ user_obj.email }}" required>
+    </label>
+
+    <!-- 현재 학기 (드롭다운) -->
+    <label>
+        현재 학년/학기
+        <select name="current_semester" required>
+            {% for value, label in profile.SEMESTER_CHOICES %}
+                <option value="{{ value }}"
+                        {% if profile.current_semester == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <!-- 관심 전공/분야 -->
+    <label>
+        관심 전공/분야
+        <select name="interest" id="interest-select">
+            {% for value, label in profile.INTEREST_CHOICES %}
+                <option value="{{ value }}"
+                        {% if profile.interest == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <!-- 기타 입력 -->
+    <label id="interest-text-label">
+        기타(직접 입력)
+        <input type="text" name="interest_text"
+               id="interest-text-input"
+               value="{{ profile.interest_text }}">
+    </label>
+
+    <!-- 데이터 사용 동의 -->
+    <div class="checkbox-row">
+        <input type="checkbox" id="data_consent" name="data_consent"
+               {% if profile.data_consent %}checked{% endif %}>
+        <label for="data_consent" style="margin-top: 0; font-weight: normal;">
+            개인정보 수집·이용에 동의합니다.
+        </label>
+    </div>
+
+    <button type="submit">정보 수정 완료</button>
+</form>
+
+<script>
+    // "기타" 선택 시에만 입력칸 활성화
+    const interestSelect = document.getElementById("interest-select");
+    const interestTextLabel = document.getElementById("interest-text-label");
+    const interestTextInput = document.getElementById("interest-text-input");
+
+    function toggleInterestText() {
+        if (interestSelect.value === "OTHER") {
+            interestTextLabel.style.display = "block";
+            interestTextInput.disabled = false;
+        } else {
+            interestTextLabel.style.display = "none";
+            interestTextInput.disabled = true;
+        }
+    }
+
+    toggleInterestText();
+    interestSelect.addEventListener("change", toggleInterestText);
+</script>
+
+</body>
+</html>
