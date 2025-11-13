@@ -1,0 +1,16 @@
+/* calculator.html 전용 스타일 */
+
+/* 요약 카드 3개가 살짝 떠 보이도록 */
+.calc-summary-card {
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.calc-summary-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+}
+
+/* 전공과목 테이블 */
+.calc-table tbody tr:hover {
+  background-color: #f9fafb;
+}

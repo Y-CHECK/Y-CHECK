@@ -1,0 +1,16 @@
+/* sunbae.html 전용 스타일 */
+
+/* 선배 카드 hover 효과 */
+.sunbae-card {
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.sunbae-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+}
+
+/* 트랙/필터 버튼 그룹 여백 */
+.sunbae-filter-group {
+  row-gap: 0.5rem;
+}
