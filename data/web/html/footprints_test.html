@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>Y_CHECK 선배의 발자취 테스트</title>
+</head>
+<body>
+<h1>Y_CHECK 선배의 발자취(API 테스트)</h1>
+
+<button id="loadBtn">선배 목록 불러오기</button>
+
+<ul id="list">
+    <!-- JS로 채움 -->
+</ul>
+
+<pre id="raw" style="margin-top:16px; background:#f5f5f5; padding:8px;"></pre>
+
+<script>
+    async function loadFootprints() {
+      const listEl = document.getElementById("list");
+      const rawEl = document.getElementById("raw");
+
+      listEl.innerHTML = "<li>로딩 중...</li>";
+      rawEl.textContent = "";
+
+      try {
+        const res = await fetch("/api/footprints/");
+        const data = await res.json();
+
+        listEl.innerHTML = "";
+        data.results.forEach(senior => {
+          const li = document.createElement("li");
+          li.textContent =
+            `${senior.display_name} / 트랙: ${senior.track} / 입학: ${senior.entrance_year}`;
+          listEl.appendChild(li);
+        });
+
+        rawEl.textContent = JSON.stringify(data, null, 2);
+      } catch (e) {
+        listEl.innerHTML = "<li>에러 발생: " + e + "</li>";
+      }
+    }
+
+    document.getElementById("loadBtn").addEventListener("click", loadFootprints);
+</script>
+</body>
+</html>

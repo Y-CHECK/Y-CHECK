@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>Y_CHECK 메인 요약 테스트</title>
+</head>
+<body>
+<h1>Y_CHECK 메인 요약(API 테스트)</h1>
+
+<button id="loadBtn">데이터 불러오기</button>
+
+<h2>전체 진행률</h2>
+<div id="overall">로딩 전</div>
+
+<h2>영역별 요약</h2>
+<table border="1" cellspacing="0" cellpadding="4">
+    <thead>
+    <tr>
+        <th>이름</th>
+        <th>이수학점</th>
+        <th>필요학점</th>
+        <th>부족학점</th>
+    </tr>
+    </thead>
+    <tbody id="groupBody">
+    <!-- JS로 채움 -->
+    </tbody>
+</table>
+
+<pre id="raw" style="margin-top:16px; background:#f5f5f5; padding:8px;"></pre>
+
+<script>
+    async function loadMainSummary() {
+      const overallEl = document.getElementById("overall");
+      const groupBody = document.getElementById("groupBody");
+      const rawEl = document.getElementById("raw");
+
+      overallEl.textContent = "로딩 중...";
+      groupBody.innerHTML = "";
+      rawEl.textContent = "";
+
+      try {
+        const res = await fetch("/api/main/summary/");
+        const data = await res.json();
+
+        // 전체 진행률
+        const o = data.overall;
+        overallEl.textContent =
+          `총 ${o.required}학점 중 ${o.earned}학점 이수 (${o.rate}% 진행)`;
+
+        // 그룹 테이블
+        data.groups.forEach(g => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${g.name}</td>
+            <td>${g.earned}</td>
+            <td>${g.required}</td>
+            <td>${g.lack}</td>
+          `;
+          groupBody.appendChild(tr);
+        });
+
+        // 원본 JSON도 아래에 찍어두기
+        rawEl.textContent = JSON.stringify(data, null, 2);
+      } catch (e) {
+        overallEl.textContent = "에러 발생: " + e;
+      }
+    }
+
+    document.getElementById("loadBtn").addEventListener("click", loadMainSummary);
+</script>
+</body>
+</html>

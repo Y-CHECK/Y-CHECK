@@ -39,6 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',        # 기존 앱
     'curriculum',   # 졸업요건/교과과정 앱 (여기 추가!)
+    'rest_framework',
+    'mainpage',
+    'timetable',
+    'footprints',
 ]
 
 MIDDLEWARE = [

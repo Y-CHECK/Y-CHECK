@@ -19,5 +19,8 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('users.urls')),  # /api/register/ 같은 URL 여기로 연결
+    path("api/", include("users.urls")),
+    path("api/main/", include("mainpage.urls")),
+    path("api/timetable/", include("timetable.urls")),
+    path("api/footprints/", include("footprints.urls")),
 ]
