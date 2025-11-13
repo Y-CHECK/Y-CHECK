@@ -20,12 +20,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-wm8^78n&pw#ejl+$u5=p3x7uik-p5rx_)i&h0)cop-+06hp=$u'
+# 환경변수에서 먼저 SECRET_KEY 읽고, 없으면 개발용 기본값 사용
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-wm8^78n&pw#ejl+$u5=p3x7uik-p5rx_)i&h0)cop-+06hp=$u'
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split() or []
 
 
 # Application definition
@@ -38,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',        # 기존 앱
-    'curriculum',   # 졸업요건/교과과정 앱 (여기 추가!)
+    'curriculum',   # 졸업요건/교과과정 앱
 ]
 
 MIDDLEWARE = [
@@ -56,7 +60,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # 프로젝트 전역 템플릿 폴더 (원하면 사용)
+        # 프로젝트 전역 템플릿 폴더
         'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -124,9 +128,12 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 # 개발 시 정적 파일 경로 (예: BASE_DIR/static/)
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
+# 폴더가 실제로 있을 때만 STATICFILES_DIRS에 추가해서
+# (staticfiles.W004) 경고 안 뜨게 처리
+STATICFILES_DIRS = []
+_static_dir = BASE_DIR / 'static'
+if _static_dir.exists():
+    STATICFILES_DIRS.append(_static_dir)
 
 # collectstatic 할 때 모이는 위치 (배포용)
 STATIC_ROOT = BASE_DIR / 'staticfiles'
