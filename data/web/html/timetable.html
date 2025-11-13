@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>Y-CHECK · 시간표</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-[#f7f9fc] text-slate-900 pb-24">
+
+  <!-- 공통 헤더 -->
+  <header class="bg-white border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="main.html" class="flex items-center gap-3">
+          <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="h-8 w-auto">
+        </a>
+        <div class="h-4 w-px bg-slate-200"></div>
+        <div class="text-sm text-slate-600">연세대학교 졸업요건계산기</div>
+      </div>
+      <nav class="hidden sm:flex items-center gap-6 text-sm text-slate-600">
+        <a href="calculator.html" class="hover:text-slate-900">계산기</a>
+        <a href="timetable.html" class="hover:text-slate-900 font-semibold">시간표</a>
+        <a href="sunbae.html" class="hover:text-slate-900">선배들의 발자취</a>
+        <a href="mypage.html" class="hover:text-slate-900">마이페이지</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- 메인 시간표 -->
+    <section class="lg:col-span-9 bg-white rounded-2xl border shadow-sm p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h1 class="text-2xl font-bold">2025년 2학기</h1>
+        <select class="rounded-xl border px-3 py-2 text-sm">
+          <option>2025년 2학기</option>
+          <option>2025년 1학기</option>
+        </select>
+      </div>
+
+      <div class="h-px bg-slate-200 mb-4"></div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm text-center">
+          <thead>
+            <tr class="text-slate-600">
+              <th class="py-2 w-20">교시</th>
+              <th class="py-2">월</th>
+              <th class="py-2">화</th>
+              <th class="py-2">수</th>
+              <th class="py-2">목</th>
+              <th class="py-2">금</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-t">
+              <td class="py-3 text-slate-500">1교시</td>
+              <td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr class="border-t">
+              <td class="py-3 text-slate-500">2교시</td>
+              <td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr class="border-t">
+              <td class="py-3 text-slate-500">3교시</td>
+              <td>
+                <div class="bg-blue-50 border border-blue-200 rounded px-2 py-1">
+                  데이터구조론
+                </div>
+              </td>
+              <td></td><td></td><td></td><td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 오른쪽: 컨트롤 / 담은 수업 -->
+    <aside class="lg:col-span-3 space-y-4">
+      <div class="bg-white rounded-2xl border shadow-sm p-4 space-y-3">
+        <button class="w-full text-left border rounded-xl px-3 py-2 text-sm">
+          + 수업 목록에서 검색해서 추가하기
+        </button>
+        <button class="w-full text-left border rounded-xl px-3 py-2 text-sm">
+          + 새 시간표 만들기
+        </button>
+      </div>
+
+      <div class="bg-white rounded-2xl border shadow-sm p-5">
+        <div class="text-lg font-semibold mb-2">담은 수업</div>
+        <div class="h-px bg-slate-200 mb-3"></div>
+        <ul class="space-y-2 text-sm">
+          <li class="flex items-center justify-between">
+            <span class="font-medium">데이터구조론</span>
+            <span class="text-slate-500">월3, 수4</span>
+          </li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+
+  <!-- 공통 푸터 -->
+  <footer class="fixed bottom-0 inset-x-0 bg-white border-t">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-start justify-between">
+      <div class="flex items-start gap-4">
+        <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="h-6 w-auto" />
+        <div class="space-y-1 text-sm text-slate-600 leading-relaxed">
+          <div>강원특별자치도 원주시 흥업면 연세대길 1 창조관</div>
+          <div>TEL) 033-123-4567</div>
+          <div>EMAIL: YCHECK@gmail.com</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-6 text-sm text-slate-600">
+        <span class="hidden sm:block h-6 w-px bg-slate-200"></span>
+        <span>만든이들</span>
+        <span>문의하기</span>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
