@@ -1,0 +1,12 @@
+/* mypage.html 전용 스타일 */
+
+/* 폼 섹션 */
+.mypage-form label {
+  font-size: 0.875rem;
+  color: #475569;
+}
+
+/* 정보 수정 버튼 */
+.mypage-submit-btn {
+  min-width: 140px;
+}
