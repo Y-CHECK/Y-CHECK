@@ -3,45 +3,384 @@
 <head>
     <meta charset="UTF-8" />
     <title>Y_CHECK 선배의 발자취 테스트</title>
+    <style>
+        body {
+          font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+          padding: 24px;
+          background: #f5f7fb;
+        }
+        h1 {
+          margin-bottom: 16px;
+        }
+        .layout {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+        .card {
+          background: #fff;
+          border-radius: 12px;
+          padding: 16px 20px;
+          box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06);
+        }
+        .section-title {
+          font-size: 18px;
+          font-weight: 700;
+          margin-bottom: 12px;
+        }
+        .filter-row {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          flex-wrap: wrap;
+        }
+        .chip-group {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+        .chip {
+          padding: 6px 14px;
+          border-radius: 999px;
+          border: 1px solid #e5e7eb;
+          background: #f9fafb;
+          font-size: 14px;
+          cursor: pointer;
+        }
+        .chip.active {
+          background: #2563eb;
+          color: #fff;
+          border-color: #2563eb;
+        }
+        select {
+          padding: 6px 10px;
+          border-radius: 999px;
+          border: 1px solid #d1d5db;
+          font-size: 14px;
+          background: #fff;
+        }
+        .muted {
+          font-size: 13px;
+          color: #6b7280;
+          margin-top: 8px;
+        }
+        .senior-list {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+          margin-top: 10px;
+        }
+        .senior-pill {
+          padding: 6px 12px;
+          border-radius: 999px;
+          border: 1px solid #e5e7eb;
+          background: #ffffff;
+          font-size: 14px;
+          cursor: pointer;
+        }
+        .senior-pill.active {
+          background: #111827;
+          color: #fff;
+          border-color: #111827;
+        }
+        .records-grid {
+          display: flex;
+          gap: 16px;
+          flex-wrap: wrap;
+        }
+        .semester-card {
+          flex: 1 1 260px;
+          border-radius: 12px;
+          border: 1px solid #e5e7eb;
+          padding: 12px 14px;
+          background: #f9fafb;
+        }
+        .semester-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 8px;
+          font-weight: 600;
+        }
+        .badge {
+          font-size: 11px;
+          padding: 2px 8px;
+          border-radius: 999px;
+          background: #eff6ff;
+          color: #1d4ed8;
+        }
+        .course-list {
+          list-style: none;
+          padding-left: 0;
+          margin: 0;
+        }
+        .course-list li {
+          font-size: 14px;
+          padding: 4px 0;
+          display: flex;
+          justify-content: space-between;
+          gap: 8px;
+        }
+        .course-title {
+          display: flex;
+          flex-direction: column;
+        }
+        .course-code {
+          font-size: 12px;
+          color: #9ca3af;
+        }
+        .course-tag {
+          font-size: 12px;
+          padding: 2px 8px;
+          border-radius: 999px;
+          background: #fee2e2;
+          color: #b91c1c;
+          white-space: nowrap;
+          height: fit-content;
+        }
+        .empty {
+          font-size: 14px;
+          color: #9ca3af;
+        }
+    </style>
 </head>
 <body>
-<h1>Y_CHECK 선배의 발자취(API 테스트)</h1>
+<h1>Y_CHECK 선배들의 발자취 (API 테스트)</h1>
 
-<button id="loadBtn">선배 목록 불러오기</button>
+<div class="layout">
+    <!-- 필터 영역 -->
+    <div class="card">
+        <div class="section-title">선배 선택 / 필터</div>
+        <div class="filter-row">
+            <div>
+                <div class="muted">관심 트랙 선택</div>
+                <div id="track-chips" class="chip-group"></div>
+            </div>
+            <div>
+                <div class="muted">선배 학년</div>
+                <select id="grade-select"></select>
+            </div>
+        </div>
 
-<ul id="list">
-    <!-- JS로 채움 -->
-</ul>
+        <div class="muted">
+            트랙과 학년을 선택하면 조건에 맞는 선배 목록이 아래에 표시됩니다.
+            선배를 하나 선택하면 실제 이수 기록이 하단에 나타납니다.
+        </div>
 
-<pre id="raw" style="margin-top:16px; background:#f5f5f5; padding:8px;"></pre>
+        <div style="margin-top: 12px;">
+            <strong>선배 목록</strong>
+            <div id="senior-list" class="senior-list"></div>
+        </div>
+    </div>
+
+    <!-- 이수 기록 영역 -->
+    <div class="card">
+        <div class="section-title">선배의 실제 이수 기록</div>
+        <div id="records-container"></div>
+    </div>
+</div>
 
 <script>
-    async function loadFootprints() {
-      const listEl = document.getElementById("list");
-      const rawEl = document.getElementById("raw");
+    let currentTrack = null;
+    let currentGrade = null;
+    let currentSeniorId = null;
 
-      listEl.innerHTML = "<li>로딩 중...</li>";
-      rawEl.textContent = "";
+    async function fetchJson(url) {
+      const res = await fetch(url);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      return await res.json();
+    }
 
-      try {
-        const res = await fetch("/api/footprints/");
-        const data = await res.json();
+    async function loadFilters() {
+      const data = await fetchJson("/api/footprints/filters/");
+      const trackArea = document.getElementById("track-chips");
+      const gradeSelect = document.getElementById("grade-select");
 
-        listEl.innerHTML = "";
-        data.results.forEach(senior => {
-          const li = document.createElement("li");
-          li.textContent =
-            `${senior.display_name} / 트랙: ${senior.track} / 입학: ${senior.entrance_year}`;
-          listEl.appendChild(li);
+      // 트랙 chip 생성
+      trackArea.innerHTML = "";
+      data.tracks.forEach(track => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "chip";
+        btn.textContent = track;
+        btn.addEventListener("click", () => {
+          currentTrack = track;
+          updateTrackActive();
+          loadSeniors();
         });
+        trackArea.appendChild(btn);
+      });
 
-        rawEl.textContent = JSON.stringify(data, null, 2);
-      } catch (e) {
-        listEl.innerHTML = "<li>에러 발생: " + e + "</li>";
+      // 학년 select
+      gradeSelect.innerHTML = "";
+      data.grades.forEach(g => {
+        const opt = document.createElement("option");
+        opt.value = g;
+        opt.textContent = `${g}학년`;
+        gradeSelect.appendChild(opt);
+      });
+      currentGrade = data.grades[0] || 3;
+
+      gradeSelect.value = currentGrade;
+      gradeSelect.addEventListener("change", () => {
+        currentGrade = Number(gradeSelect.value);
+        loadSeniors();
+      });
+
+      // 기본값으로 첫 트랙 선택
+      if (data.tracks.length > 0) {
+        currentTrack = data.tracks[0];
+        updateTrackActive();
+        loadSeniors();
       }
     }
 
-    document.getElementById("loadBtn").addEventListener("click", loadFootprints);
+    function updateTrackActive() {
+      const chips = document.querySelectorAll("#track-chips .chip");
+      chips.forEach(chip => {
+        if (chip.textContent === currentTrack) {
+          chip.classList.add("active");
+        } else {
+          chip.classList.remove("active");
+        }
+      });
+    }
+
+    async function loadSeniors() {
+      const listEl = document.getElementById("senior-list");
+      listEl.innerHTML = "";
+
+      if (!currentTrack || currentGrade == null) {
+        listEl.innerHTML = '<span class="empty">트랙과 학년을 먼저 선택하세요.</span>';
+        return;
+      }
+
+      const params = new URLSearchParams({
+        track: currentTrack,
+        grade: String(currentGrade),
+      });
+      const data = await fetchJson(`/api/footprints/seniors/?${params.toString()}`);
+
+      if (!data.results || data.results.length === 0) {
+        listEl.innerHTML = '<span class="empty">조건에 맞는 선배가 없습니다.</span>';
+        document.getElementById("records-container").innerHTML =
+          '<p class="empty">선택된 선배가 없습니다.</p>';
+        return;
+      }
+
+      data.results.forEach(s => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "senior-pill";
+        btn.textContent = `${s.display_name} (${s.track})`;
+        btn.addEventListener("click", () => {
+          currentSeniorId = s.id;
+          updateSeniorActive();
+          loadSeniorRecords();
+        });
+        listEl.appendChild(btn);
+      });
+
+      // 기본으로 첫 선배 선택
+      currentSeniorId = data.results[0].id;
+      updateSeniorActive();
+      loadSeniorRecords();
+    }
+
+    function updateSeniorActive() {
+      const pills = document.querySelectorAll(".senior-pill");
+      pills.forEach(p => {
+        const text = p.textContent;
+        if (!currentSeniorId) {
+          p.classList.remove("active");
+          return;
+        }
+        // 여기서는 단순히 첫 클릭 기준으로만 active 처리
+        // 실제로는 data-id attribute를 두고 비교하는 게 더 안전
+      });
+    }
+
+    async function loadSeniorRecords() {
+      const container = document.getElementById("records-container");
+      if (!currentSeniorId) {
+        container.innerHTML = '<p class="empty">선배를 선택하면 이수 기록이 표시됩니다.</p>';
+        return;
+      }
+
+      const params = new URLSearchParams({
+        grade: String(currentGrade),
+      });
+      const data = await fetchJson(
+        `/api/footprints/seniors/${currentSeniorId}/records/?${params.toString()}`
+      );
+
+      if (!data.semesters || data.semesters.length === 0) {
+        container.innerHTML = '<p class="empty">해당 학년 이수 기록이 없습니다.</p>';
+        return;
+      }
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "records-grid";
+
+      data.semesters.forEach(sem => {
+        const card = document.createElement("div");
+        card.className = "semester-card";
+
+        const header = document.createElement("div");
+        header.className = "semester-header";
+
+        const title = document.createElement("div");
+        title.textContent = sem.label;
+
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.textContent = `${sem.year} ${sem.term}`;
+
+        header.appendChild(title);
+        header.appendChild(badge);
+
+        const ul = document.createElement("ul");
+        ul.className = "course-list";
+
+        sem.courses.forEach(c => {
+          const li = document.createElement("li");
+
+          const left = document.createElement("div");
+          left.className = "course-title";
+          const t = document.createElement("span");
+          t.textContent = c.title;
+          const code = document.createElement("span");
+          code.className = "course-code";
+          code.textContent = c.code;
+          left.appendChild(t);
+          left.appendChild(code);
+
+          const tag = document.createElement("span");
+          tag.className = "course-tag";
+          tag.textContent = c.category;
+
+          li.appendChild(left);
+          li.appendChild(tag);
+          ul.appendChild(li);
+        });
+
+        card.appendChild(header);
+        card.appendChild(ul);
+        wrapper.appendChild(card);
+      });
+
+      container.innerHTML = "";
+      container.appendChild(wrapper);
+    }
+
+    // 초기 로드
+    loadFilters().catch(err => {
+      console.error(err);
+      document.getElementById("records-container").innerHTML =
+        '<p class="empty">API 호출 중 오류가 발생했습니다.</p>';
+    });
 </script>
 </body>
 </html>

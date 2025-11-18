@@ -1,6 +1,8 @@
 from django.urls import path
-from .views import SeniorListAPI
+from . import views
 
 urlpatterns = [
-    path("", SeniorListAPI.as_view()),
+    path("filters/", views.filters, name="footprints-filters"),
+    path("seniors/", views.seniors, name="footprints-seniors"),
+    path("seniors/<int:senior_id>/records/", views.senior_records, name="footprints-records"),
 ]
