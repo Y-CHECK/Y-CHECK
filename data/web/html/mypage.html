@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <title>Y-CHECK · 마이페이지</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <title>Y-CHECK · 마이페이지</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="min-h-screen bg-[#f7f9fc] text-slate-900 pb-24">
@@ -13,297 +13,278 @@
       공통 헤더
 =========================== -->
 <header class="bg-white border-b">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
 
-    <!-- 왼쪽 로고 -->
-    <div class="flex items-center gap-3">
-      <a href="main.html" class="flex items-center gap-3">
-        <img src="../img/ycheck_logo.png" alt="Y_CHECK 로고" class="h-8 w-auto">
-      </a>
+        <!-- 왼쪽 로고 -->
+        <div class="flex items-center gap-3">
+            <a href="main.html" class="flex items-center gap-3">
+                <img src="../img/ycheck_logo.png" alt="Y_CHECK 로고" class="h-8 w-auto">
+            </a>
+        </div>
+
+        <!-- 중앙 네비게이션 -->
+        <nav class="hidden sm:flex items-center justify-center flex-1 divide-x divide-slate-300" style="margin-left: 90px;">
+            <a href="calculator.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">계산기</a>
+            <a href="timetable.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">시간표</a>
+            <a href="sunbae.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">선배의 발자취</a>
+        </nav>
+
+        <!-- 오른쪽 마이페이지 -->
+        <div class="hidden sm:block">
+            <a href="mypage.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">마이페이지</a>
+        </div>
     </div>
-
-    <!-- 중앙 네비게이션 -->
-    <nav class="hidden sm:flex items-center justify-center flex-1 divide-x divide-slate-300" style="margin-left: 90px;">
-      <a href="calculator.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">계산기</a>
-      <a href="timetable.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">시간표</a>
-      <a href="sunbae.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">선배의 발자취</a>
-    </nav>
-
-    <!-- 오른쪽 마이페이지 -->
-    <div class="hidden sm:block">
-      <a href="mypage.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">마이페이지</a>
-    </div>
-  </div>
 </header>
 
 <!-- ===========================
-      메인 영역
+      메인 영역 (가운데 정렬)
 =========================== -->
-<main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+<main class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
 
-  <!-- ===========================
-        왼쪽 정보 카드
-  =========================== -->
-  <section class="lg:col-span-8 bg-white rounded-2xl border shadow-sm p-6">
-    <h1 class="text-xl font-semibold mb-6">My Page</h1>
+    <!-- ===========================
+          가운데 정렬된 정보 카드
+    =========================== -->
+    <section class="bg-white rounded-2xl border shadow-sm p-6">
+        <h1 class="text-xl font-semibold mb-6">My Page</h1>
 
-    <form class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <form class="grid grid-cols-1 sm:grid-cols-2 gap-5">
 
-      <!-- 이름 -->
-      <div>
-        <label class="block text-sm text-slate-600 mb-1">이름</label>
-        <input id="field-real-name" type="text"
-          class="w-full rounded-xl border px-3 py-2">
-      </div>
+            <!-- 이름 -->
+            <div>
+                <label class="block text-sm text-slate-600 mb-1">이름</label>
+                <input id="field-real-name" type="text"
+                       class="w-full rounded-xl border px-3 py-2">
+            </div>
 
-      <!-- ID (수정 X) -->
-      <div>
-        <label class="block text-sm text-slate-600 mb-1">ID</label>
-        <input id="field-username" type="text"
-          class="w-full rounded-xl border px-3 py-2 bg-slate-50 text-slate-500"
-          disabled>
-      </div>
+            <!-- ID -->
+            <div>
+                <label class="block text-sm text-slate-600 mb-1">ID</label>
+                <input id="field-username" type="text"
+                       class="w-full rounded-xl border px-3 py-2 bg-slate-50 text-slate-500"
+                       disabled>
+            </div>
 
-      <!-- 학번 -->
-      <div>
-        <label class="block text-sm text-slate-600 mb-1">학번</label>
-        <input id="field-student-id" type="text"
-          class="w-full rounded-xl border px-3 py-2">
-      </div>
+            <!-- 학번 -->
+            <div>
+                <label class="block text-sm text-slate-600 mb-1">학번</label>
+                <input id="field-student-id" type="text"
+                       class="w-full rounded-xl border px-3 py-2">
+            </div>
 
-      <!-- 학년/학기 -->
-      <div>
-        <label class="block text-sm text-slate-600 mb-1">학년/학기</label>
-        <select id="field-semester"
-          class="w-full rounded-xl border px-3 py-2 text-sm">
-          <option value="">선택하세요</option>
-          <option value="1-1">1학년 1학기</option>
-          <option value="1-2">1학년 2학기</option>
-          <option value="2-1">2학년 1학기</option>
-          <option value="2-2">2학년 2학기</option>
-          <option value="3-1">3학년 1학기</option>
-          <option value="3-2">3학년 2학기</option>
-          <option value="4-1">4학년 1학기</option>
-          <option value="4-2">4학년 2학기</option>
-        </select>
-      </div>
+            <!-- 학년/학기 -->
+            <div>
+                <label class="block text-sm text-slate-600 mb-1">학년/학기</label>
+                <select id="field-semester"
+                        class="w-full rounded-xl border px-3 py-2 text-sm">
+                    <option value="">선택하세요</option>
+                    <option value="1-1">1학년 1학기</option>
+                    <option value="1-2">1학년 2학기</option>
+                    <option value="2-1">2학년 1학기</option>
+                    <option value="2-2">2학년 2학기</option>
+                    <option value="3-1">3학년 1학기</option>
+                    <option value="3-2">3학년 2학기</option>
+                    <option value="4-1">4학년 1학기</option>
+                    <option value="4-2">4학년 2학기</option>
+                </select>
+            </div>
 
-      <!-- 이메일 (수정 X) -->
-      <div class="sm:col-span-2">
-        <label class="block text-sm text-slate-600 mb-1">이메일</label>
-        <input id="field-email" type="email"
-          class="w-full rounded-xl border px-3 py-2 bg-slate-50 text-slate-500"
-          disabled>
-      </div>
+            <!-- 이메일 -->
+            <div class="sm:col-span-2">
+                <label class="block text-sm text-slate-600 mb-1">이메일</label>
+                <input id="field-email" type="email"
+                       class="w-full rounded-xl border px-3 py-2 bg-slate-50 text-slate-500"
+                       disabled>
+            </div>
 
-      <!-- 관심 분야 6개 + 기타 입력 -->
-      <fieldset class="sm:col-span-2 border rounded-xl p-4">
-        <legend class="px-1 text-sm text-slate-600">관심 전공/분야</legend>
+            <!-- 관심 분야 -->
+            <fieldset class="sm:col-span-2 border rounded-xl p-4">
+                <legend class="px-1 text-sm text-slate-600">관심 전공/분야</legend>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm mt-1">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm mt-1">
 
-          <label class="inline-flex items-center gap-2">
-            <input id="chk-ai" type="checkbox"> AI/머신러닝
-          </label>
+                    <label class="inline-flex items-center gap-2">
+                        <input id="chk-ai" type="checkbox"> AI/머신러닝
+                    </label>
 
-          <label class="inline-flex items-center gap-2">
-            <input id="chk-security" type="checkbox"> 보안/네트워크
-          </label>
+                    <label class="inline-flex items-center gap-2">
+                        <input id="chk-security" type="checkbox"> 보안/네트워크
+                    </label>
 
-          <label class="inline-flex items-center gap-2">
-            <input id="chk-game" type="checkbox"> 게임/미디어
-          </label>
+                    <label class="inline-flex items-center gap-2">
+                        <input id="chk-game" type="checkbox"> 게임/미디어
+                    </label>
 
-          <label class="inline-flex items-center gap-2">
-            <input id="chk-embedded" type="checkbox"> 임베디드/시스템
-          </label>
+                    <label class="inline-flex items-center gap-2">
+                        <input id="chk-embedded" type="checkbox"> 임베디드/시스템
+                    </label>
 
-          <label class="inline-flex items-center gap-2">
-            <input id="chk-startup" type="checkbox"> 창업/서비스 기획
-          </label>
+                    <label class="inline-flex items-center gap-2">
+                        <input id="chk-startup" type="checkbox"> 창업/서비스 기획
+                    </label>
 
-          <label class="inline-flex items-center gap-2 w-full">
-            <input id="chk-etc" type="checkbox">
-            <span>기타</span>
-            <input id="field-interest-etc" type="text"
-              class="flex-1 rounded-lg border px-2 py-1 text-xs"
-              placeholder="예: 로봇, 교육 등">
-          </label>
+                    <label class="inline-flex items-center gap-2 w-full">
+                        <input id="chk-etc" type="checkbox">
+                        <span>기타</span>
+                        <input id="field-interest-etc" type="text"
+                               class="flex-1 rounded-lg border px-2 py-1 text-xs"
+                               placeholder="예: 로봇, 교육 등">
+                    </label>
 
-        </div>
-      </fieldset>
+                </div>
+            </fieldset>
 
-      <!-- 데이터 사용 동의 -->
-      <div class="sm:col-span-2 flex items-center gap-2">
-        <input id="chk-consent" type="checkbox" class="h-4 w-4">
-        <span class="text-sm text-slate-700">데이터 사용 동의</span>
-      </div>
+            <!-- 데이터 사용 동의 -->
+            <div class="sm:col-span-2 flex items-center gap-2">
+                <input id="chk-consent" type="checkbox" class="h-4 w-4">
+                <span class="text-sm text-slate-700">데이터 사용 동의</span>
+            </div>
 
-      <div class="sm:col-span-2 flex justify-end">
-        <button id="btn-save-profile" type="button"
-          class="px-4 py-2 rounded-xl bg-blue-700 text-white text-sm font-semibold">
-          정보 수정하기
-        </button>
-      </div>
-    </form>
-  </section>
+            <!-- 버튼 -->
+            <div class="sm:col-span-2 flex justify-end">
+                <button id="btn-save-profile" type="button"
+                        class="px-4 py-2 rounded-xl bg-blue-700 text-white text-sm font-semibold">
+                    정보 수정하기
+                </button>
+            </div>
 
-  <!-- ===========================
-        오른쪽 요약 카드
-  =========================== -->
-  <aside class="lg:col-span-4 space-y-6">
-
-    <div class="bg-white rounded-2xl border shadow-sm p-6">
-      <div class="text-sm text-slate-500">프로필</div>
-      <div class="mt-2 text-lg font-semibold" id="summary-name">-</div>
-      <div class="text-sm text-slate-600" id="summary-basic">-</div>
-      <div class="text-sm text-slate-600">소프트웨어학부</div>
-    </div>
-
-  </aside>
+        </form>
+    </section>
 </main>
 
 <!-- ===========================
       푸터
 =========================== -->
 <footer class="fixed bottom-0 inset-x-0 bg-white border-t">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-start justify-between">
-    <div class="flex items-start gap-4">
-      <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="h-6 w-auto" />
-      <div class="space-y-1 text-sm text-slate-600 leading-relaxed">
-        <div>강원특별자치도 원주시 흥업면 연세대길 1 창조관</div>
-        <div>TEL) 033-123-4567</div>
-        <div>EMAIL: YCHECK@gmail.com</div>
-      </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-start justify-between">
+        <div class="flex items-start gap-4">
+            <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="h-6 w-auto" />
+            <div class="space-y-1 text-sm text-slate-600 leading-relaxed">
+                <div>강원특별자치도 원주시 흥업면 연세대길 1 창조관</div>
+                <div>TEL) 033-123-4567</div>
+                <div>EMAIL: YCHECK@gmail.com</div>
+            </div>
+        </div>
     </div>
-  </div>
 </footer>
 
 <!-- ===========================
       JS : 로그인 유지 + DB 연동
 =========================== -->
 <script>
-  // ---------------------------
-  // 로그인 상태 + 프로필 불러오기
-  // ---------------------------
-  async function loadMyPage() {
+    // ---------------------------
+    // 로그인 상태 + 프로필 불러오기
+    // ---------------------------
+    async function loadMyPage() {
 
-    const usernameInput  = document.getElementById("field-username");
-    const realNameInput  = document.getElementById("field-real-name");
-    const studentIdInput = document.getElementById("field-student-id");
-    const emailInput     = document.getElementById("field-email");
-    const semesterInput  = document.getElementById("field-semester");
+        const usernameInput  = document.getElementById("field-username");
+        const realNameInput  = document.getElementById("field-real-name");
+        const studentIdInput = document.getElementById("field-student-id");
+        const emailInput     = document.getElementById("field-email");
+        const semesterInput  = document.getElementById("field-semester");
 
-    const summaryName  = document.getElementById("summary-name");
-    const summaryBasic = document.getElementById("summary-basic");
+        const chkAi       = document.getElementById("chk-ai");
+        const chkSecurity = document.getElementById("chk-security");
+        const chkGame     = document.getElementById("chk-game");
+        const chkEmbedded = document.getElementById("chk-embedded");
+        const chkStartup  = document.getElementById("chk-startup");
+        const chkEtc      = document.getElementById("chk-etc");
+        const etcText     = document.getElementById("field-interest-etc");
 
-    const chkAi       = document.getElementById("chk-ai");
-    const chkSecurity = document.getElementById("chk-security");
-    const chkGame     = document.getElementById("chk-game");
-    const chkEmbedded = document.getElementById("chk-embedded");
-    const chkStartup  = document.getElementById("chk-startup");
-    const chkEtc      = document.getElementById("chk-etc");
-    const etcText     = document.getElementById("field-interest-etc");
+        const chkConsent = document.getElementById("chk-consent");
 
-    const chkConsent = document.getElementById("chk-consent");
+        try {
+            const resp = await fetch("/api/mypage/", {
+                method: "GET",
+                credentials: "include",
+            });
 
-    try {
-      const resp = await fetch("/api/mypage/", {
-        method: "GET",
-        credentials: "include",
-      });
+            if (resp.status === 401) {
+                alert("로그인이 필요합니다.");
+                window.location.href = "login.html";
+                return;
+            }
 
-      if (resp.status === 401) {
-        alert("로그인이 필요합니다.");
-        window.location.href = "login.html";
-        return;
-      }
+            const data = await resp.json();
+            if (!data.logged_in) {
+                window.location.href = "login.html";
+                return;
+            }
 
-      const data = await resp.json();
-      if (!data.logged_in) {
-        window.location.href = "login.html";
-        return;
-      }
+            const p = data.profile || {};
 
-      const p = data.profile || {};
+            usernameInput.value  = data.username || "";
+            realNameInput.value  = p.real_name || "";
+            studentIdInput.value = p.student_id || "";
+            emailInput.value     = data.email || "";
+            semesterInput.value  = p.current_semester || "";
 
-      usernameInput.value  = data.username || "";
-      realNameInput.value  = p.real_name || "";
-      studentIdInput.value = p.student_id || "";
-      emailInput.value     = data.email || "";
-      semesterInput.value  = p.current_semester || "";
+            const interests = (p.interest || "").split(",");
 
-      summaryName.textContent = (p.real_name || data.username) + "님";
-      summaryBasic.textContent = `${p.student_id || "-"} / ${p.current_semester || "-"}`;
+            chkAi.checked       = interests.includes("AI/머신러닝");
+            chkSecurity.checked = interests.includes("보안/네트워크");
+            chkGame.checked     = interests.includes("게임/미디어");
+            chkEmbedded.checked = interests.includes("임베디드/시스템");
+            chkStartup.checked  = interests.includes("창업/서비스 기획");
+            chkEtc.checked      = !!p.interest_text;
 
-      const interests = (p.interest || "").split(",");
+            etcText.value       = p.interest_text || "";
+            chkConsent.checked  = !!p.data_consent;
 
-      chkAi.checked       = interests.includes("AI/머신러닝");
-      chkSecurity.checked = interests.includes("보안/네트워크");
-      chkGame.checked     = interests.includes("게임/미디어");
-      chkEmbedded.checked = interests.includes("임베디드/시스템");
-      chkStartup.checked  = interests.includes("창업/서비스 기획");
-      chkEtc.checked      = !!p.interest_text;
-
-      etcText.value       = p.interest_text || "";
-
-      chkConsent.checked  = !!p.data_consent;
-
-    } catch (err) {
-      console.error("loadMyPage 오류:", err);
+        } catch (err) {
+            console.error("loadMyPage 오류:", err);
+        }
     }
-  }
 
-  // ---------------------------
-  // 프로필 수정 저장
-  // ---------------------------
-  async function saveMyPage() {
+    // ---------------------------
+    // 프로필 수정 저장
+    // ---------------------------
+    async function saveMyPage() {
 
-    const payload = {
-      real_name: document.getElementById("field-real-name").value,
-      student_id: document.getElementById("field-student-id").value,
-      current_semester: document.getElementById("field-semester").value,
+        const payload = {
+            real_name: document.getElementById("field-real-name").value,
+            student_id: document.getElementById("field-student-id").value,
+            current_semester: document.getElementById("field-semester").value,
 
-      interest: [
-        document.getElementById("chk-ai").checked ? "AI/머신러닝" : "",
-        document.getElementById("chk-security").checked ? "보안/네트워크" : "",
-        document.getElementById("chk-game").checked ? "게임/미디어" : "",
-        document.getElementById("chk-embedded").checked ? "임베디드/시스템" : "",
-        document.getElementById("chk-startup").checked ? "창업/서비스 기획" : "",
-        document.getElementById("chk-etc").checked ? "기타" : "",
-      ].filter(x => x !== "").join(","),
+            interest: [
+                document.getElementById("chk-ai").checked ? "AI/머신러닝" : "",
+                document.getElementById("chk-security").checked ? "보안/네트워크" : "",
+                document.getElementById("chk-game").checked ? "게임/미디어" : "",
+                document.getElementById("chk-embedded").checked ? "임베디드/시스템" : "",
+                document.getElementById("chk-startup").checked ? "창업/서비스 기획" : "",
+                document.getElementById("chk-etc").checked ? "기타" : "",
+            ].filter(x => x !== "").join(","),
 
-      interest_text: document.getElementById("field-interest-etc").value,
-      data_consent: document.getElementById("chk-consent").checked,
-    };
+            interest_text: document.getElementById("field-interest-etc").value,
+            data_consent: document.getElementById("chk-consent").checked,
+        };
 
-    try {
-      const resp = await fetch("/api/mypage/", {
-        method: "POST",
-        credentials: "include",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(payload),
-      });
+        try {
+            const resp = await fetch("/api/mypage/", {
+                method: "POST",
+                credentials: "include",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(payload),
+            });
 
-      const data = await resp.json();
+            const data = await resp.json();
 
-      if (!data.success) {
-        alert("정보 저장 실패");
-        return;
-      }
+            if (!data.success) {
+                alert("정보 저장 실패");
+                return;
+            }
 
-      alert("정보가 저장되었습니다!");
-      loadMyPage();
-    } catch (err) {
-      alert("서버와 연결할 수 없습니다.");
+            alert("정보가 저장되었습니다!");
+            loadMyPage();
+        } catch (err) {
+            alert("서버와 연결할 수 없습니다.");
+        }
     }
-  }
 
-  // 이벤트 바인딩
-  document.addEventListener("DOMContentLoaded", () => {
-    loadMyPage();
-    document.getElementById("btn-save-profile").addEventListener("click", saveMyPage);
-  });
+    // 이벤트 바인딩
+    document.addEventListener("DOMContentLoaded", () => {
+        loadMyPage();
+        document.getElementById("btn-save-profile").addEventListener("click", saveMyPage);
+    });
 </script>
 
 </body>
