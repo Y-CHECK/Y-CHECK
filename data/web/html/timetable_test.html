@@ -2,52 +2,38 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8" />
-    <title>Y_CHECK 시간표 페이지 테스트</title>
+    <title>Y_CHECK 시간표 (API 연동 테스트)</title>
     <style>
         body {
           font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-          padding: 24px;
           background: #f5f7fb;
+          padding: 24px;
         }
         h1 {
+          font-size: 26px;
+          font-weight: 700;
           margin-bottom: 16px;
         }
-        .layout {
-          display: flex;
-          gap: 16px;
-        }
-        .card {
-          background: #fff;
-          border-radius: 12px;
-          padding: 16px 20px;
-          margin-bottom: 16px;
-          box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06);
-        }
-        .timetable-card {
-          flex: 3;
-        }
-        .sidebar {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-        .header-row {
+        .top-bar {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 12px;
+          margin-bottom: 16px;
         }
         .semester-label {
-          font-size: 24px;
-          font-weight: 700;
+          font-size: 18px;
+          font-weight: 600;
         }
-        select {
-          padding: 6px 10px;
-          border-radius: 999px;
-          border: 1px solid #d1d5db;
-          font-size: 14px;
+        .muted {
+          font-size: 13px;
+          color: #6b7280;
+        }
+        .card {
           background: #fff;
+          border-radius: 14px;
+          padding: 16px 20px;
+          box-shadow: 0 2px 4px rgba(15,23,42,0.06);
+          margin-bottom: 16px;
         }
         table {
           width: 100%;
@@ -66,127 +52,132 @@
         td.time-label {
           font-weight: 600;
           background: #f9fafb;
-          width: 60px;
+          width: 70px;
         }
         td.slot {
           min-height: 40px;
-          cursor: pointer;
         }
-        td.slot span {
-          display: inline-block;
-          padding: 4px 8px;
-          border-radius: 6px;
+        .subject-pill {
+          display: inline-flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 4px 6px;
+          border-radius: 8px;
           background: #eff6ff;
           color: #1d4ed8;
+          font-size: 12px;
+          line-height: 1.2;
+          min-width: 80px;
         }
-        td.slot.empty span {
-          background: transparent;
-          color: #9ca3af;
+        .subject-code {
+          font-weight: 500;
+        }
+        .subject-title {
+          margin-top: 2px;
+          white-space: nowrap;
         }
         button {
-          width: 100%;
-          padding: 10px 12px;
           border-radius: 999px;
           border: 1px solid #e5e7eb;
-          background: #ffffff;
-          font-size: 14px;
-          cursor: pointer;
-          text-align: left;
-        }
-        button.primary {
+          padding: 6px 12px;
           background: #2563eb;
-          color: #ffffff;
-          border-color: #2563eb;
-          text-align: center;
+          color: #fff;
+          font-size: 13px;
+          cursor: pointer;
         }
-        button + button {
-          margin-top: 8px;
-        }
-        .muted {
-          font-size: 14px;
-          color: #6b7280;
-        }
-        .saved-list h3 {
-          margin-top: 0;
-          margin-bottom: 8px;
-          font-size: 16px;
-        }
-        .saved-list ul {
-          list-style: none;
-          padding-left: 0;
-          margin: 0;
-        }
-        .saved-list li {
-          font-size: 14px;
-          padding: 4px 0;
+        button.secondary {
+          background: #fff;
+          color: #111827;
         }
     </style>
 </head>
 <body>
-<h1>Y_CHECK 시간표 페이지 (API 연동 테스트)</h1>
+<h1>Y_CHECK 시간표 (API 연동 테스트)</h1>
 
-<div class="layout">
-    <!-- 왼쪽: 시간표 큰 표 -->
-    <div class="card timetable-card">
-        <div class="header-row">
-            <div class="semester-label" id="semester-label">- 학기</div>
-            <div>
-                <label class="muted" for="semester-select" style="margin-right: 8px;">학기</label>
-                <select id="semester-select"></select>
-            </div>
-        </div>
-
-        <table id="timetable-table">
-            <!-- JS로 헤더/바디 생성 -->
-        </table>
-
-        <p class="muted" style="margin-top: 8px;">
-            * 칸을 클릭하면 과목명을 직접 입력할 수 있습니다. (임시 / 브라우저에서만 저장)
-        </p>
+<div class="top-bar">
+    <div>
+        <div class="semester-label" id="semester-label">학기 정보 없음</div>
+        <div class="muted" id="semester-sub">/api/timetable/current/ 에서 이번 학기 정보를 불러옵니다.</div>
     </div>
-
-    <!-- 오른쪽: 버튼들 + (나중에 담은 수업 등) -->
-    <div class="sidebar">
-        <div class="card">
-            <button onclick="onSearchAdd()">+ 수업 목록에서 검색해서 추가하기</button>
-            <button onclick="onNewTimetable()">+ 새 시간표 만들기</button>
-        </div>
-
-        <div class="card saved-list">
-            <h3>담은 수업 (예시)</h3>
-            <ul id="saved-classes">
-                <!-- JS로 채워짐 (지금은 단순 예시) -->
-            </ul>
-            <p class="muted">
-                * 나중에 “담은 수업” 목록과 시간표 연동은 DB를 붙인 뒤에 구현할 예정입니다.
-            </p>
-        </div>
+    <div>
+        <button id="reload-btn">이번 학기 시간표 불러오기</button>
     </div>
 </div>
 
+<div class="card">
+    <table id="timetable-table">
+        <!-- JS에서 채움 -->
+    </table>
+</div>
+
 <script>
-    // 현재 시간표 데이터 (프론트 전용 임시 상태)
-    let timetableState = {
-      year: null,
-      term: null,
-      days: [],
-      periods: [],
-      entries: [] // {day, period, title, code}
+    // 영문 요일을 표에 보여줄 한글 라벨로 매핑
+    const DAY_LABELS = {
+      "Mon": "월",
+      "Tue": "화",
+      "Wed": "수",
+      "Thu": "목",
+      "Fri": "금",
+      "Sat": "토",
+      "Sun": "일",
     };
 
-    async function fetchSemesters() {
-      const res = await fetch("/api/timetable/semesters/");
-      const data = await res.json();
-      return data.semesters || [];
+    // 요일 정렬 순서
+    const DAY_ORDER = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+
+    async function loadCurrentTimetable() {
+      const btn = document.getElementById("reload-btn");
+      btn.textContent = "불러오는 중...";
+      btn.disabled = true;
+
+      try {
+        const res = await fetch("/api/timetable/current/");
+        if (!res.ok) {
+          throw new Error("HTTP " + res.status);
+        }
+        const data = await res.json();
+
+        // 기본 구조 안전하게 꺼내기
+        const year = data.year ?? "-";
+        const sem = data.semester ?? "-";
+        const grid = Array.isArray(data.grid) ? data.grid : [];
+
+        document.getElementById("semester-label").textContent =
+          `${year}년 ${sem}`;
+        document.getElementById("semester-sub").textContent =
+          "아래 시간표는 /api/timetable/current/ 응답을 그대로 표현한 것입니다.";
+
+        // day -> slots 맵으로 정리
+        const dayMap = {};
+        grid.forEach(d => {
+          const dayKey = d.day;
+          const slots = Array.isArray(d.slots) ? d.slots : [];
+          dayMap[dayKey] = slots;
+        });
+
+        // 등장한 모든 교시 모으기 (중복 제거 후 정렬)
+        const periodSet = new Set();
+        Object.values(dayMap).forEach(slots => {
+          slots.forEach(s => {
+            if (typeof s.period === "number") {
+              periodSet.add(s.period);
+            }
+          });
+        });
+        const periods = Array.from(periodSet).sort((a, b) => a - b);
+
+        buildTimetableTable(dayMap, periods);
+      } catch (err) {
+        alert("시간표 API 호출 중 오류: " + err);
+        buildTimetableTable({}, []); // 비워진 표
+      } finally {
+        btn.textContent = "이번 학기 시간표 다시 불러오기";
+        btn.disabled = false;
+      }
     }
 
-    async function fetchTimetable(year, term) {
-      const res = await fetch(`/api/timetable/?year=${year}&term=${term}`);
-      const data = await res.json();
-      return data;
-    }
-
-    function buildTableSkeleton(days, periods) {
+    function buildTimetableTable(dayMap, periods) {
       const table = document.getElementById("timetable-table");
       table.innerHTML = "";
 
@@ -194,13 +185,13 @@
       const thead = document.createElement("thead");
       const headerRow = document.createElement("tr");
 
-      const emptyTh = document.createElement("th");
-      emptyTh.textContent = "교시";
-      headerRow.appendChild(emptyTh);
+      const thTime = document.createElement("th");
+      thTime.textContent = "교시";
+      headerRow.appendChild(thTime);
 
-      days.forEach(day => {
+      DAY_ORDER.forEach(dayKey => {
         const th = document.createElement("th");
-        th.textContent = day;
+        th.textContent = DAY_LABELS[dayKey] || dayKey;
         headerRow.appendChild(th);
       });
 
@@ -210,25 +201,50 @@
       // 바디
       const tbody = document.createElement("tbody");
 
-      periods.forEach(period => {
+      if (periods.length === 0) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = DAY_ORDER.length + 1;
+        td.textContent = "시간표 데이터가 없습니다.";
+        td.style.padding = "16px";
+        tbody.appendChild(tr);
+        tr.appendChild(td);
+        table.appendChild(tbody);
+        return;
+      }
+
+      periods.forEach(p => {
         const tr = document.createElement("tr");
 
         const timeTd = document.createElement("td");
-        timeTd.textContent = `${period}교시`;
         timeTd.className = "time-label";
+        timeTd.textContent = `${p}교시`;
         tr.appendChild(timeTd);
 
-        days.forEach(day => {
+        DAY_ORDER.forEach(dayKey => {
           const td = document.createElement("td");
-          td.className = "slot empty";
-          td.dataset.day = day;
-          td.dataset.period = period;
+          td.className = "slot";
+          const slots = dayMap[dayKey] || [];
+          const slot = slots.find(s => s.period === p);
 
-          const span = document.createElement("span");
-          span.textContent = "";
-          td.appendChild(span);
+          if (slot) {
+            const pill = document.createElement("div");
+            pill.className = "subject-pill";
 
-          td.addEventListener("click", () => onSlotClick(td));
+            const codeSpan = document.createElement("span");
+            codeSpan.className = "subject-code";
+            codeSpan.textContent = slot.code || "";
+
+            const titleSpan = document.createElement("span");
+            titleSpan.className = "subject-title";
+            titleSpan.textContent = slot.title || "";
+
+            pill.appendChild(codeSpan);
+            pill.appendChild(titleSpan);
+            td.appendChild(pill);
+          } else {
+            td.textContent = "";  // 빈 칸
+          }
 
           tr.appendChild(td);
         });
@@ -239,141 +255,9 @@
       table.appendChild(tbody);
     }
 
-    function fillTableWithEntries(entries) {
-      const table = document.getElementById("timetable-table");
-      const cells = table.querySelectorAll("td.slot");
-
-      // 모두 초기화
-      cells.forEach(td => {
-        td.classList.add("empty");
-        td.querySelector("span").textContent = "";
-      });
-
-      // entries 반영
-      entries.forEach(e => {
-        const selector = `td.slot[data-day="${e.day}"][data-period="${e.period}"]`;
-        const cell = table.querySelector(selector);
-        if (cell) {
-          cell.classList.remove("empty");
-          cell.querySelector("span").textContent = e.title || e.code || "";
-        }
-      });
-
-      // 오른쪽 "담은 수업" 예시용: entries에서 과목명만 모아서 간단히 보여주기
-      const savedList = document.getElementById("saved-classes");
-      savedList.innerHTML = "";
-      const names = Array.from(
-        new Set(entries.map(e => e.title || e.code).filter(Boolean))
-      );
-      names.forEach(name => {
-        const li = document.createElement("li");
-        li.textContent = name;
-        savedList.appendChild(li);
-      });
-    }
-
-    function onSlotClick(td) {
-      const day = td.dataset.day;
-      const period = Number(td.dataset.period);
-      const currentText = td.querySelector("span").textContent || "";
-
-      const title = window.prompt(
-        `${day} ${period}교시 과목명을 입력하세요 (비우면 삭제):`,
-        currentText
-      );
-
-      if (title === null) {
-        return; // 취소
-      }
-
-      // 빈 문자열이면 삭제
-      if (title.trim() === "") {
-        td.classList.add("empty");
-        td.querySelector("span").textContent = "";
-
-        timetableState.entries = timetableState.entries.filter(
-          e => !(e.day === day && e.period === period)
-        );
-      } else {
-        td.classList.remove("empty");
-        td.querySelector("span").textContent = title.trim();
-
-        // 기존 entry 있으면 수정, 없으면 추가
-        const idx = timetableState.entries.findIndex(
-          e => e.day === day && e.period === period
-        );
-        if (idx >= 0) {
-          timetableState.entries[idx].title = title.trim();
-        } else {
-          timetableState.entries.push({
-            day,
-            period,
-            title: title.trim(),
-          });
-        }
-      }
-
-      // 오른쪽 담은 수업 갱신
-      fillTableWithEntries(timetableState.entries);
-    }
-
-    function onSearchAdd() {
-      alert("수업 목록 검색/추가는 나중에 DB/검색 기능 붙일 때 구현할 예정입니다.");
-    }
-
-    function onNewTimetable() {
-      alert("새 시간표 만들기는 나중에 '여러 학기/버전 관리' 기능 붙일 때 구현할 예정입니다.");
-    }
-
-    async function initPage() {
-      // 1) 학기 목록 불러오기
-      const semesters = await fetchSemesters();
-      const select = document.getElementById("semester-select");
-      select.innerHTML = "";
-
-      semesters.forEach(s => {
-        const option = document.createElement("option");
-        option.value = `${s.year}-${s.term}`;
-        option.textContent = s.label;
-        select.appendChild(option);
-      });
-
-      if (semesters.length === 0) {
-        document.getElementById("semester-label").textContent = "학기 정보 없음";
-        return;
-      }
-
-      // 기본 선택 = 첫 번째 학기
-      const first = semesters[0];
-      select.value = `${first.year}-${first.term}`;
-      await loadTimetable(first.year, first.term);
-
-      // 학기 변경 이벤트
-      select.addEventListener("change", async () => {
-        const [yearStr, termStr] = select.value.split("-");
-        const year = Number(yearStr);
-        const term = Number(termStr);
-        await loadTimetable(year, term);
-      });
-    }
-
-    async function loadTimetable(year, term) {
-      const data = await fetchTimetable(year, term);
-
-      timetableState.year = data.year;
-      timetableState.term = data.term;
-      timetableState.days = data.days;
-      timetableState.periods = data.periods;
-      timetableState.entries = data.entries || [];
-
-      document.getElementById("semester-label").textContent = data.label;
-
-      buildTableSkeleton(data.days, data.periods);
-      fillTableWithEntries(timetableState.entries);
-    }
-
-    // 페이지 로드시 초기화
-    initPage();
+    document.getElementById("reload-btn").addEventListener("click", loadCurrentTimetable);
+    // 페이지 진입 시 한 번 자동 호출
+    loadCurrentTimetable();
 </script>
 </body>
 </html>

@@ -2,77 +2,106 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8" />
-    <title>Y_CHECK 메인 페이지 테스트</title>
+    <title>Y_CHECK 메인 페이지 (API 연동 테스트)</title>
     <style>
         body {
           font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-          padding: 24px;
           background: #f5f7fb;
+          padding: 24px;
         }
         h1 {
+          font-size: 26px;
+          font-weight: 700;
           margin-bottom: 16px;
+        }
+        .layout {
+          display: grid;
+          grid-template-columns: 2fr 1fr;
+          gap: 16px;
         }
         .card {
           background: #fff;
-          border-radius: 12px;
+          border-radius: 14px;
           padding: 16px 20px;
+          box-shadow: 0 2px 4px rgba(15,23,42,0.06);
           margin-bottom: 16px;
-          box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06);
         }
-        .row {
+        .card h2 {
+          font-size: 18px;
+          margin: 0 0 8px 0;
+        }
+        .muted {
+          color: #6b7280;
+          font-size: 13px;
+        }
+        .overall-score {
           display: flex;
-          gap: 16px;
-          margin-bottom: 16px;
+          justify-content: space-between;
+          align-items: flex-end;
+          margin-bottom: 8px;
         }
-        .row > .card {
-          flex: 1;
+        .overall-score strong {
+          font-size: 32px;
+        }
+        .overall-score span.total {
+          font-size: 16px;
+          color: #6b7280;
+        }
+        .overall-score span.rate {
+          font-size: 20px;
+          font-weight: 600;
+          color: #2563eb;
         }
         .progress-bar {
           width: 100%;
-          height: 12px;
+          height: 10px;
           border-radius: 999px;
           background: #e5e7eb;
           overflow: hidden;
           margin-top: 8px;
         }
-        .progress-bar-inner {
+        .progress-inner {
           height: 100%;
-          background: linear-gradient(90deg, #60a5fa, #2563eb);
           width: 0%;
+          background: linear-gradient(90deg,#2563eb,#4f46e5);
           transition: width 0.4s ease;
         }
-        .overall-score {
-          font-size: 32px;
-          font-weight: 700;
+
+        .horizontal {
+          display: grid;
+          grid-template-columns: 1.1fr 1.4fr;
+          gap: 16px;
         }
-        .muted {
-          color: #6b7280;
+
+        /* 이수 학점 분류 */
+        .bar-row {
+          margin: 6px 0;
+        }
+        .bar-row .label {
           font-size: 14px;
-        }
-        .badge {
-          display: inline-block;
-          padding: 2px 8px;
-          border-radius: 999px;
-          background: #eff6ff;
-          color: #1d4ed8;
-          font-size: 12px;
-          margin-left: 4px;
-        }
-        ul.grade-list {
-          list-style: none;
-          padding-left: 0;
-          margin: 0;
-        }
-        ul.grade-list li {
+          margin-bottom: 4px;
           display: flex;
           justify-content: space-between;
-          padding: 2px 0;
-          font-size: 14px;
         }
+        .bar-bg {
+          width: 100%;
+          height: 8px;
+          border-radius: 999px;
+          background: #e5e7eb;
+          overflow: hidden;
+        }
+        .bar-fill {
+          height: 100%;
+          width: 0%;
+          background: linear-gradient(90deg,#60a5fa,#2563eb);
+          transition: width 0.4s ease;
+        }
+
         table {
           width: 100%;
           border-collapse: collapse;
           font-size: 14px;
+          margin-top: 6px;
         }
         th, td {
           padding: 6px 4px;
@@ -82,288 +111,251 @@
         th {
           background: #f9fafb;
           font-weight: 600;
+          font-size: 13px;
         }
-        .track-title {
-          font-size: 18px;
-          margin-bottom: 4px;
-        }
-        .track-title span {
-          color: #16a34a;
-          font-weight: 700;
-        }
-        button {
-          padding: 6px 12px;
-          border-radius: 999px;
-          border: none;
-          background: #2563eb;
-          color: white;
-          font-size: 14px;
-          cursor: pointer;
-          margin-bottom: 16px;
-        }
-        button:disabled {
-          opacity: 0.6;
-          cursor: default;
-        }
-        pre#raw {
-          font-size: 12px;
-          background: #0f172a;
-          color: #e5e7eb;
-          padding: 8px;
-          border-radius: 8px;
-          overflow-x: auto;
-        }
+
+        /* 오른쪽 카드들 */
         .user-name {
-          font-size: 18px;
+          font-size: 20px;
           font-weight: 700;
-          margin-bottom: 4px;
         }
-        .right-column {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-          max-width: 280px;
+        .user-sub {
+          font-size: 14px;
+          color: #6b7280;
+          margin-top: 4px;
+        }
+        .chip {
+          display: inline-block;
+          padding: 2px 8px;
+          border-radius: 999px;
+          background: #eff6ff;
+          color: #1d4ed8;
+          font-size: 11px;
+          margin-left: 4px;
         }
         .memo-box {
-          white-space: pre-line;
-          border-radius: 8px;
+          width: 100%;
+          min-height: 80px;
+          border-radius: 10px;
           border: 1px solid #e5e7eb;
           padding: 8px 10px;
-          background: #f9fafb;
-          font-size: 14px;
+          font-size: 13px;
+          resize: vertical;
+        }
+
+        button {
+          border-radius: 999px;
+          border: 1px solid #e5e7eb;
+          padding: 6px 12px;
+          background: #2563eb;
+          color: #fff;
+          font-size: 13px;
+          cursor: pointer;
+        }
+        button.secondary {
+          background: #fff;
+          color: #111827;
         }
     </style>
 </head>
 <body>
 <h1>Y_CHECK 메인 페이지 (API 연동 테스트)</h1>
-<button id="reloadBtn">데이터 새로고침</button>
+<button id="reload-btn" class="secondary">불러오는 중...</button>
 
-<!-- 첫 줄: 전체 진행도 + 내 정보 -->
-<div class="row">
-    <div class="card">
-        <div class="muted">총 이수 진행도</div>
-        <div>
-            <span class="overall-score" id="overall-text">- / - 점</span>
-            <span class="badge" id="overall-rate">0%</span>
-        </div>
-        <div class="progress-bar">
-            <div class="progress-bar-inner" id="overall-bar"></div>
-        </div>
-    </div>
-
-    <div class="card" style="max-width: 280px;">
-        <div class="muted" style="text-align:right;">베타</div>
-        <div class="user-name" id="user-name">-님</div>
-        <div class="muted" id="user-id-year">-</div>
-        <div class="muted" id="user-dept">-</div>
-    </div>
-</div>
-
-<!-- 성적 비율 + 분류별 이수 -->
-<div class="row">
-    <!-- 성적 비율 -->
-    <div class="card">
-        <div class="muted">성적 비율 (원그래프용 데이터)</div>
-        <ul class="grade-list" id="grade-list">
-            <!-- JS로 채워짐 -->
-        </ul>
-    </div>
-
-    <!-- 분류별 이수 학점 -->
-    <div class="card">
-        <div class="muted">이수 학점 (분류별)</div>
-        <table>
-            <thead>
-            <tr>
-                <th>분류</th>
-                <th>이수</th>
-                <th>전체</th>
-                <th>진행률</th>
-            </tr>
-            </thead>
-            <tbody id="category-body">
-            <!-- JS로 채워짐 -->
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<!-- 트랙 추천 -->
-<div class="card">
-    <div class="muted">트랙 추천</div>
-    <div class="track-title" id="track-title">추천 트랙: -</div>
-    <div class="muted" id="track-message"></div>
-
-    <h4 style="margin-top: 12px;">추천 이수 과목 리스트</h4>
-    <table>
-        <thead>
-        <tr>
-            <th>우선순위</th>
-            <th>과목명</th>
-            <th>분류</th>
-            <th>학점</th>
-        </tr>
-        </thead>
-        <tbody id="track-course-body">
-        <!-- JS로 채워짐 -->
-        </tbody>
-    </table>
-</div>
-
-<!-- 수강 과목 + 채플 + 메모 -->
-<div class="row">
-    <!-- 수강 과목 리스트 -->
-    <div class="card">
-        <div class="muted">수강 과목 리스트 (이번 학기)</div>
-        <table>
-            <thead>
-            <tr>
-                <th>과목명</th>
-                <th>분류</th>
-                <th>학점</th>
-            </tr>
-            </thead>
-            <tbody id="current-courses-body">
-            <!-- JS로 채워짐 -->
-            </tbody>
-        </table>
-    </div>
-
-    <!-- 오른쪽: 채플 + 메모 -->
-    <div class="right-column">
+<div class="layout" style="margin-top:16px;">
+    <!-- 왼쪽 영역 -->
+    <div>
+        <!-- 전체 진행률 -->
         <div class="card">
-            <div class="muted">채플 카운트</div>
-            <div>
-                <span id="chapel-count">0 / 0</span>
-                <span class="badge" id="chapel-rate">0%</span>
+            <h2>총 이수 진행도</h2>
+            <div class="overall-score">
+                <div>
+                    <strong id="overall-earned">-</strong>
+                    <span class="total">/ <span id="overall-required">-</span> 점</span>
+                </div>
+                <span class="rate" id="overall-rate">0%</span>
             </div>
             <div class="progress-bar">
-                <div class="progress-bar-inner" id="chapel-bar"></div>
+                <div class="progress-inner" id="overall-progress"></div>
+            </div>
+        </div>
+
+        <!-- 성적 비율 (임시 표기만 / 실제 API랑 아직 안 연결) -->
+        <div class="horizontal">
+            <div class="card">
+                <h2>성적 비율 (원그래프용 데이터)</h2>
+                <p class="muted">* 아직 API에는 성적 데이터가 없어서, 이 영역은 나중에 다른 엔드포인트와 연동 예정입니다.</p>
+            </div>
+
+            <!-- 이수 학점 (분류별) -->
+            <div class="card">
+                <h2>이수 학점 (분류별)</h2>
+                <div id="groups-bars"></div>
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th>구분</th>
+                        <th>이수</th>
+                        <th>필요</th>
+                        <th>부족</th>
+                    </tr>
+                    </thead>
+                    <tbody id="groups-table-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 추천 트랙 + 추천 과목 목록 (지금은 더미값) -->
+        <div class="card">
+            <h2>트랙 추천</h2>
+            <p class="muted">* 현재 API에는 트랙 추천 데이터가 없어 임시 문구를 사용합니다. 추후 /api/track/recommend 같은 엔드포인트가 생기면 연동 가능합니다.</p>
+            <p>추천 트랙: <strong id="track-name">-</strong></p>
+            <table>
+                <thead>
+                <tr>
+                    <th>우선순위</th>
+                    <th>과목명</th>
+                    <th>분류</th>
+                    <th>학점</th>
+                </tr>
+                </thead>
+                <tbody id="track-courses-body">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 오른쪽 영역 -->
+    <div>
+        <!-- 간단한 내 정보 (임시 고정 값) -->
+        <div class="card">
+            <h2>내 정보</h2>
+            <div class="user-name" id="user-name">-님</div>
+            <div class="user-sub" id="user-sub">-</div>
+            <div class="user-sub">소프트웨어학부<span class="chip">테스트 계정</span></div>
+        </div>
+
+        <!-- 이번 학기 수강 과목 리스트 (더미) -->
+        <div class="card">
+            <h2>수강 과목 리스트 (이번 학기)</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>과목명</th>
+                    <th>분류</th>
+                    <th>학점</th>
+                </tr>
+                </thead>
+                <tbody id="current-courses-body">
+                </tbody>
+            </table>
+            <p class="muted" style="margin-top:4px;">* 실제 시간표/수강 정보는 이후 timetable API와 연동 예정입니다.</p>
+        </div>
+
+        <!-- 채플 카운트 + 메모 -->
+        <div class="card">
+            <h2>채플 카운트</h2>
+            <p><strong id="chapel-count">0</strong> / <span id="chapel-required">4</span> 회</p>
+            <div class="progress-bar" style="margin-top:4px;">
+                <div class="progress-inner" id="chapel-progress"></div>
             </div>
         </div>
 
         <div class="card">
-            <div class="muted">졸업 요구사항 (메모)</div>
-            <div class="memo-box" id="memo-box"></div>
+            <h2>졸업 요구사항 (메모)</h2>
+            <textarea class="memo-box" id="memo-box" placeholder="- 졸업작품 / 졸업논문 중 택 1&#10;- 토익 800+ 등 자유롭게 메모"></textarea>
         </div>
     </div>
-</div>
-
-<!-- 디버깅용 원본 JSON -->
-<div class="card">
-    <div class="muted">원본 JSON (디버깅용)</div>
-    <pre id="raw"></pre>
 </div>
 
 <script>
-    async function loadMain() {
-      const btn = document.getElementById("reloadBtn");
-      btn.disabled = true;
+    async function loadMainSummary() {
+      const btn = document.getElementById("reload-btn");
       btn.textContent = "불러오는 중...";
+      btn.disabled = true;
 
       try {
         const res = await fetch("/api/main/summary/");
+        if (!res.ok) throw new Error("HTTP " + res.status);
         const data = await res.json();
 
-        // 1) 전체 진행도
-        const o = data.overall;
-        document.getElementById("overall-text").textContent =
-          `${o.earned_credits} / ${o.total_credits} 점`;
-        document.getElementById("overall-rate").textContent = `${o.rate}%`;
-        document.getElementById("overall-bar").style.width = `${o.rate}%`;
+        // overall
+        const overall = data.overall || {};
+        const earned = overall.earned ?? 0;
+        const required = overall.required ?? 0;
+        const rate = overall.rate ?? (required > 0 ? (earned / required * 100) : 0);
 
-        // 2) 내 정보 카드
-        const u = data.user_info;
-        document.getElementById("user-name").textContent = `${u.name}님`;
-        document.getElementById("user-id-year").textContent =
-          `${u.student_id} / ${u.year}학년`;
-        document.getElementById("user-dept").textContent = u.department;
+        document.getElementById("overall-earned").textContent = earned;
+        document.getElementById("overall-required").textContent = required;
+        document.getElementById("overall-rate").textContent = rate.toFixed(1) + "%";
+        document.getElementById("overall-progress").style.width =
+          Math.max(0, Math.min(100, rate)) + "%";
 
-        // 3) 성적 비율
-        const gradeList = document.getElementById("grade-list");
-        gradeList.innerHTML = "";
-        const grades = data.grade_distribution;
-        Object.keys(grades).forEach(key => {
-          const g = grades[key];
-          const li = document.createElement("li");
-          li.innerHTML = `<span>${g.label}</span><span>${g.rate}%</span>`;
-          gradeList.appendChild(li);
-        });
+        // groups (분류별 이수 학점)
+        const groups = Array.isArray(data.groups) ? data.groups : [];
+        const barsContainer = document.getElementById("groups-bars");
+        const tbody = document.getElementById("groups-table-body");
+        barsContainer.innerHTML = "";
+        tbody.innerHTML = "";
 
-        // 4) 분류별 이수 진행도
-        const catBody = document.getElementById("category-body");
-        catBody.innerHTML = "";
-        data.category_progress.forEach(c => {
-          const rate = c.total === 0 ? 0 : Math.round(c.taken / c.total * 100);
+        groups.forEach(g => {
+          const name = g?.name ?? "-";
+          const e = g?.earned ?? 0;
+          const r = g?.required ?? 0;
+          const lack = g?.lack ?? Math.max(0, r - e);
+          const gr = r > 0 ? (e / r * 100) : 0;
+
+          // 바 형태
+          const rowDiv = document.createElement("div");
+          rowDiv.className = "bar-row";
+
+          const labelDiv = document.createElement("div");
+          labelDiv.className = "label";
+          labelDiv.innerHTML = `<span>${name}</span><span>${e} / ${r} (${gr.toFixed(0)}%)</span>`;
+          rowDiv.appendChild(labelDiv);
+
+          const barBg = document.createElement("div");
+          barBg.className = "bar-bg";
+          const barFill = document.createElement("div");
+          barFill.className = "bar-fill";
+          barFill.style.width = Math.max(0, Math.min(100, gr)) + "%";
+          barBg.appendChild(barFill);
+          rowDiv.appendChild(barBg);
+
+          barsContainer.appendChild(rowDiv);
+
+          // 표 row
           const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td>${c.name}</td>
-            <td>${c.taken}</td>
-            <td>${c.total}</td>
-            <td>${rate}%</td>
+            <td>${name}</td>
+            <td>${e}</td>
+            <td>${r}</td>
+            <td>${lack}</td>
           `;
-          catBody.appendChild(tr);
+          tbody.appendChild(tr);
         });
 
-        // 5) 트랙 추천
-        const trk = data.track_recommendation;
-        document.getElementById("track-title").innerHTML =
-          `추천 트랙: <span>${trk.track_name}</span>`;
-        document.getElementById("track-message").textContent = trk.message;
+        // 아래쪽 카드들은 아직 API가 없어서 더미 값만 세팅
+        document.getElementById("track-name").textContent = "-";
+        document.getElementById("track-courses-body").innerHTML = "";
+        document.getElementById("current-courses-body").innerHTML = "";
+        document.getElementById("chapel-count").textContent = "0";
+        document.getElementById("chapel-required").textContent = "4";
+        document.getElementById("chapel-progress").style.width = "0%";
 
-        const trackBody = document.getElementById("track-course-body");
-        trackBody.innerHTML = "";
-        trk.courses.forEach(c => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${c.priority}</td>
-            <td>${c.name}</td>
-            <td>${c.type}</td>
-            <td>${c.credit}</td>
-          `;
-          trackBody.appendChild(tr);
-        });
-
-        // 6) 현재 학기 수강 과목
-        const courseBody = document.getElementById("current-courses-body");
-        courseBody.innerHTML = "";
-        data.current_courses.forEach(c => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${c.name}</td>
-            <td>${c.type}</td>
-            <td>${c.credit}</td>
-          `;
-          courseBody.appendChild(tr);
-        });
-
-        // 7) 채플 카운트
-        const ch = data.chapel;
-        document.getElementById("chapel-count").textContent =
-          `${ch.taken} / ${ch.required}`;
-        document.getElementById("chapel-rate").textContent =
-          `${ch.rate}%`;
-        document.getElementById("chapel-bar").style.width =
-          `${ch.rate}%`;
-
-        // 8) 졸업 요구사항 메모
-        document.getElementById("memo-box").textContent = data.memo;
-
-        // 9) 디버깅용 RAW JSON
-        document.getElementById("raw").textContent =
-          JSON.stringify(data, null, 2);
-      } catch (e) {
-        alert("API 호출 중 오류: " + e);
+      } catch (err) {
+        alert("API 호출 중 오류: " + err);
       } finally {
+        btn.textContent = "다시 불러오기";
         btn.disabled = false;
-        btn.textContent = "데이터 새로고침";
       }
     }
 
-    document.getElementById("reloadBtn").addEventListener("click", loadMain);
-
-    // 페이지 열리면 자동 한 번 호출
-    loadMain();
+    document.getElementById("reload-btn").addEventListener("click", loadMainSummary);
+    // 페이지 진입 시 자동 한 번 호출
+    loadMainSummary();
 </script>
 </body>
 </html>
