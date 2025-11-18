@@ -20,8 +20,6 @@ services:
     container_name: yonsei-api
     expose:
       - "8000"                          # 내부 네트워크에서만 보이는 포트
-    ports:
-      - "8000:8000"
 
     depends_on:
       - db
