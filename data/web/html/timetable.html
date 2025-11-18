@@ -1,121 +1,379 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <title>Y-CHECK · 시간표</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <title>Y_CHECK 시간표 페이지 테스트</title>
+    <style>
+        body {
+          font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+          padding: 24px;
+          background: #f5f7fb;
+        }
+        h1 {
+          margin-bottom: 16px;
+        }
+        .layout {
+          display: flex;
+          gap: 16px;
+        }
+        .card {
+          background: #fff;
+          border-radius: 12px;
+          padding: 16px 20px;
+          margin-bottom: 16px;
+          box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06);
+        }
+        .timetable-card {
+          flex: 3;
+        }
+        .sidebar {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+        .header-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 12px;
+        }
+        .semester-label {
+          font-size: 24px;
+          font-weight: 700;
+        }
+        select {
+          padding: 6px 10px;
+          border-radius: 999px;
+          border: 1px solid #d1d5db;
+          font-size: 14px;
+          background: #fff;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 14px;
+        }
+        th, td {
+          border-bottom: 1px solid #e5e7eb;
+          padding: 8px 6px;
+          text-align: center;
+        }
+        th {
+          background: #f9fafb;
+          font-weight: 600;
+        }
+        td.time-label {
+          font-weight: 600;
+          background: #f9fafb;
+          width: 60px;
+        }
+        td.slot {
+          min-height: 40px;
+          cursor: pointer;
+        }
+        td.slot span {
+          display: inline-block;
+          padding: 4px 8px;
+          border-radius: 6px;
+          background: #eff6ff;
+          color: #1d4ed8;
+        }
+        td.slot.empty span {
+          background: transparent;
+          color: #9ca3af;
+        }
+        button {
+          width: 100%;
+          padding: 10px 12px;
+          border-radius: 999px;
+          border: 1px solid #e5e7eb;
+          background: #ffffff;
+          font-size: 14px;
+          cursor: pointer;
+          text-align: left;
+        }
+        button.primary {
+          background: #2563eb;
+          color: #ffffff;
+          border-color: #2563eb;
+          text-align: center;
+        }
+        button + button {
+          margin-top: 8px;
+        }
+        .muted {
+          font-size: 14px;
+          color: #6b7280;
+        }
+        .saved-list h3 {
+          margin-top: 0;
+          margin-bottom: 8px;
+          font-size: 16px;
+        }
+        .saved-list ul {
+          list-style: none;
+          padding-left: 0;
+          margin: 0;
+        }
+        .saved-list li {
+          font-size: 14px;
+          padding: 4px 0;
+        }
+    </style>
 </head>
-<body class="min-h-screen bg-[#f7f9fc] text-slate-900 pb-24">
+<body>
+<h1>Y_CHECK 시간표 페이지 (API 연동 테스트)</h1>
 
-  <!-- 공통 헤더 -->
-  <header class="bg-white border-b">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <a href="main.html" class="flex items-center gap-3">
-          <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="h-8 w-auto">
-        </a>
-        <div class="h-4 w-px bg-slate-200"></div>
-        <div class="text-sm text-slate-600">연세대학교 졸업요건계산기</div>
-      </div>
-      <nav class="hidden sm:flex items-center gap-6 text-sm text-slate-600">
-        <a href="calculator.html" class="hover:text-slate-900">계산기</a>
-        <a href="timetable.html" class="hover:text-slate-900 font-semibold">시간표</a>
-        <a href="sunbae.html" class="hover:text-slate-900">선배들의 발자취</a>
-        <a href="mypage.html" class="hover:text-slate-900">마이페이지</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
-    <!-- 메인 시간표 -->
-    <section class="lg:col-span-9 bg-white rounded-2xl border shadow-sm p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h1 class="text-2xl font-bold">2025년 2학기</h1>
-        <select class="rounded-xl border px-3 py-2 text-sm">
-          <option>2025년 2학기</option>
-          <option>2025년 1학기</option>
-        </select>
-      </div>
-
-      <div class="h-px bg-slate-200 mb-4"></div>
-
-      <div class="overflow-x-auto">
-        <table class="min-w-full text-sm text-center">
-          <thead>
-            <tr class="text-slate-600">
-              <th class="py-2 w-20">교시</th>
-              <th class="py-2">월</th>
-              <th class="py-2">화</th>
-              <th class="py-2">수</th>
-              <th class="py-2">목</th>
-              <th class="py-2">금</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="border-t">
-              <td class="py-3 text-slate-500">1교시</td>
-              <td></td><td></td><td></td><td></td><td></td>
-            </tr>
-            <tr class="border-t">
-              <td class="py-3 text-slate-500">2교시</td>
-              <td></td><td></td><td></td><td></td><td></td>
-            </tr>
-            <tr class="border-t">
-              <td class="py-3 text-slate-500">3교시</td>
-              <td>
-                <div class="bg-blue-50 border border-blue-200 rounded px-2 py-1">
-                  데이터구조론
-                </div>
-              </td>
-              <td></td><td></td><td></td><td></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- 오른쪽: 컨트롤 / 담은 수업 -->
-    <aside class="lg:col-span-3 space-y-4">
-      <div class="bg-white rounded-2xl border shadow-sm p-4 space-y-3">
-        <button class="w-full text-left border rounded-xl px-3 py-2 text-sm">
-          + 수업 목록에서 검색해서 추가하기
-        </button>
-        <button class="w-full text-left border rounded-xl px-3 py-2 text-sm">
-          + 새 시간표 만들기
-        </button>
-      </div>
-
-      <div class="bg-white rounded-2xl border shadow-sm p-5">
-        <div class="text-lg font-semibold mb-2">담은 수업</div>
-        <div class="h-px bg-slate-200 mb-3"></div>
-        <ul class="space-y-2 text-sm">
-          <li class="flex items-center justify-between">
-            <span class="font-medium">데이터구조론</span>
-            <span class="text-slate-500">월3, 수4</span>
-          </li>
-        </ul>
-      </div>
-    </aside>
-  </main>
-
-  <!-- 공통 푸터 -->
-  <footer class="fixed bottom-0 inset-x-0 bg-white border-t">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-start justify-between">
-      <div class="flex items-start gap-4">
-        <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="h-6 w-auto" />
-        <div class="space-y-1 text-sm text-slate-600 leading-relaxed">
-          <div>강원특별자치도 원주시 흥업면 연세대길 1 창조관</div>
-          <div>TEL) 033-123-4567</div>
-          <div>EMAIL: YCHECK@gmail.com</div>
+<div class="layout">
+    <!-- 왼쪽: 시간표 큰 표 -->
+    <div class="card timetable-card">
+        <div class="header-row">
+            <div class="semester-label" id="semester-label">- 학기</div>
+            <div>
+                <label class="muted" for="semester-select" style="margin-right: 8px;">학기</label>
+                <select id="semester-select"></select>
+            </div>
         </div>
-      </div>
-      <div class="flex items-center gap-6 text-sm text-slate-600">
-        <span class="hidden sm:block h-6 w-px bg-slate-200"></span>
-        <span>만든이들</span>
-        <span>문의하기</span>
-      </div>
+
+        <table id="timetable-table">
+            <!-- JS로 헤더/바디 생성 -->
+        </table>
+
+        <p class="muted" style="margin-top: 8px;">
+            * 칸을 클릭하면 과목명을 직접 입력할 수 있습니다. (임시 / 브라우저에서만 저장)
+        </p>
     </div>
-  </footer>
+
+    <!-- 오른쪽: 버튼들 + (나중에 담은 수업 등) -->
+    <div class="sidebar">
+        <div class="card">
+            <button onclick="onSearchAdd()">+ 수업 목록에서 검색해서 추가하기</button>
+            <button onclick="onNewTimetable()">+ 새 시간표 만들기</button>
+        </div>
+
+        <div class="card saved-list">
+            <h3>담은 수업 (예시)</h3>
+            <ul id="saved-classes">
+                <!-- JS로 채워짐 (지금은 단순 예시) -->
+            </ul>
+            <p class="muted">
+                * 나중에 “담은 수업” 목록과 시간표 연동은 DB를 붙인 뒤에 구현할 예정입니다.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 현재 시간표 데이터 (프론트 전용 임시 상태)
+    let timetableState = {
+      year: null,
+      term: null,
+      days: [],
+      periods: [],
+      entries: [] // {day, period, title, code}
+    };
+
+    async function fetchSemesters() {
+      const res = await fetch("/api/timetable/semesters/");
+      const data = await res.json();
+      return data.semesters || [];
+    }
+
+    async function fetchTimetable(year, term) {
+      const res = await fetch(`/api/timetable/?year=${year}&term=${term}`);
+      const data = await res.json();
+      return data;
+    }
+
+    function buildTableSkeleton(days, periods) {
+      const table = document.getElementById("timetable-table");
+      table.innerHTML = "";
+
+      // 헤더
+      const thead = document.createElement("thead");
+      const headerRow = document.createElement("tr");
+
+      const emptyTh = document.createElement("th");
+      emptyTh.textContent = "교시";
+      headerRow.appendChild(emptyTh);
+
+      days.forEach(day => {
+        const th = document.createElement("th");
+        th.textContent = day;
+        headerRow.appendChild(th);
+      });
+
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      // 바디
+      const tbody = document.createElement("tbody");
+
+      periods.forEach(period => {
+        const tr = document.createElement("tr");
+
+        const timeTd = document.createElement("td");
+        timeTd.textContent = `${period}교시`;
+        timeTd.className = "time-label";
+        tr.appendChild(timeTd);
+
+        days.forEach(day => {
+          const td = document.createElement("td");
+          td.className = "slot empty";
+          td.dataset.day = day;
+          td.dataset.period = period;
+
+          const span = document.createElement("span");
+          span.textContent = "";
+          td.appendChild(span);
+
+          td.addEventListener("click", () => onSlotClick(td));
+
+          tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+    }
+
+    function fillTableWithEntries(entries) {
+      const table = document.getElementById("timetable-table");
+      const cells = table.querySelectorAll("td.slot");
+
+      // 모두 초기화
+      cells.forEach(td => {
+        td.classList.add("empty");
+        td.querySelector("span").textContent = "";
+      });
+
+      // entries 반영
+      entries.forEach(e => {
+        const selector = `td.slot[data-day="${e.day}"][data-period="${e.period}"]`;
+        const cell = table.querySelector(selector);
+        if (cell) {
+          cell.classList.remove("empty");
+          cell.querySelector("span").textContent = e.title || e.code || "";
+        }
+      });
+
+      // 오른쪽 "담은 수업" 예시용: entries에서 과목명만 모아서 간단히 보여주기
+      const savedList = document.getElementById("saved-classes");
+      savedList.innerHTML = "";
+      const names = Array.from(
+        new Set(entries.map(e => e.title || e.code).filter(Boolean))
+      );
+      names.forEach(name => {
+        const li = document.createElement("li");
+        li.textContent = name;
+        savedList.appendChild(li);
+      });
+    }
+
+    function onSlotClick(td) {
+      const day = td.dataset.day;
+      const period = Number(td.dataset.period);
+      const currentText = td.querySelector("span").textContent || "";
+
+      const title = window.prompt(
+        `${day} ${period}교시 과목명을 입력하세요 (비우면 삭제):`,
+        currentText
+      );
+
+      if (title === null) {
+        return; // 취소
+      }
+
+      // 빈 문자열이면 삭제
+      if (title.trim() === "") {
+        td.classList.add("empty");
+        td.querySelector("span").textContent = "";
+
+        timetableState.entries = timetableState.entries.filter(
+          e => !(e.day === day && e.period === period)
+        );
+      } else {
+        td.classList.remove("empty");
+        td.querySelector("span").textContent = title.trim();
+
+        // 기존 entry 있으면 수정, 없으면 추가
+        const idx = timetableState.entries.findIndex(
+          e => e.day === day && e.period === period
+        );
+        if (idx >= 0) {
+          timetableState.entries[idx].title = title.trim();
+        } else {
+          timetableState.entries.push({
+            day,
+            period,
+            title: title.trim(),
+          });
+        }
+      }
+
+      // 오른쪽 담은 수업 갱신
+      fillTableWithEntries(timetableState.entries);
+    }
+
+    function onSearchAdd() {
+      alert("수업 목록 검색/추가는 나중에 DB/검색 기능 붙일 때 구현할 예정입니다.");
+    }
+
+    function onNewTimetable() {
+      alert("새 시간표 만들기는 나중에 '여러 학기/버전 관리' 기능 붙일 때 구현할 예정입니다.");
+    }
+
+    async function initPage() {
+      // 1) 학기 목록 불러오기
+      const semesters = await fetchSemesters();
+      const select = document.getElementById("semester-select");
+      select.innerHTML = "";
+
+      semesters.forEach(s => {
+        const option = document.createElement("option");
+        option.value = `${s.year}-${s.term}`;
+        option.textContent = s.label;
+        select.appendChild(option);
+      });
+
+      if (semesters.length === 0) {
+        document.getElementById("semester-label").textContent = "학기 정보 없음";
+        return;
+      }
+
+      // 기본 선택 = 첫 번째 학기
+      const first = semesters[0];
+      select.value = `${first.year}-${first.term}`;
+      await loadTimetable(first.year, first.term);
+
+      // 학기 변경 이벤트
+      select.addEventListener("change", async () => {
+        const [yearStr, termStr] = select.value.split("-");
+        const year = Number(yearStr);
+        const term = Number(termStr);
+        await loadTimetable(year, term);
+      });
+    }
+
+    async function loadTimetable(year, term) {
+      const data = await fetchTimetable(year, term);
+
+      timetableState.year = data.year;
+      timetableState.term = data.term;
+      timetableState.days = data.days;
+      timetableState.periods = data.periods;
+      timetableState.entries = data.entries || [];
+
+      document.getElementById("semester-label").textContent = data.label;
+
+      buildTableSkeleton(data.days, data.periods);
+      fillTableWithEntries(timetableState.entries);
+    }
+
+    // 페이지 로드시 초기화
+    initPage();
+</script>
 </body>
 </html>

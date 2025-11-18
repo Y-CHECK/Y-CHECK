@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import CurrentTimetableAPI
+from .views import TimetableSemestersAPI, TimetableBySemesterAPI
 
 urlpatterns = [
-    path("current/", CurrentTimetableAPI.as_view()),
+    path("semesters/", TimetableSemestersAPI.as_view(), name="timetable-semesters"),
+    path("", TimetableBySemesterAPI.as_view(), name="timetable-by-semester"),
 ]
