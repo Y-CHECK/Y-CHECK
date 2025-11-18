@@ -83,23 +83,36 @@
         </div>
 
         <!-- 관심 분야 -->
-        <fieldset class="sm:col-span-2 border rounded-xl p-4">
-          <legend class="px-1 text-sm text-slate-600">관심 전공/분야</legend>
-          <div class="grid grid-cols-2 gap-2 text-sm mt-1">
-            <label class="inline-flex items-center gap-2">
-              <input id="chk-ai" type="checkbox"> AI/머신러닝
-            </label>
-            <label class="inline-flex items-center gap-2">
-              <input id="chk-security" type="checkbox"> 보안
-            </label>
-            <label class="inline-flex items-center gap-2">
-              <input id="chk-data" type="checkbox"> 데이터
-            </label>
-            <label class="inline-flex items-center gap-2">
-              <input id="chk-etc" type="checkbox"> 기타
-            </label>
-          </div>
-        </fieldset>
+<fieldset class="sm:col-span-2 border rounded-xl p-4">
+  <legend class="px-1 text-sm text-slate-600">관심 전공/분야</legend>
+  <div class="grid grid-cols-2 gap-2 text-sm mt-1">
+    <label class="inline-flex items-center gap-2">
+      <input id="chk-ai" type="checkbox"> AI/머신러닝
+    </label>
+    <label class="inline-flex items-center gap-2">
+      <input id="chk-security" type="checkbox"> 보안/네트워크
+    </label>
+    <label class="inline-flex items-center gap-2">
+      <input id="chk-game" type="checkbox"> 게임/미디어
+    </label>
+    <label class="inline-flex items-center gap-2">
+      <input id="chk-embedded" type="checkbox"> 임베디드/시스템
+    </label>
+    <label class="inline-flex items-center gap-2">
+      <input id="chk-startup" type="checkbox"> 창업/서비스 기획
+    </label>
+    <label class="inline-flex items-center gap-2 w-full">
+      <input id="chk-etc" type="checkbox">
+      <span>기타</span>
+      <input
+        id="field-interest-etc"
+        type="text"
+        class="flex-1 rounded-lg border px-2 py-1 text-xs"
+        placeholder="예: 로봇, 교육 등"
+      >
+    </label>
+  </div>
+</fieldset>
 
         <!-- 데이터 동의 -->
         <div class="sm:col-span-2 flex items-center gap-2">
@@ -108,7 +121,7 @@
         </div>
 
         <div class="sm:col-span-2 flex justify-end">
-          <button type="button" class="px-4 py-2 rounded-xl bg-blue-700 text-white text-sm font-semibold">
+          <button id="btn-save-profile"  type="button" class="px-4 py-2 rounded-xl bg-blue-700 text-white text-sm font-semibold">
             정보 수정하기
           </button>
         </div>
@@ -158,8 +171,26 @@
   </footer>
 
   <!-- 로그인 확인 + 프로필 정보 가져오기 -->
+    <!-- 로그인 확인 + 프로필 정보 가져오기 & 저장하기 -->
   <script>
     async function loadMyPage() {
+      const usernameInput   = document.getElementById("field-username");
+      const realNameInput   = document.getElementById("field-real-name");
+      const studentIdInput  = document.getElementById("field-student-id");
+      const emailInput      = document.getElementById("field-email");
+
+      const summaryName     = document.getElementById("summary-name");
+      const summaryBasic    = document.getElementById("summary-basic");
+
+      const chkAi       = document.getElementById("chk-ai");
+      const chkSecurity = document.getElementById("chk-security");
+      const chkGame     = document.getElementById("chk-game");
+      const chkEmbedded = document.getElementById("chk-embedded");
+      const chkStartup  = document.getElementById("chk-startup");
+      const chkEtc      = document.getElementById("chk-etc");
+      const chkConsent  = document.getElementById("chk-consent");
+      const etcText     = document.getElementById("field-interest-etc");
+
       try {
         const resp = await fetch("/api/mypage/", {
           method: "GET",
@@ -186,24 +217,113 @@
         const p = data.profile || {};
 
         // 왼쪽 폼 채우기
-        document.getElementById("field-username").value = data.username || "";
-        document.getElementById("field-real-name").value = p.real_name || "";
-        document.getElementById("field-student-id").value = p.student_id || "";
-        document.getElementById("field-email").value = data.email || "";
+        if (usernameInput)  usernameInput.value  = data.username || "";
+        if (realNameInput)  realNameInput.value  = p.real_name || "";
+        if (studentIdInput) studentIdInput.value = p.student_id || "";
+        if (emailInput)     emailInput.value     = data.email || "";
 
         // 오른쪽 프로필 요약
-        document.getElementById("summary-name").textContent =
-          (p.real_name || data.username || "-") + "님";
+        if (summaryName) {
+          summaryName.textContent = (p.real_name || data.username || "-") + "님";
+        }
+        if (summaryBasic) {
+          const sid = p.student_id || "학번 정보 없음";
+          const sem = p.current_semester || "학기 정보 없음";
+          summaryBasic.textContent = `${sid} / ${sem}`;
+        }
 
-        const sid = p.student_id || "학번 정보 없음";
-        const sem = p.current_semester || "학기 정보 없음";
-        document.getElementById("summary-basic").textContent = `${sid} / ${sem}`;
+        // 관심 분야(interest) 체크박스 – 문자열 기반 간단 매핑
+      const interestStr = (p.interest || "").toString();
+
+      if (chkAi)       chkAi.checked       = interestStr.includes("AI/머신러닝");
+      if (chkSecurity) chkSecurity.checked = interestStr.includes("보안/네트워크");
+      if (chkGame)     chkGame.checked     = interestStr.includes("게임/미디어");
+      if (chkEmbedded) chkEmbedded.checked = interestStr.includes("임베디드/시스템");
+      if (chkStartup)  chkStartup.checked  = interestStr.includes("창업/서비스 기획");
+      if (chkEtc)      chkEtc.checked      = !!(p.interest_text);  // 기타에 내용 있으면 체크
+
+// 기타 직접 입력
+if (etcText) {
+  etcText.value = p.interest_text || "";
+}
+        // 데이터 동의
+        if (chkConsent) chkConsent.checked = !!p.data_consent;
+
       } catch (err) {
         console.error("mypage 오류:", err);
       }
     }
 
-    document.addEventListener("DOMContentLoaded", loadMyPage);
+    async function saveMyPage() {
+      const realNameInput   = document.getElementById("field-real-name");
+      const studentIdInput  = document.getElementById("field-student-id");
+
+      const chkAi       = document.getElementById("chk-ai");
+      const chkSecurity = document.getElementById("chk-security");
+      const chkGame     = document.getElementById("chk-game");
+      const chkEmbedded = document.getElementById("chk-embedded");
+      const chkStartup  = document.getElementById("chk-startup");
+      const chkEtc      = document.getElementById("chk-etc");
+      const chkConsent  = document.getElementById("chk-consent");
+      const etcText     = document.getElementById("field-interest-etc");
+
+      // 간단한 값 읽기
+      const realName  = realNameInput ? realNameInput.value.trim() : "";
+      const studentId = studentIdInput ? studentIdInput.value.trim() : "";
+
+      // 관심 분야(interest) 체크박스 – 문자열 기반 간단 매핑
+      // 관심 분야 → 문자열로 묶기
+      const interests = [];
+      if (chkAi && chkAi.checked)       interests.push("AI/머신러닝");
+      if (chkSecurity && chkSecurity.checked) interests.push("보안/네트워크");
+      if (chkGame && chkGame.checked)   interests.push("게임/미디어");
+      if (chkEmbedded && chkEmbedded.checked) interests.push("임베디드/시스템");
+      if (chkStartup && chkStartup.checked)   interests.push("창업/서비스 기획");
+      if (chkEtc && chkEtc.checked)     interests.push("기타");
+
+      const payload = {
+        real_name: realName,
+        student_id: studentId,
+        interest: interests.join(","),
+        interest_text: etcText ? etcText.value.trim() : "",
+        data_consent: chkConsent ? chkConsent.checked : false,
+      };
+
+      try {
+        const resp = await fetch("/api/mypage/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(payload),
+        });
+
+        const data = await resp.json().catch(() => ({}));
+
+        if (!resp.ok || data.success === false) {
+          alert(data.message || "정보 수정에 실패했습니다.");
+          console.error("save error", resp.status, data);
+          return;
+        }
+
+        alert("정보가 저장되었습니다.");
+        // 다시 불러와서 요약 카드/폼 동기화
+        await loadMyPage();
+      } catch (err) {
+        console.error("saveMyPage 오류:", err);
+        alert("서버에 연결할 수 없습니다.");
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadMyPage();
+
+      const btnSave = document.getElementById("btn-save-profile");
+      if (btnSave) {
+        btnSave.addEventListener("click", saveMyPage);
+      }
+    });
   </script>
 
 </body>
