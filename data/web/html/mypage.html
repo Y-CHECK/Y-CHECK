@@ -4,34 +4,35 @@
     <meta charset="UTF-8" />
     <title>Y-CHECK · 마이페이지</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind 제거하고, 별도 CSS 파일 연동 -->
+    <link rel="stylesheet" href="../css/mypage.css">
 </head>
 
-<body class="min-h-screen bg-[#f7f9fc] text-slate-900 pb-24">
+<body>
 
 <!-- ===========================
       공통 헤더
 =========================== -->
-<header class="bg-white border-b">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+<header class="site-header">
+    <div class="header-inner">
 
         <!-- 왼쪽 로고 -->
-        <div class="flex items-center gap-3">
-            <a href="main.html" class="flex items-center gap-3">
-                <img src="../img/ycheck_logo.png" alt="Y_CHECK 로고" class="h-8 w-auto">
+        <div class="header-left">
+            <a href="main.html" class="logo-link">
+                <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="logo-img">
             </a>
         </div>
 
         <!-- 중앙 네비게이션 -->
-        <nav class="hidden sm:flex items-center justify-center flex-1 divide-x divide-slate-300" style="margin-left: 90px;">
-            <a href="calculator.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">계산기</a>
-            <a href="timetable.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">시간표</a>
-            <a href="sunbae.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">선배의 발자취</a>
+        <nav class="main-nav">
+            <a href="calculator.html" class="nav-link">계산기</a>
+            <a href="timetable.html" class="nav-link">시간표</a>
+            <a href="sunbae.html" class="nav-link">선배의 발자취</a>
         </nav>
 
         <!-- 오른쪽 마이페이지 -->
-        <div class="hidden sm:block">
-            <a href="mypage.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">마이페이지</a>
+        <div class="header-right">
+            <a href="mypage.html" class="nav-link nav-link-strong">마이페이지</a>
         </div>
     </div>
 </header>
@@ -39,43 +40,36 @@
 <!-- ===========================
       메인 영역 (가운데 정렬)
 =========================== -->
-<main class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+<main class="main-container">
 
-    <!-- ===========================
-          가운데 정렬된 정보 카드
-    =========================== -->
-    <section class="bg-white rounded-2xl border shadow-sm p-6">
-        <h1 class="text-xl font-semibold mb-6">My Page</h1>
+    <!-- 가운데 정렬된 정보 카드 -->
+    <section class="card">
+        <h1 class="page-title">My Page</h1>
 
-        <form class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <form class="form-grid">
 
             <!-- 이름 -->
-            <div>
-                <label class="block text-sm text-slate-600 mb-1">이름</label>
-                <input id="field-real-name" type="text"
-                       class="w-full rounded-xl border px-3 py-2">
+            <div class="form-group">
+                <label class="form-label" for="field-real-name">이름</label>
+                <input id="field-real-name" type="text" class="form-input">
             </div>
 
             <!-- ID -->
-            <div>
-                <label class="block text-sm text-slate-600 mb-1">ID</label>
-                <input id="field-username" type="text"
-                       class="w-full rounded-xl border px-3 py-2 bg-slate-50 text-slate-500"
-                       disabled>
+            <div class="form-group">
+                <label class="form-label" for="field-username">ID</label>
+                <input id="field-username" type="text" class="form-input form-input-disabled" disabled>
             </div>
 
             <!-- 학번 -->
-            <div>
-                <label class="block text-sm text-slate-600 mb-1">학번</label>
-                <input id="field-student-id" type="text"
-                       class="w-full rounded-xl border px-3 py-2">
+            <div class="form-group">
+                <label class="form-label" for="field-student-id">학번</label>
+                <input id="field-student-id" type="text" class="form-input">
             </div>
 
             <!-- 학년/학기 -->
-            <div>
-                <label class="block text-sm text-slate-600 mb-1">학년/학기</label>
-                <select id="field-semester"
-                        class="w-full rounded-xl border px-3 py-2 text-sm">
+            <div class="form-group">
+                <label class="form-label" for="field-semester">학년/학기</label>
+                <select id="field-semester" class="form-input">
                     <option value="">선택하세요</option>
                     <option value="1-1">1학년 1학기</option>
                     <option value="1-2">1학년 2학기</option>
@@ -89,44 +83,47 @@
             </div>
 
             <!-- 이메일 -->
-            <div class="sm:col-span-2">
-                <label class="block text-sm text-slate-600 mb-1">이메일</label>
-                <input id="field-email" type="email"
-                       class="w-full rounded-xl border px-3 py-2 bg-slate-50 text-slate-500"
-                       disabled>
+            <div class="form-group form-group-full">
+                <label class="form-label" for="field-email">이메일</label>
+                <input id="field-email" type="email" class="form-input form-input-disabled" disabled>
             </div>
 
             <!-- 관심 분야 -->
-            <fieldset class="sm:col-span-2 border rounded-xl p-4">
-                <legend class="px-1 text-sm text-slate-600">관심 전공/분야</legend>
+            <fieldset class="fieldset form-group-full">
+                <legend class="fieldset-legend">관심 전공/분야</legend>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm mt-1">
+                <div class="checkbox-grid">
 
-                    <label class="inline-flex items-center gap-2">
-                        <input id="chk-ai" type="checkbox"> AI/머신러닝
+                    <label class="checkbox-item">
+                        <input id="chk-ai" type="checkbox" class="checkbox-input">
+                        <span>AI/머신러닝</span>
                     </label>
 
-                    <label class="inline-flex items-center gap-2">
-                        <input id="chk-security" type="checkbox"> 보안/네트워크
+                    <label class="checkbox-item">
+                        <input id="chk-security" type="checkbox" class="checkbox-input">
+                        <span>보안/네트워크</span>
                     </label>
 
-                    <label class="inline-flex items-center gap-2">
-                        <input id="chk-game" type="checkbox"> 게임/미디어
+                    <label class="checkbox-item">
+                        <input id="chk-game" type="checkbox" class="checkbox-input">
+                        <span>게임/미디어</span>
                     </label>
 
-                    <label class="inline-flex items-center gap-2">
-                        <input id="chk-embedded" type="checkbox"> 임베디드/시스템
+                    <label class="checkbox-item">
+                        <input id="chk-embedded" type="checkbox" class="checkbox-input">
+                        <span>임베디드/시스템</span>
                     </label>
 
-                    <label class="inline-flex items-center gap-2">
-                        <input id="chk-startup" type="checkbox"> 창업/서비스 기획
+                    <label class="checkbox-item">
+                        <input id="chk-startup" type="checkbox" class="checkbox-input">
+                        <span>창업/서비스 기획</span>
                     </label>
 
-                    <label class="inline-flex items-center gap-2 w-full">
-                        <input id="chk-etc" type="checkbox">
+                    <label class="checkbox-item checkbox-item-etc">
+                        <input id="chk-etc" type="checkbox" class="checkbox-input">
                         <span>기타</span>
                         <input id="field-interest-etc" type="text"
-                               class="flex-1 rounded-lg border px-2 py-1 text-xs"
+                               class="form-input form-input-etc"
                                placeholder="예: 로봇, 교육 등">
                     </label>
 
@@ -134,15 +131,14 @@
             </fieldset>
 
             <!-- 데이터 사용 동의 -->
-            <div class="sm:col-span-2 flex items-center gap-2">
-                <input id="chk-consent" type="checkbox" class="h-4 w-4">
-                <span class="text-sm text-slate-700">데이터 사용 동의</span>
+            <div class="form-group form-group-full form-consent">
+                <input id="chk-consent" type="checkbox" class="checkbox-input">
+                <label for="chk-consent" class="consent-label">데이터 사용 동의</label>
             </div>
 
             <!-- 버튼 -->
-            <div class="sm:col-span-2 flex justify-end">
-                <button id="btn-save-profile" type="button"
-                        class="px-4 py-2 rounded-xl bg-blue-700 text-white text-sm font-semibold">
+            <div class="form-group form-group-full form-actions">
+                <button id="btn-save-profile" type="button" class="btn-primary">
                     정보 수정하기
                 </button>
             </div>
@@ -154,11 +150,11 @@
 <!-- ===========================
       푸터
 =========================== -->
-<footer class="fixed bottom-0 inset-x-0 bg-white border-t">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-start justify-between">
-        <div class="flex items-start gap-4">
-            <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="h-6 w-auto" />
-            <div class="space-y-1 text-sm text-slate-600 leading-relaxed">
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-left">
+            <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="footer-logo" />
+            <div class="footer-text">
                 <div>강원특별자치도 원주시 흥업면 연세대길 1 창조관</div>
                 <div>TEL) 033-123-4567</div>
                 <div>EMAIL: YCHECK@gmail.com</div>
@@ -171,9 +167,7 @@
       JS : 로그인 유지 + DB 연동
 =========================== -->
 <script>
-    // ---------------------------
     // 로그인 상태 + 프로필 불러오기
-    // ---------------------------
     async function loadMyPage() {
 
         const usernameInput  = document.getElementById("field-username");
@@ -235,9 +229,7 @@
         }
     }
 
-    // ---------------------------
     // 프로필 수정 저장
-    // ---------------------------
     async function saveMyPage() {
 
         const payload = {
