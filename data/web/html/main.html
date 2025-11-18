@@ -263,15 +263,18 @@
     <!-- 오른쪽 사이드 -->
     <aside class="lg:col-span-3 flex flex-col space-y-6">
 
-      <!-- 프로필 (총 이수 진행도와 높이 동일) -->
-      <div class="bg-white rounded-2xl border shadow-sm p-5 h-40 flex flex-col justify-between">
-        <div class="text-right text-xs text-slate-400">베타</div>
-        <div>
-          <div class="text-lg font-semibold">김연세님</div>
-          <div class="text-sm text-slate-600">20220000 / 2학년</div>
-          <div class="text-sm text-slate-600">소프트웨어학부</div>
-        </div>
-      </div>
+   <!-- 프로필 (총 이수 진행도와 높이 동일) -->
+<div class="bg-white rounded-2xl border shadow-sm p-5 h-40 flex flex-col justify-between">
+  <div class="text-right text-xs text-slate-400">베타</div>
+  <div>
+    <!-- 이름 -->
+    <div id="profile-name" class="text-lg font-semibold">김연세님</div>
+    <!-- 학번 / 학기 -->
+    <div id="profile-semester" class="text-sm text-slate-600">20220000 / 2학년</div>
+    <!-- 학과 (지금은 백엔드에 없으니까 일단 고정으로 둬도 됨) -->
+    <div id="profile-major" class="text-sm text-slate-600">소프트웨어학부</div>
+  </div>
+</div>
 
       <!-- 시간표 (세로 길이 줄임) -->
       <div class="bg-white rounded-2xl border shadow-sm p-5 min-h-[420px]">
@@ -489,6 +492,51 @@
           saveState();
         });
       }
+    });
+  </script>
+
+  <!-- ✅ 로그인 상태 확인 스크립트 (새로 추가) -->
+  <script>
+    async function applyLoginStatus() {
+      const nameEl = document.getElementById("profile-name");
+      const semesterEl = document.getElementById("profile-semester");
+
+      try {
+        const resp = await fetch("http://localhost:8000/api/login-status/", {
+          method: "GET",
+          credentials: "include", // 세션 쿠키 같이 보내기
+        });
+
+        if (!resp.ok) {
+          console.log("로그인 안 된 상태 (status:", resp.status, ")");
+          // 필요하면 여기서 login.html로 리다이렉트도 가능:
+          // window.location.href = "login.html";
+          return;
+        }
+
+        const data = await resp.json();
+        if (!data.logged_in) {
+          console.log("logged_in == false");
+          return;
+        }
+
+        // 이름 / 학번 / 학기 UI 반영
+        if (data.profile) {
+          if (nameEl && data.profile.real_name) {
+            nameEl.textContent = data.profile.real_name + "님";
+          }
+          if (semesterEl && data.profile.student_id) {
+            const sem = data.profile.current_semester || "";
+            semesterEl.textContent = data.profile.student_id + (sem ? " / " + sem : "");
+          }
+        }
+      } catch (e) {
+        console.error("login-status 요청 중 오류:", e);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      applyLoginStatus();
     });
   </script>
 </body>

@@ -27,48 +27,83 @@
     </div>
   </header>
 
+  <!-- 메인 영역 -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
-    <!-- 왼쪽: 폼 -->
+
+    <!-- 왼쪽: 정보 폼 -->
     <section class="lg:col-span-8 bg-white rounded-2xl border shadow-sm p-6">
       <h1 class="text-xl font-semibold mb-6">My Page</h1>
+
       <form class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+        <!-- ID -->
         <div>
           <label class="block text-sm text-slate-600 mb-1">ID</label>
-          <input type="text" class="w-full rounded-xl border px-3 py-2 bg-slate-50" value="kimyonsei123" disabled>
-        </div>
-        <div>
-          <label class="block text-sm text-slate-600 mb-1">이름</label>
-          <input type="text" class="w-full rounded-xl border px-3 py-2" value="Kim yonsei">
-        </div>
-        <div>
-          <label class="block text-sm text-slate-600 mb-1">학번</label>
-          <input type="text" class="w-full rounded-xl border px-3 py-2" value="2025123456">
-        </div>
-        <div>
-          <label class="block text-sm text-slate-600 mb-1">이메일</label>
-          <input type="email" class="w-full rounded-xl border px-3 py-2" value="kim@yonsei.ac.kr">
+          <input
+            id="field-username"
+            type="text"
+            class="w-full rounded-xl border px-3 py-2 bg-slate-50"
+            value=""
+            disabled
+          >
         </div>
 
+        <!-- 이름 -->
+        <div>
+          <label class="block text-sm text-slate-600 mb-1">이름</label>
+          <input
+            id="field-real-name"
+            type="text"
+            class="w-full rounded-xl border px-3 py-2"
+            value=""
+          >
+        </div>
+
+        <!-- 학번 -->
+        <div>
+          <label class="block text-sm text-slate-600 mb-1">학번</label>
+          <input
+            id="field-student-id"
+            type="text"
+            class="w-full rounded-xl border px-3 py-2"
+            value=""
+          >
+        </div>
+
+        <!-- 이메일 -->
+        <div>
+          <label class="block text-sm text-slate-600 mb-1">이메일</label>
+          <input
+            id="field-email"
+            type="email"
+            class="w-full rounded-xl border px-3 py-2 bg-slate-50"
+            value=""
+            disabled
+          >
+        </div>
+
+        <!-- 관심 분야 -->
         <fieldset class="sm:col-span-2 border rounded-xl p-4">
           <legend class="px-1 text-sm text-slate-600">관심 전공/분야</legend>
           <div class="grid grid-cols-2 gap-2 text-sm mt-1">
             <label class="inline-flex items-center gap-2">
-              <input type="checkbox" checked> AI/머신러닝
+              <input id="chk-ai" type="checkbox"> AI/머신러닝
             </label>
             <label class="inline-flex items-center gap-2">
-              <input type="checkbox"> 보안
+              <input id="chk-security" type="checkbox"> 보안
             </label>
             <label class="inline-flex items-center gap-2">
-              <input type="checkbox"> 데이터
+              <input id="chk-data" type="checkbox"> 데이터
             </label>
             <label class="inline-flex items-center gap-2">
-              <input type="checkbox"> 기타
+              <input id="chk-etc" type="checkbox"> 기타
             </label>
           </div>
         </fieldset>
 
+        <!-- 데이터 동의 -->
         <div class="sm:col-span-2 flex items-center gap-2">
-          <input type="checkbox" class="h-4 w-4" checked>
+          <input id="chk-consent" type="checkbox" class="h-4 w-4">
           <span class="text-sm text-slate-700">데이터 사용 동의</span>
         </div>
 
@@ -77,15 +112,17 @@
             정보 수정하기
           </button>
         </div>
+
       </form>
     </section>
 
-    <!-- 오른쪽: 프로필 요약 -->
+    <!-- 오른쪽: 요약 프로필 -->
     <aside class="lg:col-span-4 space-y-6">
+
       <div class="bg-white rounded-2xl border shadow-sm p-6">
         <div class="text-sm text-slate-500">프로필</div>
-        <div class="mt-2 text-lg font-semibold">김연세</div>
-        <div class="text-sm text-slate-600">20220000 / 2학년</div>
+        <div class="mt-2 text-lg font-semibold" id="summary-name">-</div>
+        <div class="text-sm text-slate-600" id="summary-basic">-</div>
         <div class="text-sm text-slate-600">소프트웨어학부</div>
       </div>
 
@@ -97,6 +134,7 @@
           <li><a href="sunbae.html" class="text-blue-600 hover:underline">선배들의 발자취</a></li>
         </ul>
       </div>
+
     </aside>
   </main>
 
@@ -118,5 +156,55 @@
       </div>
     </div>
   </footer>
+
+  <!-- 로그인 확인 + 프로필 정보 가져오기 -->
+  <script>
+    async function loadMyPage() {
+      try {
+        const resp = await fetch("/api/mypage/", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (resp.status === 401) {
+          alert("로그인이 필요합니다.");
+          window.location.href = "login.html";
+          return;
+        }
+
+        if (!resp.ok) {
+          console.error("API 오류:", resp.status);
+          return;
+        }
+
+        const data = await resp.json();
+        if (!data.logged_in) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        const p = data.profile || {};
+
+        // 왼쪽 폼 채우기
+        document.getElementById("field-username").value = data.username || "";
+        document.getElementById("field-real-name").value = p.real_name || "";
+        document.getElementById("field-student-id").value = p.student_id || "";
+        document.getElementById("field-email").value = data.email || "";
+
+        // 오른쪽 프로필 요약
+        document.getElementById("summary-name").textContent =
+          (p.real_name || data.username || "-") + "님";
+
+        const sid = p.student_id || "학번 정보 없음";
+        const sem = p.current_semester || "학기 정보 없음";
+        document.getElementById("summary-basic").textContent = `${sid} / ${sem}`;
+      } catch (err) {
+        console.error("mypage 오류:", err);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadMyPage);
+  </script>
+
 </body>
 </html>
