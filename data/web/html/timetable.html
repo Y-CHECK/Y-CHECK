@@ -272,12 +272,37 @@
 
 <!-- 팝업 오버레이 (수업 목록 검색) -->
 <div id="searchModalOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+    <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg">
         <div class="flex justify-between items-center mb-4 border-b pb-2">
-            <h3 class="text-lg font-bold">수업 목록 검색</h3>
+            <h3 class="text-lg font-bold">수업 목록에서 추가하기</h3>
             <button id="closeSearchModal" class="text-slate-500 hover:text-slate-800 text-2xl leading-none">&times;</button>
         </div>
-        <p class="text-slate-700">여기에 수업 검색 내용이 들어갈 것입니다.</p>
+
+        <div class="space-y-4">
+            <!-- 검색창 -->
+            <div class="flex gap-2">
+                <input
+                        id="courseSearchInput"
+                        type="text"
+                        class="flex-1 rounded-lg border px-3 py-2 text-sm"
+                        placeholder="과목명 또는 교수명으로 검색"
+                />
+                <button
+                        id="courseSearchButton"
+                        class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold"
+                >
+                    검색
+                </button>
+            </div>
+
+            <!-- 검색 결과 리스트 -->
+            <div
+                    id="courseSearchResults"
+                    class="max-h-80 overflow-y-auto divide-y divide-slate-200 text-sm"
+            >
+                <!-- JS로 채워짐 -->
+            </div>
+        </div>
     </div>
 </div>
 
@@ -399,14 +424,33 @@
     const yearInput = document.getElementById('yearInput');
     const semesterInput = document.getElementById('semesterInput');
 
+    // 수업 검색 모달 내부 요소
+    const courseSearchInput = document.getElementById('courseSearchInput');
+    const courseSearchButton = document.getElementById('courseSearchButton');
+    const courseSearchResults = document.getElementById('courseSearchResults');
+
     if (openSearchModalButton && searchModalOverlay && closeSearchModalButton) {
         openSearchModalButton.addEventListener('click', () => {
+            if (!currentYear || !currentSemester) {
+                alert('먼저 상단에서 학기를 선택해 주세요.');
+                return;
+            }
             searchModalOverlay.classList.remove('hidden');
             searchModalOverlay.classList.add('flex');
+
+            // 모달 열릴 때 기본 리스트 로딩
+            if (courseSearchInput) courseSearchInput.value = '';
+            searchCourses();
         });
         closeSearchModalButton.addEventListener('click', () => {
             searchModalOverlay.classList.add('hidden');
             searchModalOverlay.classList.remove('flex');
+        });
+        searchModalOverlay.addEventListener('click', (e) => {
+            if (e.target === searchModalOverlay) {
+                searchModalOverlay.classList.add('hidden');
+                searchModalOverlay.classList.remove('flex');
+            }
         });
     }
 
@@ -474,7 +518,6 @@
 
             const data = await res.json();
 
-            // 서버가 배열로 주든, {semesters: [...]} 로 주든 둘 다 처리
             if (Array.isArray(data)) {
                 return data;
             }
@@ -519,8 +562,6 @@
             }
 
             const data = await res.json();
-
-            // 서버가 배열로 주든, {timetable: [...]} 로 주든 둘 다 처리
             const entries = Array.isArray(data) ? data : (data.timetable || []);
 
             entries.forEach(item => {
@@ -548,7 +589,6 @@
     async function initSemesterSelect() {
         const semesters = await fetchSemesters();
 
-        // 기존 옵션 제거 후 기본값 하나만 남기기
         semesterSelect.innerHTML = '<option value="">학기를 선택하세요</option>';
 
         semesters.forEach(({ year, semester, label }) => {
@@ -561,7 +601,6 @@
         });
 
         if (semesters.length > 0) {
-            // 최근 학기(가장 첫 번째 or 마지막, 백엔드 정렬 기준에 따라 선택)
             const first = semesters[0];
             const val = `${first.year}-${first.semester}`;
             semesterSelect.value = val;
@@ -576,6 +615,8 @@
             if (!value) {
                 clearTimetableCells();
                 timetableTitle.textContent = "시간표";
+                currentYear = null;
+                currentSemester = null;
                 return;
             }
             const [y, s] = value.split("-");
@@ -585,7 +626,7 @@
         });
     }
 
-    // 새 시간표 생성 버튼 (백엔드 POST /api/timetable/ 는 나중에 구현)
+    // 🔹 새 시간표 생성 버튼 → 해당 연도/학기의 내 시간표를 비워서 생성
     if (createTimetableButton && newTimetableModalOverlay && yearInput && semesterInput) {
         createTimetableButton.addEventListener('click', async () => {
             const year = parseInt(yearInput.value, 10);
@@ -630,6 +671,121 @@
             } catch (err) {
                 console.error("새 시간표 생성 중 오류:", err);
                 alert("시간표 생성 중 오류가 발생했습니다.");
+            }
+        });
+    }
+
+    // ================================
+    //   수업 목록 검색 & 추가 기능
+    // ================================
+    async function searchCourses() {
+        if (!currentYear || !currentSemester) {
+            return;
+        }
+        const q = courseSearchInput ? courseSearchInput.value.trim() : "";
+
+        const params = new URLSearchParams({
+            year: currentYear,
+            semester: currentSemester,
+        });
+        if (q) params.append('q', q);
+
+        try {
+            const res = await fetch(`/api/timetable/courses/?${params.toString()}`, {
+                method: "GET",
+                credentials: "include",
+            });
+
+            if (!res.ok) {
+                console.error("과목 검색 실패:", res.status, res.statusText);
+                return;
+            }
+
+            const data = await res.json();
+            renderCourseResults(Array.isArray(data) ? data : []);
+        } catch (err) {
+            console.error("과목 검색 중 오류:", err);
+        }
+    }
+
+    function renderCourseResults(courses) {
+        if (!courseSearchResults) return;
+        courseSearchResults.innerHTML = "";
+
+        if (!courses.length) {
+            courseSearchResults.innerHTML = `
+                <div class="py-4 text-sm text-slate-500 text-center">
+                    검색 결과가 없습니다.
+                </div>
+            `;
+            return;
+        }
+
+        courses.forEach(course => {
+            const row = document.createElement("div");
+            row.className = "flex items-center justify-between py-2";
+
+            row.innerHTML = `
+                <div class="text-sm text-left">
+                    <div class="font-medium">${course.subject}</div>
+                    <div class="text-xs text-slate-500">
+                        ${course.professor || ""} · ${course.day} ${course.period}교시
+                        ${course.classroom ? " · " + course.classroom : ""}
+                    </div>
+                </div>
+                <button class="ml-3 px-3 py-1 rounded-lg bg-blue-600 text-white text-xs font-semibold">
+                    추가
+                </button>
+            `;
+
+            const addBtn = row.querySelector("button");
+            addBtn.addEventListener("click", () => addCourseToTimetable(course));
+
+            courseSearchResults.appendChild(row);
+        });
+    }
+
+    async function addCourseToTimetable(course) {
+        try {
+            const res = await fetch("/api/timetable/add-course/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    course_id: course.id,
+                    year: course.year,
+                    semester: course.semester,
+                }),
+            });
+
+            if (!res.ok) {
+                console.error("시간표에 과목 추가 실패:", res.status, res.statusText);
+                alert("시간표에 과목을 추가하지 못했습니다.");
+                return;
+            }
+
+            // 시간표 다시 로딩
+            await loadTimetable(currentYear, currentSemester);
+        } catch (err) {
+            console.error("과목 추가 중 오류:", err);
+            alert("과목 추가 중 오류가 발생했습니다.");
+        }
+    }
+
+    // 검색창 이벤트
+    if (courseSearchButton) {
+        courseSearchButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            searchCourses();
+        });
+    }
+    if (courseSearchInput) {
+        courseSearchInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                searchCourses();
             }
         });
     }

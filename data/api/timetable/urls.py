@@ -1,8 +1,14 @@
-# timetable/urls.py
 from django.urls import path
-from .views import timetable_semesters, timetable_list
+from .views import (
+    TimetableSemestersAPI,
+    TimetableBySemesterAPI,
+    CourseSearchAPI,
+    TimetableAddCourseAPI,
+)
 
 urlpatterns = [
-    path("semesters/", timetable_semesters, name="timetable-semesters"),
-    path("", timetable_list, name="timetable-list"),
+    path("semesters/", TimetableSemestersAPI.as_view(), name="timetable-semesters"),
+    path("", TimetableBySemesterAPI.as_view(), name="timetable-by-semester"),
+    path("courses/", CourseSearchAPI.as_view(), name="timetable-course-search"),
+    path("add-course/", TimetableAddCourseAPI.as_view(), name="timetable-add-course"),
 ]
