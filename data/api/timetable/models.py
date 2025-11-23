@@ -56,14 +56,14 @@ class Timetable(models.Model):
         (2, "2학기"),
     ]
 
-    # ✅ 어떤 유저의 시간표인지
+    # 어떤 유저의 시간표인지
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="timetables",
     )
 
-    # ✅ 어떤 연도/학기인지
+    # 연도/학기
     year = models.PositiveSmallIntegerField(
         help_text="연도 (예: 2025)"
     )
@@ -72,7 +72,7 @@ class Timetable(models.Model):
         help_text="학기 (1=1학기, 2=2학기)"
     )
 
-    # ✅ 기존 필드들
+    # 기존 필드들
     DAY_CHOICES = [
         ('MON', '월요일'),
         ('TUE', '화요일'),
@@ -106,8 +106,11 @@ class Timetable(models.Model):
         help_text="비고 (선택)"
     )
 
+    # 🔥 새로 추가된 공유 여부 필드
+    is_shared = models.BooleanField(default=False)
+
     class Meta:
-        # 🔥 같은 유저 + 연도 + 학기 + 요일 + 교시 조합은 하나만
+        # 같은 유저 + 연도 + 학기 + 요일 + 교시 조합은 하나만
         unique_together = ('user', 'year', 'semester', 'day', 'period')
         ordering = ['year', 'semester', 'day', 'period']
 

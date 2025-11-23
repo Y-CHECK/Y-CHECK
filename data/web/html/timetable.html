@@ -332,6 +332,11 @@
 </div>
 
 <script>
+    // ====== localStorage 키 ======
+    const STORAGE_KEY_YEAR = "timetable_last_year";
+    const STORAGE_KEY_SEMESTER = "timetable_last_semester";
+    const STORAGE_KEY_SHARE_PREFIX = "timetable_share_";  // 예: timetable_share_2025_2
+
     // 만든이들 모달
     const openMakersBtn = document.getElementById('open-makers-modal');
     const makersModal = document.getElementById('makers-modal-overlay');
@@ -465,27 +470,77 @@
         });
     }
 
-    // ✅ 시간표 공유 체크 상태 저장/복원 (로컬 예시)
-    const SHARE_KEY = "ycheck-share-timetable";
+    // ================================
+    //   시간표 공유 체크박스
+    // ================================
     const shareChk = document.getElementById("chk-share-timetable");
-    if (shareChk) {
-        // 복원
-        shareChk.checked = (localStorage.getItem(SHARE_KEY) === "true");
 
-        shareChk.addEventListener("change", () => {
-            localStorage.setItem(SHARE_KEY, String(shareChk.checked));
-            if (shareChk.checked) {
-                alert("시간표 공유가 ON 되었습니다! (예시)");
-            } else {
-                alert("시간표 공유가 OFF 되었습니다! (예시)");
+    // 현재 선택된 학기에 맞게 체크박스 활성/비활성 + 상태 복원
+    function updateShareCheckboxDisabled() {
+        if (!shareChk) return;
+
+        if (!currentYear || !currentSemester) {
+            shareChk.checked = false;
+            shareChk.disabled = true;
+            return;
+        }
+
+        // localStorage에 저장된 공유 상태 복원
+        const key = STORAGE_KEY_SHARE_PREFIX + `${currentYear}_${currentSemester}`;
+        const saved = localStorage.getItem(key);
+        shareChk.checked = (saved === "1");
+        shareChk.disabled = false;
+    }
+
+    if (shareChk) {
+        // 처음 로드 시에는 학기 선택 여부에 따라 비활성화/활성화
+        shareChk.disabled = true;
+
+        shareChk.addEventListener("change", async (e) => {
+            if (!currentYear || !currentSemester) {
+                alert("먼저 상단에서 학기를 선택해 주세요.");
+                e.target.checked = !e.target.checked;
+                return;
+            }
+
+            try {
+                const res = await fetch("/api/timetable/share/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                    body: JSON.stringify({
+                        year: currentYear,
+                        semester: currentSemester,
+                        is_shared: e.target.checked,
+                    }),
+                });
+
+                if (!res.ok) {
+                    console.error("시간표 공유 설정 실패:", res.status, res.statusText);
+                    alert("시간표 공유 설정에 실패했습니다.");
+                    e.target.checked = !e.target.checked;
+                    return;
+                }
+
+                const data = await res.json();
+                console.log("공유 상태 변경됨:", data);
+
+                // ✅ 성공한 경우에만 localStorage에 저장
+                const key = STORAGE_KEY_SHARE_PREFIX + `${currentYear}_${currentSemester}`;
+                localStorage.setItem(key, e.target.checked ? "1" : "0");
+
+            } catch (err) {
+                console.error("시간표 공유 설정 중 오류:", err);
+                alert("시간표 공유 설정 중 오류가 발생했습니다.");
+                e.target.checked = !e.target.checked;
             }
         });
     }
 
     // ================================
     //   시간표 API 연동 부분
-    //   /api/timetable/semesters/
-    //   /api/timetable/?year=YYYY&semester=S
     // ================================
     const timetableTitle = document.getElementById("timetableTitle");
     const semesterSelect = document.getElementById("semesterSelect");
@@ -536,12 +591,19 @@
         if (!year || !semester) {
             clearTimetableCells();
             timetableTitle.textContent = "시간표";
+            currentYear = null;
+            currentSemester = null;
+            updateShareCheckboxDisabled();
             return;
         }
 
         currentYear = year;
         currentSemester = semester;
         timetableTitle.textContent = formatSemesterLabel(year, semester);
+
+        // ✅ 현재 학기 localStorage에 저장
+        localStorage.setItem(STORAGE_KEY_YEAR, String(year));
+        localStorage.setItem(STORAGE_KEY_SEMESTER, String(semester));
 
         try {
             const res = await fetch(`/api/timetable/?year=${year}&semester=${semester}`, {
@@ -582,10 +644,13 @@
             });
         } catch (err) {
             console.error("시간표 로딩 중 오류:", err);
+        } finally {
+            // 🔹 학기 정보가 바뀐 뒤 체크박스 상태 갱신
+            updateShareCheckboxDisabled();
         }
     }
 
-    // 🔹 학기 셀렉트 초기화
+    // 🔹 학기 셀렉트 초기화 (localStorage 활용)
     async function initSemesterSelect() {
         const semesters = await fetchSemesters();
 
@@ -600,14 +665,32 @@
             semesterSelect.appendChild(opt);
         });
 
-        if (semesters.length > 0) {
-            const first = semesters[0];
-            const val = `${first.year}-${first.semester}`;
+        // ✅ localStorage에 저장된 마지막 학기 우선 선택
+        let initial = null;
+        const savedYearStr = localStorage.getItem(STORAGE_KEY_YEAR);
+        const savedSemStr = localStorage.getItem(STORAGE_KEY_SEMESTER);
+        const savedYear = savedYearStr ? parseInt(savedYearStr, 10) : NaN;
+        const savedSem = savedSemStr ? parseInt(savedSemStr, 10) : NaN;
+
+        if (!Number.isNaN(savedYear) && !Number.isNaN(savedSem)) {
+            initial = semesters.find(s => s.year === savedYear && s.semester === savedSem) || null;
+        }
+
+        // 저장된 게 없거나, 그 학기가 더 이상 없으면 첫 번째 학기로
+        if (!initial && semesters.length > 0) {
+            initial = semesters[0];
+        }
+
+        if (initial) {
+            const val = `${initial.year}-${initial.semester}`;
             semesterSelect.value = val;
-            await loadTimetable(first.year, first.semester);
+            await loadTimetable(initial.year, initial.semester);
         } else {
             clearTimetableCells();
             timetableTitle.textContent = "시간표";
+            currentYear = null;
+            currentSemester = null;
+            updateShareCheckboxDisabled();
         }
 
         semesterSelect.addEventListener("change", async (e) => {
@@ -617,6 +700,7 @@
                 timetableTitle.textContent = "시간표";
                 currentYear = null;
                 currentSemester = null;
+                updateShareCheckboxDisabled();
                 return;
             }
             const [y, s] = value.split("-");
@@ -626,7 +710,7 @@
         });
     }
 
-    // 🔹 새 시간표 생성 버튼 → 해당 연도/학기의 내 시간표를 비워서 생성
+    // 🔹 새 시간표 생성 버튼 → 해당 연도/학기의 내 시간표 생성
     if (createTimetableButton && newTimetableModalOverlay && yearInput && semesterInput) {
         createTimetableButton.addEventListener('click', async () => {
             const year = parseInt(yearInput.value, 10);
@@ -766,7 +850,6 @@
                 return;
             }
 
-            // 시간표 다시 로딩
             await loadTimetable(currentYear, currentSemester);
         } catch (err) {
             console.error("과목 추가 중 오류:", err);
@@ -774,7 +857,6 @@
         }
     }
 
-    // 검색창 이벤트
     if (courseSearchButton) {
         courseSearchButton.addEventListener("click", (e) => {
             e.preventDefault();
@@ -795,6 +877,7 @@
         initSemesterSelect();
     });
 </script>
+
 
 </body>
 </html>
