@@ -5,6 +5,41 @@
     <title>Y_CHECK · 시간표</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 🔹 시간표 열 너비 고정 + 셀 높이 일정 -->
+    <style>
+        /* 전체 시간표 테이블 고정 레이아웃 */
+        #timetableTable {
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        /* 기본적으로 6등분(교시 + 월~금) */
+        #timetableTable th,
+        #timetableTable td {
+            width: 16.66%;
+        }
+
+        /* 맨 앞 교시 열은 고정 폭 */
+        #timetableTable th:first-child,
+        #timetableTable td:first-child {
+            width: 80px;
+        }
+
+        /* 각 교시 한 줄의 높이 고정 (필요하면 값 조절) */
+        #timetableTable td.timetable-cell {
+            height: 64px;              /* 한 교시 세로 높이 */
+            vertical-align: middle;
+        }
+
+        /* 과목 정보를 flex-column으로 가운데 정렬 */
+        #timetableTable td.timetable-cell > div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
 </head>
 <body class="min-h-screen bg-[#f7f9fc] text-slate-900 pb-24">
 
@@ -49,10 +84,11 @@
         <div class="h-px bg-slate-200 mb-4"></div>
 
         <div class="overflow-x-auto">
-            <table class="min-w-full text-sm text-center">
+            <!-- 🔹 table-fixed + id 부여 -->
+            <table id="timetableTable" class="min-w-full table-fixed text-sm text-center">
                 <thead>
                 <tr class="text-slate-600">
-                    <th class="py-2 w-20">교시</th>
+                    <th class="py-2">교시</th>
                     <th class="py-2">월</th>
                     <th class="py-2">화</th>
                     <th class="py-2">수</th>
@@ -187,8 +223,8 @@
     </aside>
 </main>
 
-<!-- ==== 공통 푸터 + 모달 + 스크립트 ==== -->
-<footer class="absolute bottom-0 inset-x-0 bg-white border-t w-full">
+<!-- 🔹 footer를 absolute가 아니라 일반 블록으로 (겹침 방지) -->
+<footer class="bg-white border-t w-full mt-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-start justify-between">
         <div class="flex items-start gap-4">
             <div class="space-y-0.5 text-sm text-slate-600 leading-tight">
@@ -429,47 +465,10 @@
     const courseSearchButton = document.getElementById('courseSearchButton');
     const courseSearchResults = document.getElementById('courseSearchResults');
 
-    if (openSearchModalButton && searchModalOverlay && closeSearchModalButton) {
-        openSearchModalButton.addEventListener('click', () => {
-            if (!currentYear || !currentSemester) {
-                alert('먼저 상단에서 학기를 선택해 주세요.');
-                return;
-            }
-            searchModalOverlay.classList.remove('hidden');
-            searchModalOverlay.classList.add('flex');
-
-            // 모달 열릴 때 기본 리스트 로딩
-            if (courseSearchInput) courseSearchInput.value = '';
-            searchCourses();
-        });
-        closeSearchModalButton.addEventListener('click', () => {
-            searchModalOverlay.classList.add('hidden');
-            searchModalOverlay.classList.remove('flex');
-        });
-        searchModalOverlay.addEventListener('click', (e) => {
-            if (e.target === searchModalOverlay) {
-                searchModalOverlay.classList.add('hidden');
-                searchModalOverlay.classList.remove('flex');
-            }
-        });
-    }
-
-    if (openNewTimetableModalButton && newTimetableModalOverlay && closeNewTimetableModalButton) {
-        openNewTimetableModalButton.addEventListener('click', () => {
-            newTimetableModalOverlay.classList.remove('hidden');
-            newTimetableModalOverlay.classList.add('flex');
-        });
-        closeNewTimetableModalButton.addEventListener('click', () => {
-            newTimetableModalOverlay.classList.add('hidden');
-            newTimetableModalOverlay.classList.remove('flex');
-        });
-    }
-
     // ✅ 시간표 공유 체크 상태 저장/복원 (로컬 예시)
     const SHARE_KEY = "ycheck-share-timetable";
     const shareChk = document.getElementById("chk-share-timetable");
     if (shareChk) {
-        // 복원
         shareChk.checked = (localStorage.getItem(SHARE_KEY) === "true");
 
         shareChk.addEventListener("change", () => {
@@ -766,7 +765,6 @@
                 return;
             }
 
-            // 시간표 다시 로딩
             await loadTimetable(currentYear, currentSemester);
         } catch (err) {
             console.error("과목 추가 중 오류:", err);
@@ -775,6 +773,41 @@
     }
 
     // 검색창 이벤트
+    if (openSearchModalButton && searchModalOverlay && closeSearchModalButton) {
+        openSearchModalButton.addEventListener('click', () => {
+            if (!currentYear || !currentSemester) {
+                alert('먼저 상단에서 학기를 선택해 주세요.');
+                return;
+            }
+            searchModalOverlay.classList.remove('hidden');
+            searchModalOverlay.classList.add('flex');
+
+            if (courseSearchInput) courseSearchInput.value = '';
+            searchCourses();
+        });
+        closeSearchModalButton.addEventListener('click', () => {
+            searchModalOverlay.classList.add('hidden');
+            searchModalOverlay.classList.remove('flex');
+        });
+        searchModalOverlay.addEventListener('click', (e) => {
+            if (e.target === searchModalOverlay) {
+                searchModalOverlay.classList.add('hidden');
+                searchModalOverlay.classList.remove('flex');
+            }
+        });
+    }
+
+    if (openNewTimetableModalButton && newTimetableModalOverlay && closeNewTimetableModalButton) {
+        openNewTimetableModalButton.addEventListener('click', () => {
+            newTimetableModalOverlay.classList.remove('hidden');
+            newTimetableModalOverlay.classList.add('flex');
+        });
+        closeNewTimetableModalButton.addEventListener('click', () => {
+            newTimetableModalOverlay.classList.add('hidden');
+            newTimetableModalOverlay.classList.remove('flex');
+        });
+    }
+
     if (courseSearchButton) {
         courseSearchButton.addEventListener("click", (e) => {
             e.preventDefault();
