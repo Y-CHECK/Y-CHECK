@@ -19,5 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/curriculum/', include('curriculum.urls')),
     path('', include('users.urls')),  # /api/register/ 같은 URL 여기로 연결
 ]
