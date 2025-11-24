@@ -28,14 +28,22 @@
     </div>
   </header>
 
+
+  <!-- ====================== -->
+  <!-- 메인 -->
+  <!-- ====================== -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
+    <!-- ====================== -->
     <!-- 왼쪽: 내 정보 & 과목 선택 -->
+    <!-- ====================== -->
     <section class="lg:col-span-4 space-y-4">
+
       <div class="bg-white rounded-2xl border shadow-sm p-5">
 
         <h2 class="text-lg font-semibold mb-4 border-b pb-2">내 정보</h2>
 
+        <!-- 입학년도 -->
         <div class="mb-3">
           <label class="block text-sm text-slate-600 mb-1">입학년도</label>
           <select id="entryYear" class="w-full rounded-xl border px-3 py-2 text-sm">
@@ -43,6 +51,7 @@
           </select>
         </div>
 
+        <!-- 전공 -->
         <div class="mb-3">
           <label class="block text-sm text-slate-600 mb-1">전공</label>
           <select id="major" class="w-full rounded-xl border px-3 py-2 text-sm">
@@ -53,6 +62,7 @@
         <!-- 트랙 -->
         <div class="mb-3">
           <div class="text-sm text-slate-600 mb-1">트랙</div>
+
           <label class="mr-4 text-sm"><input type="radio" name="track" value="none" checked /> 미정</label>
           <label class="mr-4 text-sm"><input type="radio" name="track" value="ai_bigdata" /> AI·빅데이터</label>
           <label class="mr-4 text-sm"><input type="radio" name="track" value="ai_media" /> AI미디어</label>
@@ -61,11 +71,11 @@
           <label class="mr-4 text-sm"><input type="radio" name="track" value="security" /> 정보보안</label>
         </div>
 
-        <!-- DB 과목 자동 로딩 -->
+        <!-- 과목 선택 -->
         <div class="mt-4 border rounded-xl p-3">
           <div class="text-sm font-semibold mb-2">이수 과목 선택</div>
           <div id="courseList" class="space-y-1 text-sm text-slate-700">
-            <!-- JS로 자동 채워짐 -->
+            <!-- JS 자동 로딩 -->
           </div>
         </div>
 
@@ -78,15 +88,17 @@
       </div>
     </section>
 
-
-    <!-- 오른쪽: 결과 -->
+    <!-- ====================== -->
+    <!-- 오른쪽: 결과 영역 -->
+    <!-- ====================== -->
     <section class="lg:col-span-8 space-y-4">
+
 
       <!-- 요약 카드 -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
         <div class="bg-white rounded-2xl border shadow-sm p-5 text-center">
-          <div class="text-sm text-slate-500">누적 이수</div>
+          <div class="text-sm text-slate-500">누적 이수 학점</div>
           <div id="summaryTotalCredits" class="mt-2 text-3xl font-bold text-blue-600">0</div>
         </div>
 
@@ -99,42 +111,30 @@
           <div class="text-sm text-slate-500">졸업 가능 여부</div>
           <div id="summaryCanGraduate" class="mt-2 text-3xl font-bold text-rose-500">-</div>
         </div>
+
       </div>
 
-      <!-- 전공필수 진행률 -->
-      <div class="bg-white rounded-2xl border shadow-sm p-5">
-        <div class="text-sm text-slate-500 mb-3">전공필수 진행률</div>
 
-        <div class="mb-3">
-          <div class="flex justify-between text-xs mb-1">
-            <span>전공필수</span>
-            <span id="majorRequiredPercent">0%</span>
-          </div>
-          <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
-            <div id="majorRequiredBar" class="h-full bg-blue-500" style="width:0%"></div>
-          </div>
-        </div>
+      <!-- ================================= -->
+      <!-- 졸업요건 영역별 진행률 + 전공필수 포함 -->
+      <!-- ================================= -->
+      <div class="bg-white rounded-2xl border shadow-sm p-5">
+        <h3 class="text-sm text-slate-500 mb-3">졸업요건 영역별 진행률</h3>
+        <div id="progressList" class="space-y-4"></div>
       </div>
 
-      <!-- 전공필수 목록 -->
-      <div class="bg-white rounded-2xl border shadow-sm p-5">
-        <div class="text-sm text-slate-500 mb-2">전공필수 현황</div>
-        <div class="overflow-x-auto">
-          <table class="min-w-full text-sm">
-            <thead>
-              <tr class="border-b text-slate-500">
-                <th class="py-2">코드</th>
-                <th class="py-2">이름</th>
-                <th class="py-2">학점</th>
-              </tr>
-            </thead>
-            <tbody id="majorRequiredTable"></tbody>
-          </table>
-        </div>
+
+      <!-- ================================= -->
+      <!-- 영역별 이수 과목 표 출력 -->
+      <!-- ================================= -->
+      <div id="areaTables" class="space-y-6">
+        <!-- JS에서 자동 구성 -->
       </div>
 
     </section>
+
   </main>
+
 
 
   <!-- 푸터 -->
@@ -154,13 +154,13 @@
         <span>문의하기</span>
       </div>
     </div>
-  </footer>
+  </footer>3
 
-  <!-- JS 영역 -->
+
 <script>
 
 // ===============================
-// 1) DB에서 과목 목록 불러오기
+// 1) DB에서 과목 목록 로딩
 // ===============================
 async function loadCourses() {
   const res = await fetch("http://localhost:8000/api/curriculum/courses/");
@@ -169,43 +169,96 @@ async function loadCourses() {
   const list = document.getElementById("courseList");
   list.innerHTML = "";
 
-  courses.forEach(course => {
+  courses.forEach(c => {
     list.innerHTML += `
       <label class="block">
-        <input type="checkbox" value="${course.code}" class="mr-2 course-checkbox">
-        ${course.code} - ${course.name} (${course.credits}학점)
+        <input type="checkbox"
+          class="mr-2 course-checkbox"
+          data-credits="${c.credits}"
+          data-category="${c.category}"
+          value="${c.code}">
+        ${c.code} - ${c.name} (${c.credits}학점)
       </label>
     `;
   });
 }
+
 window.onload = loadCourses;
 
 
+
+
 // ===============================
-// 2) 졸업 계산 API 호출
+// 2) 졸업요건 계산
 // ===============================
 async function calculate() {
 
-  const selected = [];
+  // (1) 선택된 과목 목록
+  const selectedCodes = [];
+  let totalCredits = 0;
+
+  const selectedCourses = [];   // 표 출력용
+
   document.querySelectorAll(".course-checkbox:checked").forEach(cb => {
-    selected.push(cb.value);
+    selectedCodes.push(cb.value);
+    totalCredits += Number(cb.dataset.credits);
+
+    selectedCourses.push({
+      code: cb.value,
+      credits: Number(cb.dataset.credits),
+      category: cb.dataset.category
+    });
   });
 
+  // (2) 트랙
   const track = document.querySelector("input[name='track']:checked").value;
 
+
+  // (3) 이수 영역별 분류
+  const categoryCredits = {
+    GE_BASIC: 0,
+    GE_UNIV_REQUIRED: 0,
+    EXPLORATION: 0,
+    MAJOR_BASIC: 0,
+    MAJOR_DEEP: 0,
+    LEVEL300: 0
+  };
+
+  const categoryDetails = {
+    GE_BASIC: [],
+    GE_UNIV_REQUIRED: [],
+    EXPLORATION: [],
+    MAJOR_BASIC: [],
+    MAJOR_DEEP: [],
+    LEVEL300: []
+  };
+
+  selectedCourses.forEach(c => {
+    categoryCredits[c.category] += c.credits;
+    categoryDetails[c.category].push(c);
+
+    // 3000단위 이상
+    if (c.code.startsWith("SWE3") || c.code.startsWith("SWE4")) {
+      categoryCredits["LEVEL300"] += c.credits;
+      categoryDetails["LEVEL300"].push(c);
+    }
+  });
+
+
+  // (4) 백엔드로 보낼 payload
   const payload = {
     entry_year: 2022,
     major: "소프트웨어학부",
     track: track,
-    total_credits: 135,
-    completed_courses: selected,
+    total_credits: totalCredits,
+    completed_courses: selectedCodes,
     credits: {
-      liberal_basic: 22,
-      univ_required: 5,
-      exploration: 21,
-      major_basic: 36,
-      level300: 45,
-      deep_major: 36,
+      liberal_basic: categoryCredits.GE_BASIC,
+      univ_required: categoryCredits.GE_UNIV_REQUIRED,
+      exploration: categoryCredits.EXPLORATION,
+      major_basic: categoryCredits.MAJOR_BASIC,
+      level300: categoryCredits.LEVEL300,
+      deep_major: categoryCredits.MAJOR_DEEP,
       track: 15
     },
     flags: {
@@ -225,31 +278,123 @@ async function calculate() {
   const data = await res.json();
   console.log(data);
 
-  // 요약 카드 갱신
-  document.getElementById("summaryTotalCredits").innerText = data.summary.total_credits;
+
+  // ============================
+  // 5) 요약 카드 업데이트
+  // ============================
+  document.getElementById("summaryTotalCredits").innerText = totalCredits;
   document.getElementById("summaryRequiredCredits").innerText = data.summary.required_total_credits;
-  document.getElementById("summaryCanGraduate").innerText = data.summary.can_graduate ? "가능" : "불가";
+  document.getElementById("summaryCanGraduate").innerText =
+    data.summary.can_graduate ? "가능" : "불가";
 
-  // 전공필수 진행률
-  document.getElementById("majorRequiredPercent").innerText = data.major_required.percentage + "%";
-  document.getElementById("majorRequiredBar").style.width = data.major_required.percentage + "%";
 
-  // 테이블 갱신
-  const tbody = document.getElementById("majorRequiredTable");
-  tbody.innerHTML = "";
 
-  data.major_required.completed.forEach(c => {
-    tbody.innerHTML += `
-      <tr class="border-b">
-        <td class="py-2 text-center">${c.code}</td>
-        <td class="py-2 text-center">${c.name}</td>
-        <td class="py-2 text-center">${c.credits}</td>
-      </tr>
+  // ============================
+  // 6) 영역별 진행률 + 전공필수 포함
+  // ============================
+  const progressList = document.getElementById("progressList");
+  progressList.innerHTML = "";
+
+  const areaNames = {
+    GE_BASIC: "교양기초",
+    GE_UNIV_REQUIRED: "대학교양 필수",
+    EXPLORATION: "전공탐색",
+    MAJOR_BASIC: "기본전공",
+    MAJOR_DEEP: "심화전공",
+    LEVEL300: "3000단위 이상"
+  };
+
+  const needed = {
+    GE_BASIC: 22,
+    GE_UNIV_REQUIRED: 5,
+    EXPLORATION: 21,
+    MAJOR_BASIC: 36,
+    LEVEL300: 45,
+    MAJOR_DEEP: 36,
+    MAJOR_TRACK: 15
+  };
+
+  Object.keys(areaNames).forEach(key => {
+    const now = categoryCredits[key];
+    const min = needed[key] || 0;
+    const percent = min ? Math.min(100, Math.round(now / min * 100)) : 0;
+
+    progressList.innerHTML += `
+      <div>
+        <div class="flex justify-between text-xs mb-1">
+          <span>${areaNames[key]}</span>
+          <span>${percent}% (${now}/${min})</span>
+        </div>
+        <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+          <div class="h-full bg-blue-500" style="width:${percent}%"></div>
+        </div>
+      </div>
     `;
   });
+
+  // 전공필수 추가
+  const majorRequiredPercent = data.major_required.percentage;
+  progressList.innerHTML += `
+    <div>
+      <div class="flex justify-between text-xs mb-1">
+        <span>전공필수</span>
+        <span>${majorRequiredPercent}%</span>
+      </div>
+      <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+        <div class="h-full bg-blue-500" style="width:${majorRequiredPercent}%"></div>
+      </div>
+    </div>
+  `;
+
+
+
+  // ============================
+  // 7) 영역별 이수 과목 표 자동 생성
+  // ============================
+  const areaTables = document.getElementById("areaTables");
+  areaTables.innerHTML = "";
+
+  const tableAreas = [
+    ["GE_BASIC", "교양기초 이수 현황"],
+    ["GE_UNIV_REQUIRED", "대학교양 필수 이수 현황"],
+    ["EXPLORATION", "전공탐색 이수 현황"],
+    ["MAJOR_BASIC", "기본전공 이수 현황"],
+    ["MAJOR_DEEP", "심화전공 이수 현황"],
+    ["LEVEL300", "3000단위 이상 이수 현황"],
+  ];
+
+  tableAreas.forEach(([key, label]) => {
+    let rows = "";
+    categoryDetails[key].forEach(c => {
+      rows += `
+        <tr class="border-b">
+          <td class="py-2 text-center">${c.code}</td>
+          <td class="py-2 text-center">${c.category}</td>
+          <td class="py-2 text-center">${c.credits}</td>
+        </tr>
+      `;
+    });
+
+    areaTables.innerHTML += `
+      <div class="bg-white rounded-2xl border shadow-sm p-5">
+        <div class="text-sm text-slate-500 mb-2">${label}</div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="border-b text-slate-500">
+                <th class="py-2">코드</th>
+                <th class="py-2">영역</th>
+                <th class="py-2">학점</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  });
+
+
 }
 
 </script>
-
-</body>
-</html>

@@ -22,13 +22,17 @@ def get_courses(request):
 # ========================
 GRAD_RULES_2022_SWE = {
     "meta": {"entry_year": 2022, "major": "소프트웨어학부"},
+
     "total_credits": 135,
     "need_second_major": True,
+
     "certifications": {
         "language": {"required": True, "label": "외국어인증"},
         "it_or_industry": {"required": True, "options": ["정보인증", "산업실무역량인증"]},
     },
+
     "level300_min_credits": 45,
+
     "multi_major_required_rule": {
         "type": "text_rule",
         "description": (
@@ -37,6 +41,7 @@ GRAD_RULES_2022_SWE = {
             "(2) 전공필수가 12학점 미만인 전공은 전공필수 전체 이수."
         ),
     },
+
     "overlap_rules": {
         "basic_vs_explore": {
             "max_credits": 3,
@@ -47,6 +52,7 @@ GRAD_RULES_2022_SWE = {
             "description": "기본전공과 심화전공 공통 교과목은 최대 7학점까지 심화전공 학점으로 인정.",
         },
     },
+
     "liberal_arts": {
         "basic_min_credits": 22,
         "univ_required": {
@@ -70,6 +76,7 @@ GRAD_RULES_2022_SWE = {
         },
         "exploration": {"min_credits": 21},
     },
+
     "major": {
         "basic_min_credits": 36,
         "not_count_as_major": [
@@ -90,12 +97,14 @@ GRAD_RULES_2022_SWE = {
             {"code": "SWE3017", "name": "데이터베이스", "credits": 3},
         ],
     },
+
     "deep_major": {
         "min_credits": 36,
         "track_min_credits": 15,
         "need_two_track_required": True,
         "allow_basic_overlap_max": 7,
     },
+
     "tracks": {
         "ai_bigdata": {
             "name": "AI·빅데이터 트랙",
@@ -133,6 +142,7 @@ GRAD_RULES_2022_SWE = {
             ],
         },
     },
+
     "area_min_credits": {
         "liberal_basic": 22,
         "univ_required": 5,
@@ -184,6 +194,9 @@ def calculate_graduation(request):
 
     rules = GRAD_RULES_2022_SWE
 
+    # ============================
+    # 전공필수 계산
+    # ============================
     required_courses = rules["major"]["required_courses"]
     required_total_credits = sum(c.get("credits", 0) for c in required_courses)
 
@@ -194,20 +207,24 @@ def calculate_graduation(request):
 
     major_required_percentage = (
         int(earned_required_credits / required_total_credits * 100)
-        if required_total_credits > 0
-        else 0
+        if required_total_credits > 0 else 0
     )
 
+    # ============================
+    # 트랙 전필 검사
+    # ============================
     track_result = None
     track_required_ok = True
+
     if track_key in rules["tracks"]:
         track_info = rules["tracks"][track_key]
         track_required = track_info["required_courses"]
         track_required_total = sum(c.get("credits", 0) for c in track_required)
+
         track_completed = [c for c in track_required if c["code"] in completed_codes]
         track_earned = sum(c.get("credits", 0) for c in track_completed)
 
-        track_required_ok = (track_earned >= track_required_total)
+        track_required_ok = track_earned >= track_required_total
 
         track_result = {
             "track_key": track_key,
@@ -217,26 +234,32 @@ def calculate_graduation(request):
             "completed": track_completed,
         }
 
+    # ============================
+    # 영역별 조건 검사
+    # ============================
     area_min = rules["area_min_credits"]
 
-    conditions = {}
-    conditions["total_credits"] = (total_credits >= rules["total_credits"])
-    conditions["second_major"] = (not rules["need_second_major"]) or second_major_done
-    conditions["language_cert"] = (not rules["certifications"]["language"]["required"]) or language_cert_ok
-    conditions["it_or_industry_cert"] = (
-        (not rules["certifications"]["it_or_industry"]["required"]) or (it_cert_ok or industry_cert_ok)
-    )
-    conditions["level300"] = (level300_credits >= rules["level300_min_credits"])
-    conditions["liberal_basic"] = (liberal_basic_credits >= area_min["liberal_basic"])
-    conditions["univ_required"] = (univ_required_credits >= area_min["univ_required"])
-    conditions["exploration"] = (exploration_credits >= area_min["exploration"])
-    conditions["major_basic"] = (major_basic_credits >= area_min["major_basic"])
-    conditions["major_required_all"] = (len(remaining_required) == 0)
+    conditions = {
+        "total_credits": total_credits >= rules["total_credits"],
+        "second_major": (not rules["need_second_major"]) or second_major_done,
+        "language_cert": (not rules["certifications"]["language"]["required"]) or language_cert_ok,
+        "it_or_industry_cert": (
+            (not rules["certifications"]["it_or_industry"]["required"])
+            or (it_cert_ok or industry_cert_ok)
+        ),
+        "level300": level300_credits >= rules["level300_min_credits"],
+        "liberal_basic": liberal_basic_credits >= area_min["liberal_basic"],
+        "univ_required": univ_required_credits >= area_min["univ_required"],
+        "exploration": exploration_credits >= area_min["exploration"],
+        "major_basic": major_basic_credits >= area_min["major_basic"],
+        "major_required_all": len(remaining_required) == 0,
+    }
 
     deep_rules = rules["deep_major"]
+
     if track_key in rules["tracks"]:
-        conditions["deep_major_min"] = (deep_major_credits >= deep_rules["min_credits"])
-        conditions["track_min_credits"] = (track_credits >= deep_rules["track_min_credits"])
+        conditions["deep_major_min"] = deep_major_credits >= deep_rules["min_credits"]
+        conditions["track_min_credits"] = track_credits >= deep_rules["track_min_credits"]
         conditions["track_required_all"] = track_required_ok
     else:
         conditions["deep_major_min"] = True
@@ -245,15 +268,66 @@ def calculate_graduation(request):
 
     can_graduate = all(conditions.values())
 
+    # ============================
+    # 진행률(progress) 계산
+    # ============================
+    def calc_percent(earned, required):
+        if required <= 0:
+            return 100
+        return int((earned / required) * 100)
+
+    progress = {
+        "liberal_basic": {
+            "earned": liberal_basic_credits,
+            "required": area_min["liberal_basic"],
+            "percent": calc_percent(liberal_basic_credits, area_min["liberal_basic"]),
+        },
+        "univ_required": {
+            "earned": univ_required_credits,
+            "required": area_min["univ_required"],
+            "percent": calc_percent(univ_required_credits, area_min["univ_required"]),
+        },
+        "exploration": {
+            "earned": exploration_credits,
+            "required": area_min["exploration"],
+            "percent": calc_percent(exploration_credits, area_min["exploration"]),
+        },
+        "major_basic": {
+            "earned": major_basic_credits,
+            "required": area_min["major_basic"],
+            "percent": calc_percent(major_basic_credits, area_min["major_basic"]),
+        },
+        "level300": {
+            "earned": level300_credits,
+            "required": area_min["level300"],
+            "percent": calc_percent(level300_credits, area_min["level300"]),
+        },
+        "deep_major": {
+            "earned": deep_major_credits,
+            "required": deep_rules["min_credits"],
+            "percent": calc_percent(deep_major_credits, deep_rules["min_credits"]),
+        },
+        "track": {
+            "earned": track_credits,
+            "required": deep_rules["track_min_credits"],
+            "percent": calc_percent(track_credits, deep_rules["track_min_credits"]),
+        },
+    }
+
+    # ============================
+    # 최종 응답
+    # ============================
     response_data = {
         "entry_year": entry_year,
         "major": major,
         "track": track_key,
+
         "summary": {
             "total_credits": total_credits,
             "required_total_credits": rules["total_credits"],
             "can_graduate": can_graduate,
         },
+
         "major_required": {
             "percentage": major_required_percentage,
             "earned_credits": earned_required_credits,
@@ -261,8 +335,10 @@ def calculate_graduation(request):
             "completed": completed_required,
             "remaining": remaining_required,
         },
+
         "track": track_result,
         "conditions": conditions,
+        "progress": progress,
         "rules_meta": rules,
     }
 
