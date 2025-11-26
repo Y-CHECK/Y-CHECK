@@ -12,7 +12,13 @@ from .models import Course
 @require_GET
 def get_courses(request):
     courses = Course.objects.all().values(
-        "code", "name", "credits", "category", "major_type", "is_required"
+        "code",
+        "name",
+        "credits",
+        "category",
+        "major_type",
+        "is_required",
+        "level",          # 🔹 단위 필터용 필드 추가
     )
     return JsonResponse(list(courses), safe=False)
 
@@ -314,9 +320,6 @@ def calculate_graduation(request):
         },
     }
 
-    # ============================
-    # 최종 응답
-    # ============================
     response_data = {
         "entry_year": entry_year,
         "major": major,
