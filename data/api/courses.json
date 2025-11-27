@@ -111,15 +111,14 @@
     {"code": "YHE1002", "name": "리더십실습", "credits": 2},
     {"code": "YHE1007", "name": "대학학문의세계", "credits": 1},
     {"code": "YHX1001", "name": "컴퓨팅사고", "credits": 3},
-
+    {"code": "YHC0001", "name": "기독교의이해", "credits": 3},
     {"code": "YHZ1003", "name": "산업과기업의이해", "credits": 1},
     {"code": "YHZ1004", "name": "커리어디자인", "credits": 1}
   ],
 
   "교양필수": [
     {"code": "YHI1030", "name": "SW소양영어", "credits": 2},
-    {"code": "YHX1012", "name": "프로그래밍실습", "credits": 3},
-    {"code": "YHC0001", "name": "기독교의이해", "credits": 3}
+    {"code": "YHX1012", "name": "프로그래밍실습", "credits": 3}
   ],
 
   "교양-1영역": [

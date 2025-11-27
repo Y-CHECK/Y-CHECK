@@ -18,8 +18,8 @@ def get_courses(request):
         "category",
         "major_type",
         "is_required",
-        "level",      # 🔹 단위 필터용 필드
-        "ge_area",    # 🔹 대학교양 영역 정보 추가 (예: "3영역")
+        "level",
+        "ge_area",
     )
     return JsonResponse(
         list(courses),
@@ -252,6 +252,18 @@ def calculate_graduation(request):
         }
 
     # ============================
+    # 대학교양 선택 영역 개수 계산 (★추가된 부분)
+    # ============================
+    completed_course_objects = Course.objects.filter(code__in=completed_codes)
+
+    area_set = set()
+    for c in completed_course_objects:
+        if c.ge_area:
+            area_set.add(c.ge_area)
+
+    ge_area_count = len(area_set)  # 선택 영역 이수 개수
+
+    # ============================
     # 영역별 조건 검사
     # ============================
     area_min = rules["area_min_credits"]
@@ -269,6 +281,10 @@ def calculate_graduation(request):
         "level300": level300_credits >= rules["level300_min_credits"],
         "liberal_basic": liberal_basic_credits >= area_min["liberal_basic"],
         "univ_required": univ_required_credits >= area_min["univ_required"],
+
+        # 🔹 필수 추가 조건 (교양영역 5개 이상)
+        "univ_elective_areas": ge_area_count >= 5,
+
         "exploration": exploration_credits >= area_min["exploration"],
         "major_basic": major_basic_credits >= area_min["major_basic"],
         "major_required_all": len(remaining_required) == 0,
@@ -287,6 +303,7 @@ def calculate_graduation(request):
         conditions["track_min_credits"] = True
         conditions["track_required_all"] = True
 
+    # 졸업 가능 여부
     can_graduate = all(conditions.values())
 
     # ============================
