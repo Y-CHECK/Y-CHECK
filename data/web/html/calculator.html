@@ -5,6 +5,14 @@
     <title>Y-CHECK · 계산기</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* 드롭다운 스크롤 강제 */
+        select {
+            max-height: 300px !important;
+            overflow-y: auto !important;
+        }
+    </style>
 </head>
 
 <body class="min-h-screen bg-[#f7f9fc] text-slate-900 pb-24">
@@ -67,7 +75,7 @@
                     <option value="GE_BASIC">교양기초</option>
                     <option value="GE_UNIV_REQUIRED">대학교양필수</option>
 
-                    <!-- ⭐ 영역별 직접 노출 -->
+                    <!-- 영역 필터 복구 완료 -->
                     <option value="GE_UNIV_ELECTIVE_1">1영역</option>
                     <option value="GE_UNIV_ELECTIVE_2">2영역</option>
                     <option value="GE_UNIV_ELECTIVE_3">3영역</option>
@@ -85,13 +93,14 @@
                        class="w-full rounded-xl border px-3 py-2 text-sm mb-2">
 
                 <button onclick="applyFilter()"
-                        class="w-full bg-slate-700 text-white py-2 rounded-xl text-sm font-semibold">필터 적용</button>
+                        class="w-full bg-slate-700 text-white py-2 rounded-xl text-sm font-semibold">
+                    필터 적용
+                </button>
             </div>
 
             <!-- 과목 목록 -->
             <div class="border rounded-xl p-3">
                 <div class="text-sm font-semibold mb-2">이수 과목 선택</div>
-                <!-- 🔥 스크롤 가능 영역 -->
                 <div id="courseList"
                      class="space-y-1 text-sm text-slate-700 h-[480px] overflow-y-auto pr-2">
                 </div>
@@ -136,50 +145,120 @@
             <div id="areaStatusContent" class="text-sm"></div>
         </div>
 
+        <!-- 영역별 이수 과목 표 -->
+        <div id="areaTables" class="space-y-6"></div>
+
     </section>
 </main>
 
 <!-- ================================
-     JS 시작
+     JS
 ================================= -->
 <script>
     let allCourses = [];
     let currentFiltered = [];
     let selectedCourses = new Set();
 
-    /* 1) 과목 로딩 */
+    const STORAGE_KEY = "ycheck_selected_courses";
+    const RESULT_STORAGE_KEY = "ycheck_calc_result";
+
+    /* ---------------------------------------
+       1) 데이터 불러오기
+    ----------------------------------------*/
+    function loadSelectedFromStorage() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try {
+                selectedCourses = new Set(JSON.parse(saved));
+            } catch (e) {
+                console.error("저장된 과목 불러오기 실패", e);
+            }
+        }
+    }
+
+    function loadResultFromStorage() {
+        const saved = localStorage.getItem(RESULT_STORAGE_KEY);
+        if (!saved) return;
+
+        try {
+            const result = JSON.parse(saved);
+
+            // 요약 반영
+            document.getElementById("summaryTotalCredits").innerText = result.totalCredits;
+            document.getElementById("summaryRequiredCredits").innerText = result.required;
+            document.getElementById("summaryCanGraduate").innerText =
+                result.canGraduate ? "가능" : "불가";
+
+            // 상세 렌더링
+            renderProgress(result.credits, result.majorPercent);
+            renderAreaStatus(result.selectedList);
+            renderAreaTables(result.selectedList);
+
+        } catch (e) {
+            console.error("결과 복원 실패", e);
+        }
+    }
+
+    function saveResultToStorage(data, totalCredits, credits) {
+        const selectedList = allCourses.filter(c => selectedCourses.has(c.code));
+
+        const result = {
+            selectedList,
+            totalCredits,
+            required: data.summary.required_total_credits,
+            canGraduate: data.summary.can_graduate,
+            credits,
+            majorPercent: data.major_required.percentage,
+        };
+
+        localStorage.setItem(RESULT_STORAGE_KEY, JSON.stringify(result));
+    }
+
+    /* ---------------------------------------
+       2) 초기 로딩
+    ----------------------------------------*/
     async function loadCourses() {
+        loadSelectedFromStorage();
+
         const res = await fetch("http://localhost:8000/api/curriculum/courses/");
         allCourses = await res.json();
         currentFiltered = [...allCourses];
+
         renderCourseList();
+        loadResultFromStorage();  // ★ 계산 결과 복원!
     }
 
-    /* 2) 렌더링 */
+    /* ---------------------------------------
+       3) 과목 체크박스 렌더링
+    ----------------------------------------*/
     function renderCourseList() {
         const list = document.getElementById("courseList");
         list.innerHTML = "";
 
         currentFiltered.forEach(c => {
             list.innerHTML += `
-          <label class="block">
-            <input type="checkbox"
-              class="mr-2 course-checkbox"
-              value="${c.code}"
-              ${selectedCourses.has(c.code) ? "checked" : ""}>
-            ${c.code} - ${c.name} (${c.credits}학점)
-          </label>
-        `;
+              <label class="block">
+                <input type="checkbox"
+                  class="mr-2 course-checkbox"
+                  value="${c.code}"
+                  ${selectedCourses.has(c.code) ? "checked" : ""}>
+                ${c.code} - ${c.name} (${c.credits}학점)
+              </label>
+            `;
         });
 
         document.querySelectorAll(".course-checkbox").forEach(cb => {
             cb.addEventListener("change", () => {
-                cb.checked ? selectedCourses.add(cb.value) : selectedCourses.delete(cb.value);
+                if (cb.checked) selectedCourses.add(cb.value);
+                else selectedCourses.delete(cb.value);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify([...selectedCourses]));
             });
         });
     }
 
-    /* 3) 필터 */
+    /* ---------------------------------------
+       4) 필터 적용
+    ----------------------------------------*/
     function applyFilter() {
         const filter = document.getElementById("filterCategory").value;
         const search = document.getElementById("searchInput").value.trim().toLowerCase();
@@ -195,8 +274,7 @@
             }
 
             if (search) {
-                const key = (c.code + c.name).toLowerCase();
-                ok = ok && key.includes(search);
+                ok = ok && (c.code + c.name).toLowerCase().includes(search);
             }
 
             return ok;
@@ -205,7 +283,9 @@
         renderCourseList();
     }
 
-    /* 4) 계산 */
+    /* ---------------------------------------
+       5) 계산하기
+    ----------------------------------------*/
     async function calculate() {
         const selectedList = allCourses.filter(c => selectedCourses.has(c.code));
 
@@ -220,14 +300,13 @@
         };
 
         selectedList.forEach(c => {
-            const credit = Number(c.credits);
-            totalCredits += credit;
+            totalCredits += c.credits;
 
             if (credits[c.category] !== undefined)
-                credits[c.category] += credit;
+                credits[c.category] += c.credits;
 
             if (c.level >= 3000)
-                credits["LEVEL300"] += credit;
+                credits["LEVEL300"] += c.credits;
         });
 
         const payload = {
@@ -268,9 +347,16 @@
 
         renderProgress(credits, data.major_required.percentage);
         renderAreaStatus(selectedList);
+        renderAreaTables(selectedList);
+
+        // ★ 계산 결과 저장 (새로고침 복원)
+        saveResultToStorage(data, totalCredits, credits);
     }
 
-    /* 5) 진행률 바 */
+    /* ---------------------------------------
+       6) 아래 3개 렌더 함수는 기존 그대로 유지
+    ----------------------------------------*/
+
     function renderProgress(credits, majorPercent) {
         const NEEDED = {
             GE_BASIC: 22,
@@ -293,75 +379,130 @@
         let html = "";
 
         Object.keys(NEEDED).forEach(k => {
-            const now = credits[k] || 0;
+            const now = credits[k];
             const min = NEEDED[k];
-            const pct = min > 0 ? Math.min(100, Math.round((now / min) * 100)) : 0;
+            const pct = Math.min(100, Math.round((now / min) * 100));
 
             html += `
-          <div>
-            <div class="flex justify-between text-xs mb-1">
-              <span>${NAMES[k]}</span>
-              <span>${pct}% (${now}/${min})</span>
-            </div>
-            <div class="h-2 bg-slate-100 rounded-full">
-              <div class="h-full bg-blue-500" style="width:${pct}%"></div>
-            </div>
-          </div>
-        `;
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span>${NAMES[k]}</span>
+                  <span>${pct}% (${now}/${min})</span>
+                </div>
+                <div class="h-2 bg-slate-100 rounded-full">
+                  <div class="h-full bg-blue-500" style="width:${pct}%"></div>
+                </div>
+              </div>
+            `;
         });
 
         html += `
-        <div>
-          <div class="flex justify-between text-xs mb-1">
-            <span>전공필수</span>
-            <span>${majorPercent}%</span>
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span>전공필수</span>
+              <span>${majorPercent}%</span>
+            </div>
+            <div class="h-2 bg-slate-100 rounded-full">
+              <div class="h-full bg-blue-500" style="width:${majorPercent}%"></div>
+            </div>
           </div>
-          <div class="h-2 bg-slate-100 rounded-full">
-            <div class="h-full bg-blue-500" style="width:${majorPercent}%"></div>
-          </div>
-        </div>
-      `;
+        `;
 
         document.getElementById("progressList").innerHTML = html;
     }
 
-    /* 6) 영역 이수 현황 */
     function renderAreaStatus(selectedList) {
-        const set = new Set();
+        const areaSet = new Set();
 
         selectedList.forEach(c => {
-            if (c.ge_area) set.add(c.ge_area);
+            if (c.ge_area) areaSet.add(c.ge_area);
         });
 
-        const count = set.size;
+        const now = areaSet.size;
         const required = 5;
-        const ok = count >= required;
 
         let html = `
-        <div class="flex justify-between mb-2">
-          <span>이수한 영역 수</span>
-          <span class="${ok ? "text-green-600" : "text-rose-600"} font-semibold">
-            ${count}개 / ${required}개 (${ok ? "충족" : "미충족"})
-          </span>
-        </div>
+            <div class="flex justify-between mb-2">
+              <span>이수한 영역 수</span>
+              <span class="${now >= required ? "text-green-600" : "text-rose-600"} font-semibold">
+                ${now}개 / ${required}개
+              </span>
+            </div>
 
-        <div class="flex flex-wrap gap-2 mt-2">
-      `;
-
-        [...set].forEach(a => {
-            html += `
-          <span class="px-3 py-1 text-xs rounded-full bg-blue-50 border border-blue-200 text-blue-700">
-            ${a}
-          </span>
+            <div class="flex flex-wrap gap-2 mt-2">
         `;
+
+        [...areaSet].forEach(area => {
+            html += `
+              <span class="px-3 py-1 text-xs rounded-full bg-blue-50 border border-blue-200 text-blue-700">
+                ${area}
+              </span>
+            `;
         });
 
         html += `</div>`;
         document.getElementById("areaStatusContent").innerHTML = html;
     }
 
+    function renderAreaTables(selectedList) {
+        const details = {
+            GE_BASIC: [],
+            GE_UNIV_REQUIRED: [],
+            EXPLORATION: [],
+            MAJOR_BASIC: [],
+            MAJOR_DEEP: [],
+            LEVEL300: []
+        };
+
+        selectedList.forEach(c => {
+            if (details[c.category]) details[c.category].push(c);
+            if (c.level >= 3000) details["LEVEL300"].push(c);
+        });
+
+        const LABELS = {
+            GE_BASIC: "교양기초 이수 현황",
+            GE_UNIV_REQUIRED: "대학교양 필수 이수 현황",
+            EXPLORATION: "전공탐색 이수 현황",
+            MAJOR_BASIC: "기본전공 이수 현황",
+            MAJOR_DEEP: "심화전공 이수 현황",
+            LEVEL300: "3000단위 이상 이수 현황"
+        };
+
+        const container = document.getElementById("areaTables");
+        container.innerHTML = "";
+
+        Object.keys(details).forEach(key => {
+            const rows = details[key].map(c => `
+                <tr class="border-b">
+                    <td class="py-2 text-center">${c.code}</td>
+                    <td class="py-2 text-center">${c.name}</td>
+                    <td class="py-2 text-center">${c.credits}</td>
+                </tr>
+            `).join("");
+
+            container.innerHTML += `
+                <div class="bg-white rounded-2xl border shadow-sm p-5">
+                    <div class="text-sm text-slate-500 mb-2">${LABELS[key]}</div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-sm">
+                            <thead>
+                                <tr class="border-b text-slate-500">
+                                    <th class="py-2">코드</th>
+                                    <th class="py-2">과목명</th>
+                                    <th class="py-2">학점</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
     window.onload = loadCourses;
 </script>
+
 
 </body>
 </html>
