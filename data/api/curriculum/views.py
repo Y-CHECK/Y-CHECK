@@ -12,9 +12,20 @@ from .models import Course
 @require_GET
 def get_courses(request):
     courses = Course.objects.all().values(
-        "code", "name", "credits", "category", "major_type", "is_required"
+        "code",
+        "name",
+        "credits",
+        "category",
+        "major_type",
+        "is_required",
+        "level",
+        "ge_area",
     )
-    return JsonResponse(list(courses), safe=False)
+    return JsonResponse(
+        list(courses),
+        safe=False,
+        json_dumps_params={"ensure_ascii": False},
+    )
 
 
 # ========================
@@ -28,7 +39,10 @@ GRAD_RULES_2022_SWE = {
 
     "certifications": {
         "language": {"required": True, "label": "외국어인증"},
-        "it_or_industry": {"required": True, "options": ["정보인증", "산업실무역량인증"]},
+        "it_or_industry": {
+            "required": True,
+            "options": ["정보인증", "산업실무역량인증"],
+        },
     },
 
     "level300_min_credits": 45,
@@ -201,13 +215,16 @@ def calculate_graduation(request):
     required_total_credits = sum(c.get("credits", 0) for c in required_courses)
 
     completed_required = [c for c in required_courses if c["code"] in completed_codes]
-    remaining_required = [c for c in required_courses if c["code"] not in completed_codes]
+    remaining_required = [
+        c for c in required_courses if c["code"] not in completed_codes
+    ]
 
     earned_required_credits = sum(c.get("credits", 0) for c in completed_required)
 
     major_required_percentage = (
         int(earned_required_credits / required_total_credits * 100)
-        if required_total_credits > 0 else 0
+        if required_total_credits > 0
+        else 0
     )
 
     # ============================
@@ -235,6 +252,18 @@ def calculate_graduation(request):
         }
 
     # ============================
+    # 대학교양 선택 영역 개수 계산 (★추가된 부분)
+    # ============================
+    completed_course_objects = Course.objects.filter(code__in=completed_codes)
+
+    area_set = set()
+    for c in completed_course_objects:
+        if c.ge_area:
+            area_set.add(c.ge_area)
+
+    ge_area_count = len(area_set)  # 선택 영역 이수 개수
+
+    # ============================
     # 영역별 조건 검사
     # ============================
     area_min = rules["area_min_credits"]
@@ -242,7 +271,9 @@ def calculate_graduation(request):
     conditions = {
         "total_credits": total_credits >= rules["total_credits"],
         "second_major": (not rules["need_second_major"]) or second_major_done,
-        "language_cert": (not rules["certifications"]["language"]["required"]) or language_cert_ok,
+        "language_cert": (
+            not rules["certifications"]["language"]["required"]
+        ) or language_cert_ok,
         "it_or_industry_cert": (
             (not rules["certifications"]["it_or_industry"]["required"])
             or (it_cert_ok or industry_cert_ok)
@@ -250,6 +281,10 @@ def calculate_graduation(request):
         "level300": level300_credits >= rules["level300_min_credits"],
         "liberal_basic": liberal_basic_credits >= area_min["liberal_basic"],
         "univ_required": univ_required_credits >= area_min["univ_required"],
+
+        # 🔹 필수 추가 조건 (교양영역 5개 이상)
+        "univ_elective_areas": ge_area_count >= 5,
+
         "exploration": exploration_credits >= area_min["exploration"],
         "major_basic": major_basic_credits >= area_min["major_basic"],
         "major_required_all": len(remaining_required) == 0,
@@ -259,13 +294,16 @@ def calculate_graduation(request):
 
     if track_key in rules["tracks"]:
         conditions["deep_major_min"] = deep_major_credits >= deep_rules["min_credits"]
-        conditions["track_min_credits"] = track_credits >= deep_rules["track_min_credits"]
+        conditions["track_min_credits"] = (
+            track_credits >= deep_rules["track_min_credits"]
+        )
         conditions["track_required_all"] = track_required_ok
     else:
         conditions["deep_major_min"] = True
         conditions["track_min_credits"] = True
         conditions["track_required_all"] = True
 
+    # 졸업 가능 여부
     can_graduate = all(conditions.values())
 
     # ============================
@@ -280,22 +318,30 @@ def calculate_graduation(request):
         "liberal_basic": {
             "earned": liberal_basic_credits,
             "required": area_min["liberal_basic"],
-            "percent": calc_percent(liberal_basic_credits, area_min["liberal_basic"]),
+            "percent": calc_percent(
+                liberal_basic_credits, area_min["liberal_basic"]
+            ),
         },
         "univ_required": {
             "earned": univ_required_credits,
             "required": area_min["univ_required"],
-            "percent": calc_percent(univ_required_credits, area_min["univ_required"]),
+            "percent": calc_percent(
+                univ_required_credits, area_min["univ_required"]
+            ),
         },
         "exploration": {
             "earned": exploration_credits,
             "required": area_min["exploration"],
-            "percent": calc_percent(exploration_credits, area_min["exploration"]),
+            "percent": calc_percent(
+                exploration_credits, area_min["exploration"]
+            ),
         },
         "major_basic": {
             "earned": major_basic_credits,
             "required": area_min["major_basic"],
-            "percent": calc_percent(major_basic_credits, area_min["major_basic"]),
+            "percent": calc_percent(
+                major_basic_credits, area_min["major_basic"]
+            ),
         },
         "level300": {
             "earned": level300_credits,
@@ -305,29 +351,28 @@ def calculate_graduation(request):
         "deep_major": {
             "earned": deep_major_credits,
             "required": deep_rules["min_credits"],
-            "percent": calc_percent(deep_major_credits, deep_rules["min_credits"]),
+            "percent": calc_percent(
+                deep_major_credits, deep_rules["min_credits"]
+            ),
         },
         "track": {
             "earned": track_credits,
             "required": deep_rules["track_min_credits"],
-            "percent": calc_percent(track_credits, deep_rules["track_min_credits"]),
+            "percent": calc_percent(
+                track_credits, deep_rules["track_min_credits"]
+            ),
         },
     }
 
-    # ============================
-    # 최종 응답
-    # ============================
     response_data = {
         "entry_year": entry_year,
         "major": major,
         "track": track_key,
-
         "summary": {
             "total_credits": total_credits,
             "required_total_credits": rules["total_credits"],
             "can_graduate": can_graduate,
         },
-
         "major_required": {
             "percentage": major_required_percentage,
             "earned_credits": earned_required_credits,
@@ -335,7 +380,6 @@ def calculate_graduation(request):
             "completed": completed_required,
             "remaining": remaining_required,
         },
-
         "track": track_result,
         "conditions": conditions,
         "progress": progress,
