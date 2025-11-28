@@ -38,10 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # 프로젝트 앱들
-    'users',
+    'users.apps.UsersConfig',   # ← AppConfig 정상 적용
     'curriculum',
-    'timetable',     # ✅ 시간표 앱
-    'footprints',    # ✅ 선배 발자취 앱
+    'timetable',
+    'footprints',
 ]
 
 
@@ -66,14 +66,13 @@ ROOT_URLCONF = 'config.urls'
 # --------------------------------------------------
 # TEMPLATES
 # --------------------------------------------------
-# HTML을 data/web/html 에서 바로 불러올 수 있도록 DIRS 설정
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             BASE_DIR.parent / 'web' / 'html',   # /data/web/html/
-            BASE_DIR / 'templates',             # 필요 시 사용할 프로젝트 templates 폴더
+            BASE_DIR / 'templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -132,11 +131,6 @@ USE_TZ = True
 # --------------------------------------------------
 # STATIC FILES
 # --------------------------------------------------
-# ⭐ data/web 폴더 전체를 static root로 등록
-#   - /data/web/html → HTML 파일 (TemplateView로 렌더링)
-#   - /data/web/css  → CSS
-#   - /data/web/img  → 이미지
-#   전부 그대로 사용 가능
 
 STATIC_URL = '/static/'
 
