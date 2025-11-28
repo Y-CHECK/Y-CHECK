@@ -4,45 +4,33 @@
     <meta charset="UTF-8" />
     <title>Y-CHECK · 마이페이지</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Tailwind 제거하고, 별도 CSS 파일 연동 -->
     <link rel="stylesheet" href="../css/mypage.css">
 </head>
 
 <body>
 
-<!-- ===========================
-      공통 헤더
-=========================== -->
 <header class="site-header">
     <div class="header-inner">
-
-        <!-- 왼쪽 로고 -->
         <div class="header-left">
             <a href="main.html" class="logo-link">
                 <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="logo-img">
             </a>
         </div>
 
-        <!-- 중앙 네비게이션 -->
         <nav class="main-nav">
             <a href="calculator.html" class="nav-link">계산기</a>
             <a href="timetable.html" class="nav-link">시간표</a>
             <a href="sunbae.html" class="nav-link">선배의 발자취</a>
         </nav>
 
-        <!-- 오른쪽 마이페이지 -->
         <div class="header-right">
             <a href="mypage.html" class="nav-link nav-link-strong">마이페이지</a>
         </div>
     </div>
 </header>
 
-<!-- ===========================
-      메인 영역 (가운데 정렬)
-=========================== -->
 <main class="main-container">
 
-    <!-- 가운데 정렬된 정보 카드 -->
     <section class="card">
         <h1 class="page-title">My Page</h1>
 
@@ -50,25 +38,25 @@
 
             <!-- 이름 -->
             <div class="form-group">
-                <label class="form-label" for="field-real-name">이름</label>
+                <label class="form-label">이름</label>
                 <input id="field-real-name" type="text" class="form-input">
             </div>
 
             <!-- ID -->
             <div class="form-group">
-                <label class="form-label" for="field-username">ID</label>
+                <label class="form-label">ID</label>
                 <input id="field-username" type="text" class="form-input form-input-disabled" disabled>
             </div>
 
             <!-- 학번 -->
             <div class="form-group">
-                <label class="form-label" for="field-student-id">학번</label>
+                <label class="form-label">학번</label>
                 <input id="field-student-id" type="text" class="form-input">
             </div>
 
             <!-- 학년/학기 -->
             <div class="form-group">
-                <label class="form-label" for="field-semester">학년/학기</label>
+                <label class="form-label">학년/학기</label>
                 <select id="field-semester" class="form-input">
                     <option value="">선택하세요</option>
                     <option value="1-1">1학년 1학기</option>
@@ -82,10 +70,18 @@
                 </select>
             </div>
 
-            <!-- 이메일 -->
+            <!-- 학과/학부 (새 필드) -->
             <div class="form-group form-group-full">
-                <label class="form-label" for="field-email">이메일</label>
-                <input id="field-email" type="email" class="form-input form-input-disabled" disabled>
+                <label class="form-label">학과/학부</label>
+                <select id="field-major-dept" class="form-input">
+                    <option value="">선택하세요</option>
+                    <option value="SOFTWARE">소프트웨어학부</option>
+                    <option value="DATASCIENCE">데이터사이언스학부</option>
+                    <option value="AI_SEMI">AI반도체학부</option>
+                    <option value="BIOMED">의공학부</option>
+                    <option value="CLINICAL">임상병리학과</option>
+                    <option value="OCC_THERAPY">작업치료학과</option>
+                </select>
             </div>
 
             <!-- 관심 분야 -->
@@ -95,32 +91,32 @@
                 <div class="checkbox-grid">
 
                     <label class="checkbox-item">
-                        <input id="chk-ai" type="checkbox" class="checkbox-input">
+                        <input type="radio" name="interest" value="AI_ML" class="radio-input">
                         <span>AI/머신러닝</span>
                     </label>
 
                     <label class="checkbox-item">
-                        <input id="chk-security" type="checkbox" class="checkbox-input">
+                        <input type="radio" name="interest" value="SECURITY_NETWORK" class="radio-input">
                         <span>보안/네트워크</span>
                     </label>
 
                     <label class="checkbox-item">
-                        <input id="chk-game" type="checkbox" class="checkbox-input">
+                        <input type="radio" name="interest" value="GAME_MEDIA" class="radio-input">
                         <span>게임/미디어</span>
                     </label>
 
                     <label class="checkbox-item">
-                        <input id="chk-embedded" type="checkbox" class="checkbox-input">
+                        <input type="radio" name="interest" value="EMBEDDED_SYSTEM" class="radio-input">
                         <span>임베디드/시스템</span>
                     </label>
 
                     <label class="checkbox-item">
-                        <input id="chk-startup" type="checkbox" class="checkbox-input">
+                        <input type="radio" name="interest" value="STARTUP_SERVICE" class="radio-input">
                         <span>창업/서비스 기획</span>
                     </label>
 
                     <label class="checkbox-item checkbox-item-etc">
-                        <input id="chk-etc" type="checkbox" class="checkbox-input">
+                        <input type="radio" name="interest" value="OTHER" class="radio-input">
                         <span>기타</span>
                         <input id="field-interest-etc" type="text"
                                class="form-input form-input-etc"
@@ -136,16 +132,10 @@
                 <label for="chk-consent" class="consent-label">데이터 사용 동의</label>
             </div>
 
-            <!-- 정보 수정 버튼 -->
-            <div class="form-group form-group-full">
+            <!-- 버튼 -->
+            <div class="form-group form-group-full form-actions">
                 <button id="btn-save-profile" type="button" class="btn-primary">
                     정보 수정하기
-                </button>
-            </div>
-
-            <div class="form-group form-group-full">
-                <button id="btn-logout" type="button" class="btn-secondary">
-                    로그아웃
                 </button>
             </div>
 
@@ -153,9 +143,6 @@
     </section>
 </main>
 
-<!-- ===========================
-      푸터
-=========================== -->
 <footer class="site-footer">
     <div class="footer-inner">
         <div class="footer-left">
@@ -169,29 +156,9 @@
     </div>
 </footer>
 
-<!-- ===========================
-      JS : 로그인 유지 + DB 연동 + 로그아웃
-=========================== -->
 <script>
-    // 로그인 상태 + 프로필 불러오기
+    // 마이페이지 불러오기
     async function loadMyPage() {
-
-        const usernameInput  = document.getElementById("field-username");
-        const realNameInput  = document.getElementById("field-real-name");
-        const studentIdInput = document.getElementById("field-student-id");
-        const emailInput     = document.getElementById("field-email");
-        const semesterInput  = document.getElementById("field-semester");
-
-        const chkAi       = document.getElementById("chk-ai");
-        const chkSecurity = document.getElementById("chk-security");
-        const chkGame     = document.getElementById("chk-game");
-        const chkEmbedded = document.getElementById("chk-embedded");
-        const chkStartup  = document.getElementById("chk-startup");
-        const chkEtc      = document.getElementById("chk-etc");
-        const etcText     = document.getElementById("field-interest-etc");
-
-        const chkConsent = document.getElementById("chk-consent");
-
         try {
             const resp = await fetch("/api/mypage/", {
                 method: "GET",
@@ -205,53 +172,37 @@
             }
 
             const data = await resp.json();
-            if (!data.logged_in) {
-                window.location.href = "login.html";
-                return;
-            }
-
             const p = data.profile || {};
 
-            usernameInput.value  = data.username || "";
-            realNameInput.value  = p.real_name || "";
-            studentIdInput.value = p.student_id || "";
-            emailInput.value     = data.email || "";
-            semesterInput.value  = p.current_semester || "";
+            document.getElementById("field-username").value       = data.username || "";
+            document.getElementById("field-real-name").value      = p.real_name || "";
+            document.getElementById("field-student-id").value     = p.student_id || "";
+            document.getElementById("field-semester").value       = p.current_semester || "";
+            document.getElementById("field-major-dept").value     = p.major_department || "";
 
-            const interests = (p.interest || "").split(",");
+            // 관심 분야 설정
+            const radios = document.querySelectorAll("input[name='interest']");
+            radios.forEach(r => r.checked = (r.value === p.interest));
 
-            chkAi.checked       = interests.includes("AI/머신러닝");
-            chkSecurity.checked = interests.includes("보안/네트워크");
-            chkGame.checked     = interests.includes("게임/미디어");
-            chkEmbedded.checked = interests.includes("임베디드/시스템");
-            chkStartup.checked  = interests.includes("창업/서비스 기획");
-            chkEtc.checked      = !!p.interest_text;
-
-            etcText.value       = p.interest_text || "";
-            chkConsent.checked  = !!p.data_consent;
+            document.getElementById("field-interest-etc").value = p.interest_text || "";
+            document.getElementById("chk-consent").checked = !!p.data_consent;
 
         } catch (err) {
             console.error("loadMyPage 오류:", err);
         }
     }
 
-    // 프로필 수정 저장
+    // 정보 저장
     async function saveMyPage() {
+        const selectedRadio = document.querySelector("input[name='interest']:checked");
+        const interestValue = selectedRadio ? selectedRadio.value : "";
 
         const payload = {
             real_name: document.getElementById("field-real-name").value,
             student_id: document.getElementById("field-student-id").value,
             current_semester: document.getElementById("field-semester").value,
-
-            interest: [
-                document.getElementById("chk-ai").checked ? "AI/머신러닝" : "",
-                document.getElementById("chk-security").checked ? "보안/네트워크" : "",
-                document.getElementById("chk-game").checked ? "게임/미디어" : "",
-                document.getElementById("chk-embedded").checked ? "임베디드/시스템" : "",
-                document.getElementById("chk-startup").checked ? "창업/서비스 기획" : "",
-                document.getElementById("chk-etc").checked ? "기타" : "",
-            ].filter(x => x !== "").join(","),
-
+            major_department: document.getElementById("field-major-dept").value,
+            interest: interestValue,
             interest_text: document.getElementById("field-interest-etc").value,
             data_consent: document.getElementById("chk-consent").checked,
         };
@@ -273,38 +224,15 @@
 
             alert("정보가 저장되었습니다!");
             loadMyPage();
+
         } catch (err) {
-            alert("서버와 연결할 수 없습니다.");
+            alert("서버 연결 실패");
         }
     }
 
-    // 로그아웃
-    async function logoutUser() {
-        try {
-            const resp = await fetch("/api/logout/", {
-                method: "POST",
-                credentials: "include",
-            });
-
-            const data = await resp.json();
-
-            if (data.success) {
-                alert("로그아웃 되었습니다.");
-                window.location.href = "login.html";
-            } else {
-                alert("로그아웃에 실패했습니다.");
-            }
-        } catch (err) {
-            console.error("logoutUser 오류:", err);
-            alert("서버와 연결할 수 없습니다.");
-        }
-    }
-
-    // 이벤트 바인딩
     document.addEventListener("DOMContentLoaded", () => {
         loadMyPage();
         document.getElementById("btn-save-profile").addEventListener("click", saveMyPage);
-        document.getElementById("btn-logout").addEventListener("click", logoutUser);
     });
 </script>
 
