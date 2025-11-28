@@ -22,7 +22,7 @@ def shared_timetables(request):
           "user": {
             "id": 3,
             "username": "testuser",
-            "display_name": "testuser"
+            "display_name": "홍길동"
           },
           "label": "2025년 1학기",
           "year": 2025,
@@ -35,49 +35,62 @@ def shared_timetables(request):
         ...
       ]
     }
-
-    - Timetable.is_shared = True 인 것만 포함
-    - (선택) user의 관심분야 / 학년으로 필터
-    - user + year + semester 기준으로 묶어서 한 카드로 내려줌
     """
+
     track_param = request.GET.get("track")   # 예: "AI", "AI_ML"
     grade_param = request.GET.get("grade")   # 예: "3"
 
-    # 기본 쿼리셋: 공유 ON + UserProfile 있는 유저만
+    # 기본 쿼리셋: 공유 ON (일단 전부 다 가져온 뒤, 필요하면 프로필 기준으로 필터)
     qs = (
         Timetable.objects
-        .filter(is_shared=True, user__userprofile__isnull=False)
+        .filter(is_shared=True)
         .select_related("user", "user__userprofile")
         .order_by("user_id", "year", "semester", "day", "period")
     )
 
-    # ---- 관심 트랙 필터 ----
-    # DB에는 "AI/머신러닝" 이런 '라벨'이 들어있으므로, 파라미터를 라벨로 매핑해준다.
+    # -------------------------------
+    #  관심 트랙 필터
+    #   - UserProfile.interest 에 저장된 '라벨'과 매칭
+    #     예: "AI/머신러닝", "보안/네트워크" ...
+    # -------------------------------
     TRACK_LABEL_MAP = {
-        "AI": "AI/머신러닝",
-        "AI_ML": "AI/머신러닝",
-        "SECURITY": "보안/네트워크",
-        "SECURITY_NETWORK": "보안/네트워크",
-        "GAME": "게임/미디어",
-        "GAME_MEDIA": "게임/미디어",
-        "EMBEDDED": "임베디드/시스템",
-        "EMBEDDED_SYSTEM": "임베디드/시스템",
-        "STARTUP": "창업/서비스기획",
-        "STARTUP_SERVICE": "창업/서비스기획",
-        "OTHER": "기타(직접입력)",
+        # 버튼: 실제 DB에 저장된 코드
+        "AI": "AI_ML",
+        "AI_ML": "AI_ML",
+
+        "SECURITY": "SECURITY_NETWORK",
+        "SECURITY_NETWORK": "SECURITY_NETWORK",
+
+        "GAME": "GAME_MEDIA",
+        "GAME_MEDIA": "GAME_MEDIA",
+
+        "EMBEDDED": "EMBEDDED_SYSTEM",
+        "EMBEDDED_SYSTEM": "EMBEDDED_SYSTEM",
+
+        "STARTUP": "STARTUP_SERVICE",
+        "STARTUP_SERVICE": "STARTUP_SERVICE",
+
+        "OTHER": "OTHER",
     }
 
     if track_param:
-        # 매핑에 없으면 그대로 비교 (혹시 "AI/머신러닝" 같이 라벨이 직접 넘어오는 경우 대비)
-        interest_label = TRACK_LABEL_MAP.get(track_param, track_param)
-        qs = qs.filter(user__userprofile__interest=interest_label)
+        # 매핑에 없으면 그냥 그대로 사용
+        interest_code = TRACK_LABEL_MAP.get(track_param, track_param)
+        qs = qs.filter(user__userprofile__interest=interest_code)
 
-    # ---- 학년 필터 ----
-    # grade="3" 이면 current_semester 가 "3-1", "3-2" 인 유저만
+    # -------------------------------
+    #  학년 필터
+    #   - UserProfile.current_semester 가 "3-1", "3-2" 이런 형식이라고 가정
+    #   - grade="3" → "3-" 로 시작하는 값만
+    # -------------------------------
     if grade_param:
-        qs = qs.filter(user__userprofile__current_semester__startswith=f"{grade_param}-")
+        qs = qs.filter(
+            user__userprofile__current_semester__startswith=f"{grade_param}-"
+        )
 
-    # ---- 그룹핑 (user, year, semester 단위 카드) ----
+    # -------------------------------
+    #  user + year + semester 단위로 그룹핑해서 카드 만들기
+    # -------------------------------
     grouped = {}  # key: (user_id, year, semester) → dict
 
     for tt in qs:
@@ -87,9 +100,8 @@ def shared_timetables(request):
             user = tt.user
             profile = getattr(user, "userprofile", None)
 
-            # display_name: 실명 있으면 실명, 없으면 username
-            display_name = None
-            if profile and profile.real_name:
+            # display_name: 프로필 실명 있으면 그거, 없으면 username
+            if profile and getattr(profile, "real_name", None):
                 display_name = profile.real_name
             else:
                 display_name = user.username
