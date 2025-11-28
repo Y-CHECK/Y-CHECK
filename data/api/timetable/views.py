@@ -432,25 +432,56 @@ def timetable_share_status(request):
 
 class WeeklyTimetableAPI(APIView):
     """
-    주간 시간표 조회 API
-    GET /api/timetable/weekly/?term=2025-2
+    메인페이지 오른쪽 '주간 시간표'용 API
+    - 쿼리파라미터 term 예: ?term=2025-2
+    - Timetable 테이블에서 현재 로그인 유저의 해당 학기 시간표를 읽어온다.
     """
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        term = request.GET.get("term", "2025-2")
+        term = request.GET.get("term")
+        if not term:
+            return Response(
+                {"detail": "term 파라미터가 필요합니다. 예: ?term=2025-2"},
+                status=400,
+            )
 
-        # 로그인한 사용자 + 해당 학기 기준으로 DB에서 조회
-        qs = TimetableEntry.objects.filter(
+        # "2025-2" → year=2025, semester=2
+        try:
+            year_str, sem_str = term.split("-")
+            year = int(year_str)
+            semester = int(sem_str)
+        except ValueError:
+            return Response(
+                {"detail": "term 형식이 잘못되었습니다. 예: 2025-2"},
+                status=400,
+            )
+
+        # 이 학기의 내 시간표 행들을 가져오기
+        qs = Timetable.objects.filter(
             user=request.user,
-            term=term,
+            year=year,
+            semester=semester,
         )
 
-        serializer = TimetableEntrySerializer(qs, many=True)
+        # 메인페이지 JS가 쓰는 포맷으로 변환
+        lectures = []
+        for row in qs:
+            # 교시(1~9)를 메인페이지 시간(9~17시)로 변환
+            start_hour = 8 + row.period   # 1교시 → 9, 2교시 → 10 ...
+            end_hour = start_hour + 1     # 한 칸(1교시)짜리로 처리
+
+            lectures.append({
+                "name": row.subject,
+                "day": row.day,           # "MON", "TUE", ...
+                "start": start_hour,      # 예: 11
+                "end": end_hour,          # 예: 12
+                "location": row.classroom or "",
+            })
+
         return Response({
             "term": term,
-            "lectures": serializer.data,
+            "lectures": lectures,
         })
 
 @method_decorator(csrf_exempt, name="dispatch")
