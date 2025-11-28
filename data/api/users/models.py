@@ -32,7 +32,12 @@ class UserProfile(models.Model):
         ("CLINICAL", "임상병리학과"),
         ("OCC_THERAPY", "작업치료학과"),
     ]
-    major_department = models.CharField(max_length=30, choices=DEPARTMENT_CHOICES)
+    major_department = models.CharField(
+        max_length=30,
+        choices=DEPARTMENT_CHOICES,
+        blank=True,
+        null=True,
+    )
 
     # 관심 전공/분야
     INTEREST_CHOICES = [
