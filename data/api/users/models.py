@@ -52,3 +52,33 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"{self.real_name} ({self.student_id})"
+
+
+# ============================
+# 🔥 메인페이지 요약 정보 저장용 모델
+# ============================
+class UserSummary(models.Model):
+    # AUTH_USER_MODEL 그대로 사용 (커스텀 유저 대비)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="summary",
+    )
+
+    # 총 이수 학점
+    total_credits = models.PositiveSmallIntegerField(default=0)
+
+    # 계산기에서 쓰는 영역별 학점 그대로 저장
+    liberal_basic_credits = models.PositiveSmallIntegerField(default=0)
+    univ_required_credits = models.PositiveSmallIntegerField(default=0)
+    exploration_credits = models.PositiveSmallIntegerField(default=0)
+    major_basic_credits = models.PositiveSmallIntegerField(default=0)
+    deep_major_credits = models.PositiveSmallIntegerField(default=0)
+    level300_credits = models.PositiveSmallIntegerField(default=0)
+
+    # 수강 과목 리스트 (코드/이름/학점/분류만 JSON으로 저장)
+    # 예) [{"code": "SWE2001", "name": "데이터구조론", "credits": 3, "category": "MAJOR_BASIC"}, ...]
+    selected_courses = models.JSONField(default=list)
+
+    def __str__(self):
+        return f"{self.user.username} 요약 정보"
