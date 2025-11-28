@@ -34,6 +34,7 @@ def mypage_api(request):
             {
                 "logged_in": True,
                 "username": user.username,
+                "email": user.email,
                 "profile": profile_data,
             }
         )
