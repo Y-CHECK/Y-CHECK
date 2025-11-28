@@ -1,6 +1,6 @@
 # timetable/serializers.py
 from rest_framework import serializers
-from .models import Timetable, Course
+from .models import Timetable, Course, TimetableEntry
 
 
 class TimetableSerializer(serializers.ModelSerializer):
@@ -23,3 +23,9 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = "__all__"
+
+
+class TimetableEntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TimetableEntry
+        fields = ["id", "term", "day", "start", "end", "name", "location"]

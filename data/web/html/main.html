@@ -277,100 +277,39 @@
 </div>
 
       <!-- 시간표 (세로 길이 줄임) -->
-      <div class="bg-white rounded-2xl border shadow-sm p-5 min-h-[420px]">
-        <div class="text-sm text-slate-500 mb-3">시간표</div>
-        <div class="overflow-x-auto">
-          <table class="min-w-full text-sm text-center border-collapse">
-            <thead>
-              <tr class="text-slate-600">
-                <th class="w-16 py-2 border border-slate-200"></th>
-                <th class="py-2 border border-slate-200">월</th>
-                <th class="py-2 border border-slate-200">화</th>
-                <th class="py-2 border border-slate-200">수</th>
-                <th class="py-2 border border-slate-200">목</th>
-                <th class="py-2 border border-slate-200">금</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- 9 ~ 5시 -->
-              <tr>
-                <td class="py-2 border border-slate-200 text-slate-500">9</td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-              </tr>
-              <tr>
-                <td class="py-2 border border-slate-200 text-slate-500">10</td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-              </tr>
-              <tr>
-                <td class="py-2 border border-slate-200 text-slate-500">11</td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-              </tr>
-              <tr>
-                <td class="py-2 border border-slate-200 text-slate-500">12</td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-              </tr>
-              <tr>
-                <td class="py-2 border border-slate-200 text-slate-500">1</td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-              </tr>
-              <tr>
-                <td class="py-2 border border-slate-200 text-slate-500">2</td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-              </tr>
-              <tr>
-                <td class="py-2 border border-slate-200 text-slate-500">3</td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-              </tr>
-              <tr>
-                <td class="py-2 border border-slate-200 text-slate-500">4</td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-              </tr>
-              <tr>
-                <td class="py-2 border border-slate-200 text-slate-500">5</td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+        <div class="bg-white rounded-2xl border shadow-sm p-5 min-h-[420px]">
 
-      <!-- 채플 카운트 -->
+            <!-- 🔥 제목 + 드롭다운 -->
+            <div class="flex items-center justify-between mb-3">
+                <div class="text-sm text-slate-500">시간표</div>
+                <select id="main-term-select" class="text-xs border rounded-lg px-2 py-1 text-slate-600">
+                    <option value="2025-1">2025-1</option>
+                    <option value="2024-2">2024-2</option>
+                    <option value="2024-1">2024-1</option>
+                </select>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table id="main-timetable" class="min-w-full text-sm text-center border-collapse">
+                    <thead>
+                    <tr class="text-slate-600">
+                        <th class="w-16 py-2 border border-slate-200"></th>
+                        <th class="py-2 border border-slate-200">월</th>
+                        <th class="py-2 border border-slate-200">화</th>
+                        <th class="py-2 border border-slate-200">수</th>
+                        <th class="py-2 border border-slate-200">목</th>
+                        <th class="py-2 border border-slate-200">금</th>
+                    </tr>
+                    </thead>
+
+                    <!-- 🔥 기존 9~5시 tr 전체 삭제하고 빈 tbody -->
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <!-- 채플 카운트 -->
       <div class="bg-white rounded-2xl border shadow-sm p-5">
         <div class="text-sm text-slate-500 mb-3">채플 카운트</div>
         <div class="flex items-center gap-2">
@@ -539,5 +478,80 @@
       applyLoginStatus();
     });
   </script>
+
+  <script>
+      async function loadMainTimetable(term) {
+        const tableBody = document.querySelector("#main-timetable tbody");
+        if (!tableBody) return;
+
+        const days = ["MON", "TUE", "WED", "THU", "FRI"];
+        const hours = [9,10,11,12,13,14,15,16,17];  // 필요하면 시간대 수정 가능
+
+        // 1) 시간표 데이터 가져오기
+        let lectures = [];
+        try {
+          const resp = await fetch(
+            "http://localhost:8000/api/timetable/weekly/?term=" + encodeURIComponent(term),
+            { credentials: "include" }   // 세션 쿠키 쓰는 경우
+          );
+          if (!resp.ok) throw new Error("timetable api error: " + resp.status);
+          const data = await resp.json();
+          lectures = data.lectures || [];
+        } catch (e) {
+          console.error("시간표 불러오기 실패:", e);
+        }
+
+        // 2) 시간표 칸에 어떤 과목이 들어갈지 매핑
+        const cellMap = {};  // key: `${day}-${hour}` -> 과목명
+        for (const lec of lectures) {
+          // start <= h < end 범위에 과목 이름 채우기
+          for (let h = lec.start; h < lec.end; h++) {
+            cellMap[`${lec.day}-${h}`] = lec.name;
+          }
+        }
+
+        // 3) 테이블 그리기
+        tableBody.innerHTML = "";
+        for (const hour of hours) {
+          const tr = document.createElement("tr");
+
+          // 왼쪽 시간 표시
+          const timeTd = document.createElement("td");
+          timeTd.textContent = hour;
+          timeTd.className = "py-2 border border-slate-200 text-slate-500";
+          tr.appendChild(timeTd);
+
+          // 월~금 칸
+          for (const d of days) {
+            const td = document.createElement("td");
+            td.className = "h-10 border border-slate-200 text-xs";
+
+            const key = `${d}-${hour}`;
+            if (cellMap[key]) {
+              td.textContent = cellMap[key];
+              td.classList.add("bg-blue-50", "text-slate-800", "font-medium");
+            }
+
+            tr.appendChild(td);
+          }
+
+          tableBody.appendChild(tr);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const termSelect = document.getElementById("main-term-select");
+        if (!termSelect) return;
+
+        // 페이지 처음 열릴 때 기본 학기로 한 번 로드
+        loadMainTimetable(termSelect.value);
+
+        // 드롭다운 변경될 때마다 다시 로드
+        termSelect.addEventListener("change", () => {
+          loadMainTimetable(termSelect.value);
+        });
+      });
+  </script>
+
 </body>
 </html>

@@ -4,7 +4,15 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.db.models import Count
 
-from .models import Timetable, Course
+from .models import Timetable, Course, TimetableEntry
+from .serializers import TimetableEntrySerializer
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 import json
 
@@ -421,3 +429,73 @@ def timetable_share_status(request):
     ).exists()
 
     return JsonResponse({"is_shared": exists})
+
+class WeeklyTimetableAPI(APIView):
+    """
+    주간 시간표 조회 API
+    GET /api/timetable/weekly/?term=2025-2
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        term = request.GET.get("term", "2025-2")
+
+        # 로그인한 사용자 + 해당 학기 기준으로 DB에서 조회
+        qs = TimetableEntry.objects.filter(
+            user=request.user,
+            term=term,
+        )
+
+        serializer = TimetableEntrySerializer(qs, many=True)
+        return Response({
+            "term": term,
+            "lectures": serializer.data,
+        })
+
+@method_decorator(csrf_exempt, name="dispatch")
+class SaveTimetableAPI(APIView):
+    """
+    시간표 저장 API
+    POST /api/timetable/save/
+
+    요청 JSON 예시:
+    {
+      "term": "2025-2",
+      "lectures": [
+        {"day": "MON", "start": 10, "end": 12, "name": "자료구조", "location": "창조관"},
+        ...
+      ]
+    }
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        term = request.data.get("term")
+        lectures = request.data.get("lectures", [])
+
+        if not term:
+            return Response({"detail": "term 값이 필요합니다."}, status=400)
+
+        # 1) 기존에 저장되어 있던 해당 학기 시간표 싹 지우고
+        TimetableEntry.objects.filter(user=request.user, term=term).delete()
+
+        # 2) 새롭게 넣기
+        new_entries = []
+        for lec in lectures:
+            new_entries.append(
+                TimetableEntry(
+                    user=request.user,
+                    term=term,
+                    day=lec.get("day"),
+                    start=lec.get("start"),
+                    end=lec.get("end"),
+                    name=lec.get("name", ""),
+                    location=lec.get("location", ""),
+                )
+            )
+
+        TimetableEntry.objects.bulk_create(new_entries)
+
+        return Response({"detail": "시간표가 저장되었습니다.", "count": len(new_entries)})

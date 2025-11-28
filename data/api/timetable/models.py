@@ -1,6 +1,7 @@
 # timetable/models.py
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
 
 
 class Course(models.Model):
@@ -116,3 +117,34 @@ class Timetable(models.Model):
 
     def __str__(self):
         return f"[{self.year}-{self.semester}] {self.user.username} / {self.day} {self.period}교시 - {self.subject}"
+
+class TimetableEntry(models.Model):
+    """
+    한 칸짜리 시간표 데이터
+    예: 월요일 10~12시 자료구조
+    """
+    DAY_CHOICES = [
+        ("MON", "월"),
+        ("TUE", "화"),
+        ("WED", "수"),
+        ("THU", "목"),
+        ("FRI", "금"),
+    ]
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="timetable_entries",
+    )
+    term = models.CharField(max_length=20)   # 예: "2025-2"
+    day = models.CharField(max_length=3, choices=DAY_CHOICES)
+    start = models.IntegerField()            # 시작 시간(정수, 9, 10 ...)
+    end = models.IntegerField()              # 끝 시간(정수)
+    name = models.CharField(max_length=100)  # 과목명
+    location = models.CharField(max_length=100, blank=True)
+
+    class Meta:
+        ordering = ["term", "day", "start"]
+
+    def __str__(self):
+        return f"{self.term} {self.get_day_display()} {self.start}~{self.end} {self.name}"
