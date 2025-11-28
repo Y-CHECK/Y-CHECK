@@ -24,16 +24,6 @@ class UserProfile(models.Model):
     ]
     current_semester = models.CharField(max_length=3, choices=SEMESTER_CHOICES)
 
-    DEPARTMENT_CHOICES = [
-        ("SOFTWARE", "소프트웨어학부"),
-        ("DATASCIENCE", "데이터사이언스학부"),
-        ("AI_SEMI", "AI반도체학부"),
-        ("BIOMED", "의공학부"),
-        ("CLINICAL", "임상병리학과"),
-        ("OCC_THERAPY", "작업치료학과"),
-    ]
-    major_department = models.CharField(max_length=30, choices=DEPARTMENT_CHOICES)
-
     # 관심 전공/분야
     INTEREST_CHOICES = [
         ("AI_ML", "AI/머신러닝"),
