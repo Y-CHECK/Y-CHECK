@@ -1,972 +1,707 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8" />
-    <title>Y_CHECK · 메인</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @media print {
-            .no-print {
-                display: none !important;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Y-CHECK · 메인</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @media print{.no-print{display:none!important}}
+  </style>
 </head>
 <body class="min-h-screen bg-[#f7f9fc] text-slate-900 pb-24">
 
-    <!-- 공통 헤더 -->
-    <header class="bg-white border-b">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-            <!-- 로고 -->
-            <div class="flex items-center gap-3">
-                <a href="main.html" class="flex items-center gap-3">
-                    <img src="../img/ycheck_logo.png" alt="Y_CHECK 로고" class="h-8 w-auto">
-                </a>
-            </div>
-
-            <!-- 내비게이션 -->
-            <nav class="hidden sm:flex items-center justify-center flex-1 divide-x divide-slate-300" style="margin-left: 90px;">
-                <a href="calculator.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">계산기</a>
-                <a href="timetable.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">시간표</a>
-                <a href="sunbae.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">선배의 발자취</a>
-            </nav>
-
-            <!-- 마이페이지 -->
-            <div class="hidden sm:block">
-                <a href="mypage.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">마이페이지</a>
-            </div>
-        </div>
-    </header>
-
-    <!-- 메인 대시보드 -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-        <!-- 왼쪽(큰 영역) -->
-        <section class="lg:col-span-9 space-y-6">
-
-            <!-- 총 이수 진행도 -->
-            <div class="bg-white rounded-2xl border shadow-sm p-6 h-40 flex flex-col justify-between">
-                <div>
-                    <div class="text-sm text-slate-500 font-bold">총 이수 진행도</div>
-                    <div class="mt-1 text-4xl font-extrabold tracking-tight">
-                        <span id="total-progress-text">0 / 135 점</span>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-center gap-3">
-                    <div class="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden">
-                        <div id="total-progress-bar"
-                             class="h-full bg-gradient-to-r from-blue-200 via-blue-500 to-blue-800"
-                             style="width:0%"></div>
-                    </div>
-                    <div id="total-progress-percent"
-                         class="w-16 text-right text-lg font-bold text-emerald-600">0%</div>
-                </div>
-            </div>
-
-            <!-- 채플 + 분류별 이수 진행도 -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-                <!-- 채플 카운트 (원형 그래프) -->
-                <div class="bg-white rounded-2xl border shadow-sm p-5 flex items-center justify-between h-full">
-                    <!-- 왼쪽: 제목 + 입력 -->
-                    <div class="flex flex-col gap-3">
-                        <div class="text-sm text-slate-500 font-bold">채플 카운트</div>
-                        <div class="flex items-center gap-2">
-                            <input id="chapel-input"
-                                   type="number"
-                                   min="0"
-                                   max="4"
-                                   value="0"
-                                   class="w-12 px-3 py-2 rounded-xl border text-sm text-center" />
-                            <span class="text-slate-500 text-sm">/ 4</span>
-                        </div>
-                    </div>
-
-                    <!-- 오른쪽: 원형 그래프 -->
-                    <div class="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36">
-                        <svg viewBox="0 0 36 36" class="w-full h-full">
-                            <!-- 배경 원 -->
-                            <circle cx="18" cy="18" r="15"
-                                    fill="none"
-                                    stroke-width="4"
-                                    class="text-slate-100"
-                                    stroke="currentColor"></circle>
-                            <!-- 진행 원 -->
-                            <circle id="chapel-circle"
-                                    cx="18" cy="18" r="15"
-                                    fill="none"
-                                    stroke-width="4"
-                                    stroke-linecap="round"
-                                    class="text-blue-500"
-                                    stroke="currentColor"
-                                    stroke-dasharray="94.2477796077"
-                                    stroke-dashoffset="94.2477796077"
-                                    transform="rotate(-90 18 18)"></circle>
-                        </svg>
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <span id="chapel-percent-center" class="text-sm font-semibold text-slate-700">0%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 분류별 이수 진행도 (기본전공 / 심화전공 / 3000단위 이상) -->
-                <div class="bg-white rounded-2xl border shadow-sm p-5 lg:col-span-2 h-full flex flex-col">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="text-sm text-slate-500 font-bold">분류별 이수 진행도</div>
-                        <button id="go-calculator-from-credits"
-                                class="text-xs text-blue-600 hover:underline">
-                            자세히 보기
-                        </button>
-                    </div>
-
-                    <!-- 기본전공 -->
-                    <div class="mb-4">
-                        <div class="flex justify-between text-sm">
-                            <span class="font-medium text-slate-700">기본전공</span>
-                            <span id="major-basic-text" class="tabular-nums text-slate-700">0 / 36</span>
-                        </div>
-                        <div class="flex items-center gap-3 mt-2">
-                            <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                <div id="major-basic-bar"
-                                     class="h-full bg-gradient-to-r from-blue-200 via-blue-500 to-blue-800"
-                                     style="width:0%"></div>
-                            </div>
-                            <div id="major-basic-percent"
-                                 class="w-10 text-right text-xs font-semibold text-slate-700">0%</div>
-                        </div>
-                    </div>
-
-                    <!-- 심화전공 -->
-                    <div class="mb-4">
-                        <div class="flex justify-between text-sm">
-                            <span class="font-medium text-slate-700">심화전공</span>
-                            <span id="major-deep-text" class="tabular-nums text-slate-700">0 / 36</span>
-                        </div>
-                        <div class="flex items-center gap-3 mt-2">
-                            <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                <div id="major-deep-bar"
-                                     class="h-full bg-gradient-to-r from-blue-200 via-blue-500 to-blue-800"
-                                     style="width:0%"></div>
-                            </div>
-                            <div id="major-deep-percent"
-                                 class="w-10 text-right text-xs font-semibold text-slate-700">0%</div>
-                        </div>
-                    </div>
-
-                    <!-- 3000단위 이상 -->
-                    <div>
-                        <div class="flex justify-between text-sm">
-                            <span class="font-medium text-slate-700">3000단위 이상</span>
-                            <span id="level300-text" class="tabular-nums text-slate-700">0 / 45</span>
-                        </div>
-                        <div class="flex items-center gap-3 mt-2">
-                            <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                <div id="level300-bar"
-                                     class="h-full bg-gradient-to-r from-blue-200 via-blue-500 to-blue-800"
-                                     style="width:0%"></div>
-                            </div>
-                            <div id="level300-percent"
-                                 class="w-10 text-right text-xs font-semibold text-slate-700">0%</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 트랙별 과목 추천 (디자인 그대로, 데이터 하드코딩) -->
-            <div class="bg-white rounded-2xl border shadow-sm p-5">
-                <div class="mb-4">
-                    <div class="text-sm text-slate-500 mb-1 font-bold">트랙별 과목 추천</div>
-                    <div class="flex items-center gap-2">
-                        <div class="text-lg font-semibold">트랙</div>
-                        <!-- 트랙 드롭다운 -->
-                        <div class="relative text-xs">
-                            <button id="track-dropdown-button"
-                                    type="button"
-                                    class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm">
-                                <span id="track-dropdown-label">AI빅데이터</span>
-                                <svg class="w-3 h-3" viewBox="0 0 12 12" aria-hidden="true">
-                                    <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5"
-                                          fill="none" stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                            </button>
-
-                            <div id="track-dropdown-menu"
-                                 class="absolute left-0 mt-2 w-40 bg-white border border-slate-200 rounded-xl shadow-lg py-1 text-xs text-slate-700 hidden z-10">
-                                <button type="button" class="block w-full text-left px-4 py-1.5 hover:bg-blue-50" data-track="AI빅데이터">
-                                    AI빅데이터
-                                </button>
-                                <button type="button" class="block w-full text-left px-4 py-1.5 hover:bg-blue-50" data-track="AI미디어">
-                                    AI미디어
-                                </button>
-                                <button type="button" class="block w-full text-left px-4 py-1.5 hover:bg-blue-50" data-track="AI계산과학">
-                                    AI계산과학
-                                </button>
-                                <button type="button" class="block w-full text-left px-4 py-1.5 hover:bg-blue-50" data-track="스마트IoT">
-                                    스마트IoT
-                                </button>
-                                <button type="button" class="block w-full text-left px-4 py-1.5 hover:bg-blue-50" data-track="정보보안">
-                                    정보보안
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-between mb-2">
-                    <div class="text-sm text-slate-500">추천 과목 리스트</div>
-                    <button id="track-more-button" class="text-xs text-blue-600 hover:underline">
-                        자세히 보기
-                    </button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full text-sm table-fixed">
-                        <colgroup>
-                            <col style="width:20%">
-                            <col style="width:20%">
-                            <col style="width:50%">
-                            <col style="width:10%">
-                        </colgroup>
-                        <thead>
-                            <tr class="text-left text-slate-500 border-b">
-                                <th class="py-2 pr-2">분류</th>
-                                <th class="py-2 pr-2">학정번호</th>
-                                <th class="py-2 pr-2">과목명</th>
-                                <th class="py-2 pr-2">학점</th>
-                            </tr>
-                        </thead>
-                        <tbody id="track-course-tbody">
-                            <!-- JS에서 렌더링 -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 수강 과목 리스트 (최근 3개를 API로 불러오기) -->
-            <div class="bg-white rounded-2xl border shadow-sm p-5">
-                <div class="flex items-center justify-between">
-                    <div class="text-sm text-slate-500 font-bold">수강 과목 리스트</div>
-                    <button id="go-calculator-from-course-list"
-                            class="text-xs text-blue-600 hover:underline">
-                        자세히 보기
-                    </button>
-                </div>
-                <div class="overflow-x-auto mt-3">
-                    <table class="min-w-full text-sm">
-                        <thead>
-                            <tr class="text-left text-slate-500 border-b">
-                                <th class="py-2 pr-4">과목명</th>
-                                <th class="py-2 pr-4">분류</th>
-                                <th class="py-2 pr-4">학점</th>
-                            </tr>
-                        </thead>
-                        <tbody id="course-list-body">
-                            <!-- /api/curriculum/taken-courses/ 에서 최근 3개 렌더링 -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-        </section>
-
-        <!-- 오른쪽 사이드 -->
-        <aside class="lg:col-span-3 flex flex-col space-y-6">
-
-            <!-- 프로필 -->
-            <div class="bg-white rounded-2xl border shadow-sm p-5 h-40 flex items-center">
-                <div>
-                    <div id="profile-name" class="text-2xl font-extrabold tracking-tight">로그인 필요</div>
-                    <div class="mt-1 text-base text-slate-600">
-                        <span id="profile-student-id">-</span>
-                        <span class="text-slate-400"> / </span>
-                        <span id="profile-year">-학년</span>
-                    </div>
-                    <div id="profile-major" class="mt-0.5 text-base text-slate-600"></div>
-                </div>
-            </div>
-
-            <!-- 시간표 (더보기 → timetable.html로 이동) -->
-            <div class="bg-white rounded-2xl border shadow-sm p-5 min-h-[420px]">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="text-sm text-slate-500 font-bold">시간표</div>
-                    <select id="semester-select"
-                            class="text-xs border border-slate-200 rounded-full px-3 py-1 text-slate-700 bg-white">
-                        <option value="2024-1">2024-1</option>
-                        <option value="2024-2">2024-2</option>
-                        <option value="2025-1">2025-1</option>
-                    </select>
-                </div>
-                <div class="relative overflow-x-auto">
-                    <table class="w-full text-sm text-center border-collapse table-fixed">
-                        <thead>
-                            <tr class="text-slate-600">
-                                <th class="w-12 py-2 border border-slate-200"></th>
-                                <th class="py-2 border border-slate-200">월</th>
-                                <th class="py-2 border border-slate-200">화</th>
-                                <th class="py-2 border border-slate-200">수</th>
-                                <th class="py-2 border border-slate-200">목</th>
-                                <th class="py-2 border border-slate-200">금</th>
-                            </tr>
-                        </thead>
-                        <tbody id="timetable-body">
-                            <!-- JS로 렌더링 -->
-                        </tbody>
-                    </table>
-
-                    <!-- 더보기 버튼 -->
-                    <div class="pointer-events-none absolute inset-x-0 bottom-4 flex justify-center">
-                        <button id="timetable-more-button"
-                                class="pointer-events-auto px-4 py-1.5 rounded-full border border-slate-200 bg-white/80 text-xs text-slate-700 shadow-sm hover:bg-blue-50">
-                            더보기
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 졸업 요구사항 메모 (localStorage) -->
-            <div class="bg-white rounded-2xl border shadow-sm p-5">
-                <div class="text-sm text-slate-500 mb-2 font-bold">졸업 요구사항 (메모)</div>
-                <textarea id="memo-text"
-                          class="w-full h-40 rounded-2xl border px-3 py-2 text-sm resize-none"
-                          placeholder="- 졸업작품 / 졸업논문 중 택1&#10;- 토익 800+"></textarea>
-            </div>
-
-        </aside>
-    </main>
-
-    <!-- 푸터 -->
-    <footer class="absolute bottom inset-x-0 bg-white border-t w-full">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-start justify-between">
-            <div class="flex items-start gap-4">
-                <div class="space-y-0.5 text-sm text-slate-600 leading-tight">
-                    <div>Inc: 강원특별자치도 원주시 흥업면 연세대길 1</div>
-                    <div>Instagram: @Y_CHECK.YONSEI</div>
-                    <div>Email: YCHECK2025@gmail.com</div>
-                </div>
-            </div>
-            <div class="flex items-center gap-6 text-sm text-slate-600 leading-tight" style="margin-top: 12px;">
-                <span class="hidden sm:block h-6 w-px bg-slate-200"></span>
-                <a href="#" class="text-xs text-black-600 hover:underline" id="open-makers-modal"><span>만든이들</span></a>
-                <a href="#" class="text-xs text-black-600 hover:underline" id="open-contact-modal"><span>문의하기</span></a>
-            </div>
-        </div>
-    </footer>
-
-    <!-- 만든이들 모달 -->
-    <div id="makers-modal-overlay"
-         class="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50 hidden">
-        <div class="bg-white rounded-2xl px-6 py-8 w-full max-w-md shadow-xl relative">
-            <button id="close-makers-modal"
-                    class="absolute top-3 right-3 text-slate-500 hover:text-slate-700 text-2xl font-bold"
-                    aria-label="닫기">
-                &times;
-            </button>
-            <h2 class="text-xl font-bold mb-4 text-center">만든이들</h2>
-            <div class="space-y-2 text-sm text-slate-700">
-                <div><strong>PM</strong> – CHOI</div>
-                <div><strong>Back-end</strong> – KIM / MA</div>
-                <div><strong>Front-end</strong> – YU / LEE</div>
-                <hr class="my-2">
-                <div class="text-xs text-slate-500">
-                    Y_CHECK 서비스는 위 팀원이 함께 만들었습니다.<br>
-                    궁금한 점은 언제든 문의해 주세요!
-                </div>
-            </div>
-        </div>
+  <!-- 공통 헤더 -->
+  <header class="bg-white border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="main.html" class="flex items-center gap-3">
+          <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="h-8 w-auto">
+        </a>
+        <div class="h-4 w-px bg-slate-200"></div>
+        <div class="text-sm text-slate-600">연세대학교 졸업요건계산기</div>
+      </div>
+      <nav class="hidden sm:flex items-center gap-6 text-sm text-slate-600">
+        <a href="calculator.html" class="hover:text-slate-900">계산기</a>
+        <a href="timetable.html" class="hover:text-slate-900">시간표</a>
+        <a href="sunbae.html" class="hover:text-slate-900">선배들의 발자취</a>
+        <a href="mypage.html" class="hover:text-slate-900">마이페이지</a>
+      </nav>
     </div>
+  </header>
 
-    <!-- 문의하기 모달 -->
-    <div id="contact-modal-overlay"
-         class="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50 hidden">
-        <div class="bg-white rounded-2xl px-6 py-8 w-full max-w-md shadow-xl relative">
-            <button id="close-contact-modal"
-                    class="absolute top-3 right-3 text-slate-500 hover:text-slate-700 text-2xl font-bold"
-                    aria-label="닫기">
-                &times;
-            </button>
-            <h2 class="text-xl font-bold mb-4 text-center">문의하기</h2>
+  <!-- 메인 대시보드 -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-            <form id="contact-form" class="space-y-4">
-                <div>
-                    <label for="inquiry-type" class="block text-sm font-medium text-slate-700 mb-1">문의 종류</label>
-                    <select id="inquiry-type" name="inquiry-type"
-                            class="w-full border rounded-xl px-3 py-2 text-sm">
-                        <option value="버그">버그 제보</option>
-                        <option value="개선">기능/UX 개선</option>
-                        <option value="문의">서비스 문의</option>
-                        <option value="기타">기타</option>
-                    </select>
-                </div>
+    <!-- 왼쪽(큰 영역) -->
+    <section class="lg:col-span-9 space-y-6">
 
-                <div id="custom-type-wrap" class="hidden">
-                    <label for="custom-type" class="block text-sm font-medium text-slate-700 mb-1">세부 종류</label>
-                    <input id="custom-type" name="custom-type" type="text"
-                           class="w-full border rounded-xl px-3 py-2 text-sm"
-                           placeholder="예: 졸업요건 계산식 관련 문의" />
-                </div>
+      <!-- 총 이수 진행도 (프로필과 높이 맞춤: h-40) -->
+      <div class="bg-white rounded-2xl border shadow-sm p-6 h-40 flex flex-col justify-between">
+        <div>
+          <div class="text-sm text-slate-500">총 이수 진행도</div>
+          <div class="mt-1 text-4xl font-extrabold tracking-tight">
+            123 <span class="text-slate-400">/</span> 133 <span class="text-slate-400">점</span>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center gap-3">
+          <div class="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-blue-200 via-blue-500 to-blue-800" style="width:92%"></div>
+          </div>
+          <div class="w-16 text-right text-lg font-bold text-emerald-600">92%</div>
+        </div>
+      </div>
 
-                <div>
-                    <label for="inquiry-content" class="block text-sm font-medium text-slate-700 mb-1">내용</label>
-                    <textarea id="inquiry-content" name="inquiry-content"
-                              class="w-full border rounded-xl px-3 py-2 text-sm resize-none h-32"
-                              placeholder="문의하실 내용을 작성해 주세요."></textarea>
-                </div>
+      <!-- 성적비율 + 이수학점 -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- 성적 비율 : 도넛 그래프 -->
+        <div class="bg-white rounded-2xl border shadow-sm p-5">
+          <div class="text-sm text-slate-500 mb-3">성적 비율</div>
+          <div class="grid grid-cols-2 gap-4 items-center">
+            <!-- 도넛 -->
+            <div class="flex justify-center">
+              <svg viewBox="0 0 120 120" class="w-32 h-32">
+                <!-- 바탕 원 -->
+                <circle cx="60" cy="60" r="40" fill="none" stroke="#e5edff" stroke-width="16" />
+                <!-- A+~A0 (파랑) -->
+                <circle
+                  cx="60" cy="60" r="40"
+                  fill="none"
+                  stroke="#2563eb"
+                  stroke-width="16"
+                  stroke-linecap="round"
+                  stroke-dasharray="118 999"
+                  stroke-dashoffset="-90"
+                  transform="rotate(-90 60 60)"
+                />
+                <!-- B+~B0 (핑크) -->
+                <circle
+                  cx="60" cy="60" r="40"
+                  fill="none"
+                  stroke="#f43f5e"
+                  stroke-width="16"
+                  stroke-linecap="round"
+                  stroke-dasharray="111 999"
+                  stroke-dashoffset="-208"
+                  transform="rotate(-90 60 60)"
+                />
+                <!-- C+~C0 (노랑) -->
+                <circle
+                  cx="60" cy="60" r="40"
+                  fill="none"
+                  stroke="#f59e0b"
+                  stroke-width="16"
+                  stroke-linecap="round"
+                  stroke-dasharray="18 999"
+                  stroke-dashoffset="-319"
+                  transform="rotate(-90 60 60)"
+                />
+                <!-- 가운데 흰색원으로 도넛 구멍 -->
+                <circle cx="60" cy="60" r="24" fill="white" />
+              </svg>
+            </div>
+            <!-- 범례 -->
+            <ul class="text-sm space-y-1">
+              <li class="flex items-center gap-2">
+                <span class="inline-block w-3 h-3 rounded-full" style="background:#2563eb"></span>
+                <span>A+~A0</span><span class="ml-auto text-slate-500">47%</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="inline-block w-3 h-3 rounded-full" style="background:#f43f5e"></span>
+                <span>B+~B0</span><span class="ml-auto text-slate-500">44%</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="inline-block w-3 h-3 rounded-full" style="background:#f59e0b"></span>
+                <span>C+~C0</span><span class="ml-auto text-slate-500">7%</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="inline-block w-3 h-3 rounded-full" style="background:#10b981"></span>
+                <span>D+~D0</span><span class="ml-auto text-slate-500">0%</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="inline-block w-3 h-3 rounded-full" style="background:#64748b"></span>
+                <span>F</span><span class="ml-auto text-slate-500">0%</span>
+              </li>
+            </ul>
+          </div>
+        </div>
 
-                <button type="submit"
-                        class="w-full bg-blue-600 text-white text-sm font-semibold py-2 rounded-xl hover:bg-blue-700">
-                    보내기
-                </button>
-            </form>
+        <!-- 이수 학점(분류별) -->
+        <div class="bg-white rounded-2xl border shadow-sm p-5 lg:col-span-2">
+          <div class="text-sm text-slate-500 mb-3">이수 학점 (분류별)</div>
 
-            <div id="contact-success" class="hidden text-center text-sm text-emerald-600 mt-4">
-                문의가 성공적으로 전송되었습니다. 감사합니다!
+          <!-- 교양 -->
+          <div class="mb-4">
+            <div class="flex justify-between text-sm">
+              <span class="font-medium text-slate-700">교양</span>
+              <span class="tabular-nums text-slate-700">52 / 52</span>
+            </div>
+            <div class="flex items-center gap-3 mt-2">
+              <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-blue-200 via-blue-500 to-blue-800" style="width:100%"></div>
+              </div>
+              <div class="w-10 text-right text-xs font-semibold text-slate-700">100%</div>
+            </div>
+          </div>
+
+          <!-- 전공필수 -->
+          <div class="mb-4">
+            <div class="flex justify-between text-sm">
+              <span class="font-medium text-slate-700">전공필수</span>
+              <span class="tabular-nums text-slate-700">56 / 65</span>
+            </div>
+            <div class="flex items-center gap-3 mt-2">
+              <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-blue-200 via-blue-500 to-blue-800" style="width:86%"></div>
+              </div>
+              <div class="w-10 text-right text-xs font-semibold text-slate-700">86%</div>
+            </div>
+          </div>
+
+          <!-- 전공선택 -->
+          <div>
+            <div class="flex justify-between text-sm">
+              <span class="font-medium text-slate-700">전공선택</span>
+              <span class="tabular-nums text-slate-700">15 / 16</span>
+            </div>
+            <div class="flex items-center gap-3 mt-2">
+              <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-blue-200 via-blue-500 to-blue-800" style="width:94%"></div>
+              </div>
+              <div class="w-10 text-right text-xs font-semibold text-slate-700">94%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 트랙 추천 + 추천 이수과목 리스트 -->
+      <div class="bg-white rounded-2xl border shadow-sm p-5">
+        <div class="text-sm text-slate-500 mb-1">트랙 추천</div>
+        <div class="text-lg font-semibold">
+          추천 트랙: <span class="text-emerald-600">AI 트랙</span>
+        </div>
+        <div class="mt-1 text-sm text-slate-600 mb-4">
+          연관도 점수: 1 — 관련 과목을 더 들으면 정확도가 높아집니다.
+        </div>
+
+        <!-- 추천 이수과목 리스트 -->
+        <div class="flex items-center justify-between mb-2">
+          <div class="text-sm text-slate-500">추천 이수과목 리스트</div>
+          <button class="text-xs text-blue-600 hover:underline">자세히 보기</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="text-left text-slate-500 border-b">
+                <th class="py-2 pr-4">우선순위</th>
+                <th class="py-2 pr-4">과목명</th>
+                <th class="py-2 pr-4">분류</th>
+                <th class="py-2 pr-4">학점</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b">
+                <td class="py-2 pr-4">1</td>
+                <td class="py-2 pr-4">기계학습</td>
+                <td class="py-2 pr-4">전선</td>
+                <td class="py-2 pr-4">3</td>
+              </tr>
+              <tr class="border-b">
+                <td class="py-2 pr-4">2</td>
+                <td class="py-2 pr-4">데이터베이스</td>
+                <td class="py-2 pr-4">전필</td>
+                <td class="py-2 pr-4">3</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4">3</td>
+                <td class="py-2 pr-4">확률과통계</td>
+                <td class="py-2 pr-4">MSC</td>
+                <td class="py-2 pr-4">3</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 수강 과목 리스트 -->
+      <div class="bg-white rounded-2xl border shadow-sm p-5">
+        <div class="flex items-center justify-between">
+          <div class="text-sm text-slate-500">수강 과목 리스트</div>
+        </div>
+        <div class="overflow-x-auto mt-3">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="text-left text-slate-500 border-b">
+                <th class="py-2 pr-4">과목명</th>
+                <th class="py-2 pr-4">분류</th>
+                <th class="py-2 pr-4">학점</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b">
+                <td class="py-2 pr-4">자료구조</td>
+                <td class="py-2 pr-4">전필</td>
+                <td class="py-2 pr-4">3</td>
+              </tr>
+              <tr class="border-b">
+                <td class="py-2 pr-4">인공지능개론</td>
+                <td class="py-2 pr-4">전선</td>
+                <td class="py-2 pr-4">3</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4">운영체제</td>
+                <td class="py-2 pr-4">전필</td>
+                <td class="py-2 pr-4">3</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 오른쪽 사이드 -->
+    <aside class="lg:col-span-3 flex flex-col space-y-6">
+
+   <!-- 프로필 (총 이수 진행도와 높이 동일) -->
+<div class="bg-white rounded-2xl border shadow-sm p-5 h-40 flex flex-col justify-between">
+  <div class="text-right text-xs text-slate-400">베타</div>
+  <div>
+    <!-- 이름 -->
+    <div id="profile-name" class="text-lg font-semibold">김연세님</div>
+    <!-- 학번 / 학기 -->
+    <div id="profile-semester" class="text-sm text-slate-600">20220000 / 2학년</div>
+    <!-- 학과 (지금은 백엔드에 없으니까 일단 고정으로 둬도 됨) -->
+    <div id="profile-major" class="text-sm text-slate-600">소프트웨어학부</div>
+  </div>
+</div>
+
+        <!-- 시간표 (세로 길이 줄임) -->
+        <div class="bg-white rounded-2xl border shadow-sm p-5 min-h-[420px]">
+            <div class="flex items-center justify-between mb-1">
+                <div class="text-sm text-slate-500">시간표</div>
+                <!-- 🔽 메인 시간표용 학기 선택 드롭다운 -->
+                <select
+                        id="main-timetable-semester-select"
+                        class="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white"
+                >
+                    <option value="">학기 선택</option>
+                </select>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm text-center border-collapse">
+                    <thead>
+                    <tr class="text-slate-600">
+                        <th class="w-16 py-2 border border-slate-200"></th>
+                        <th class="py-2 border border-slate-200">월</th>
+                        <th class="py-2 border border-slate-200">화</th>
+                        <th class="py-2 border border-slate-200">수</th>
+                        <th class="py-2 border border-slate-200">목</th>
+                        <th class="py-2 border border-slate-200">금</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- 아래 row 들은 "표시는 9~5시"지만, period 는 1~9로 매핑 -->
+                    <tr>
+                        <td class="py-2 border border-slate-200 text-slate-500">9</td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="MON" data-period="1"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="TUE" data-period="1"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="WED" data-period="1"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="THU" data-period="1"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="FRI" data-period="1"></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 border border-slate-200 text-slate-500">10</td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="MON" data-period="2"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="TUE" data-period="2"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="WED" data-period="2"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="THU" data-period="2"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="FRI" data-period="2"></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 border border-slate-200 text-slate-500">11</td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="MON" data-period="3"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="TUE" data-period="3"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="WED" data-period="3"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="THU" data-period="3"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="FRI" data-period="3"></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 border border-slate-200 text-slate-500">12</td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="MON" data-period="4"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="TUE" data-period="4"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="WED" data-period="4"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="THU" data-period="4"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="FRI" data-period="4"></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 border border-slate-200 text-slate-500">1</td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="MON" data-period="5"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="TUE" data-period="5"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="WED" data-period="5"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="THU" data-period="5"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="FRI" data-period="5"></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 border border-slate-200 text-slate-500">2</td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="MON" data-period="6"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="TUE" data-period="6"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="WED" data-period="6"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="THU" data-period="6"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="FRI" data-period="6"></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 border border-slate-200 text-slate-500">3</td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="MON" data-period="7"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="TUE" data-period="7"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="WED" data-period="7"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="THU" data-period="7"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="FRI" data-period="7"></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 border border-slate-200 text-slate-500">4</td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="MON" data-period="8"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="TUE" data-period="8"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="WED" data-period="8"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="THU" data-period="8"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="FRI" data-period="8"></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 border border-slate-200 text-slate-500">5</td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="MON" data-period="9"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="TUE" data-period="9"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="WED" data-period="9"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="THU" data-period="9"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="FRI" data-period="9"></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
+
+
+
+
+        <!-- 채플 카운트 -->
+      <div class="bg-white rounded-2xl border shadow-sm p-5">
+        <div class="text-sm text-slate-500 mb-3">채플 카운트</div>
+        <div class="flex items-center gap-2">
+          <input
+            id="chapel-input"
+            type="number"
+            min="0"
+            max="4"
+            value="0"
+            class="w-20 px-3 py-2 rounded-xl border text-sm text-center"
+          />
+          <span class="text-slate-500 text-sm">/ 4</span>
+          <span id="chapel-percent" class="ml-auto text-sm font-semibold text-emerald-600">0%</span>
+        </div>
+        <div class="mt-3 h-2 bg-slate-100 rounded-full overflow-hidden">
+          <div
+            id="chapel-bar"
+            class="h-full bg-gradient-to-r from-blue-200 via-blue-500 to-blue-800"
+            style="width:0%"
+          ></div>
+        </div>
+      </div>
+
+      <!-- 졸업 요구사항 메모 -->
+      <div class="bg-white rounded-2xl border shadow-sm p-5">
+        <div class="text-sm text-slate-500 mb-2">졸업 요구사항 (메모)</div>
+        <textarea
+          id="memo-text"
+          class="w-full h-40 rounded-2xl border px-3 py-2 text-sm resize-none"
+          placeholder="- 졸업작품 / 졸업논문 중 택1&#10;- 토익 800+"
+        >- 졸업작품 / 졸업논문 중 택1
+- 토익 800+</textarea>
+      </div>
+
+    </aside>
+  </main>
+
+  <!-- 공통 푸터 (고정) -->
+  <footer class="fixed bottom-0 inset-x-0 bg-white border-t">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-start justify-between">
+      <div class="flex items-start gap-4">
+        <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="h-6 w-auto" />
+        <div class="space-y-1 text-sm text-slate-600 leading-relaxed">
+          <div>강원특별자치도 원주시 흥업면 연세대길 1 창조관</div>
+          <div>TEL) 033-123-4567</div>
+          <div>EMAIL: YCHECK@gmail.com</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-6 text-sm text-slate-600">
+        <span class="hidden sm:block h-6 w-px bg-slate-200"></span>
+        <span>만든이들</span>
+        <span>문의하기</span>
+      </div>
     </div>
+  </footer>
 
-    <!-- 모달 스크립트 -->
-    <script>
-        const openMakersBtn = document.getElementById('open-makers-modal');
-        const makersModal = document.getElementById('makers-modal-overlay');
-        const closeMakersBtn = document.getElementById('close-makers-modal');
-        if (openMakersBtn && makersModal && closeMakersBtn) {
-            openMakersBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                makersModal.classList.remove('hidden');
-            });
-            closeMakersBtn.addEventListener('click', function () {
-                makersModal.classList.add('hidden');
-            });
-            makersModal.addEventListener('click', function (e) {
-                if (e.target === makersModal) {
-                    makersModal.classList.add('hidden');
-                }
-            });
-            document.addEventListener('keydown', function (e) {
-                if (!makersModal.classList.contains('hidden') && e.key === 'Escape') {
-                    makersModal.classList.add('hidden');
-                }
-            });
+  <!-- 채플 / 메모 로컬 저장 스크립트 -->
+  <script>
+    const STATE_KEY = "ycheck-main-state-v1";
+
+    const chapelInput = document.getElementById("chapel-input");
+    const chapelBar = document.getElementById("chapel-bar");
+    const chapelPercent = document.getElementById("chapel-percent");
+    const memoText = document.getElementById("memo-text");
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STATE_KEY);
+        if (!raw) return;
+        const state = JSON.parse(raw);
+        if (typeof state.chapel === "number" && chapelInput) {
+          chapelInput.value = state.chapel;
         }
-
-        const openContactBtn = document.getElementById('open-contact-modal');
-        const contactModal = document.getElementById('contact-modal-overlay');
-        const closeContactBtn = document.getElementById('close-contact-modal');
-        if (openContactBtn && contactModal && closeContactBtn) {
-            openContactBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                contactModal.classList.remove('hidden');
-            });
-            closeContactBtn.addEventListener('click', function () {
-                contactModal.classList.add('hidden');
-            });
-            contactModal.addEventListener('click', function (e) {
-                if (e.target === contactModal) {
-                    contactModal.classList.add('hidden');
-                }
-            });
-            document.addEventListener('keydown', function (e) {
-                if (!contactModal.classList.contains('hidden') && e.key === 'Escape') {
-                    contactModal.classList.add('hidden');
-                }
-            });
-
-            const inquiryType = document.getElementById('inquiry-type');
-            const customTypeWrap = document.getElementById('custom-type-wrap');
-            const customTypeInput = document.getElementById('custom-type');
-            if (inquiryType && customTypeWrap && customTypeInput) {
-                inquiryType.addEventListener('change', function () {
-                    if (this.value === '기타') {
-                        customTypeWrap.classList.remove('hidden');
-                        customTypeInput.setAttribute('required', 'required');
-                    } else {
-                        customTypeWrap.classList.add('hidden');
-                        customTypeInput.value = '';
-                        customTypeInput.removeAttribute('required');
-                    }
-                });
-            }
-
-            const contactForm = document.getElementById('contact-form');
-            const contactSuccess = document.getElementById('contact-success');
-            if (contactForm && contactSuccess) {
-                contactForm.addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    contactForm.classList.add('hidden');
-                    contactSuccess.classList.remove('hidden');
-                    setTimeout(() => {
-                        contactModal.classList.add('hidden');
-                        contactForm.reset();
-                        contactForm.classList.remove('hidden');
-                        customTypeWrap.classList.add('hidden');
-                        contactSuccess.classList.add('hidden');
-                    }, 1800);
-                });
-            }
+        if (typeof state.memo === "string" && memoText) {
+          memoText.value = state.memo;
         }
-    </script>
-
-    <!-- 채플/메모 로컬 저장 -->
-    <script>
-        const STATE_KEY = "ycheck-main-state-v1";
-
-        const chapelInput = document.getElementById("chapel-input");
-        const chapelCircle = document.getElementById("chapel-circle");
-        const chapelPercentCenter = document.getElementById("chapel-percent-center");
-        const memoText = document.getElementById("memo-text");
-
-        const CHAPEL_CIRC = 94.2477796077; // 원 둘레(2πr, r=15)
-
-        function loadState() {
-            try {
-                const raw = localStorage.getItem(STATE_KEY);
-                if (!raw) return;
-                const state = JSON.parse(raw);
-                if (typeof state.chapel === "number" && chapelInput) {
-                    chapelInput.value = state.chapel;
-                }
-                if (typeof state.memo === "string" && memoText) {
-                    memoText.value = state.memo;
-                }
-            } catch (e) {
-                console.warn("state load error", e);
-            }
-        }
-
-        function saveState() {
-            try {
-                const data = {
-                    chapel: chapelInput ? Number(chapelInput.value || 0) : 0,
-                    memo: memoText ? memoText.value : ""
-                };
-                localStorage.setItem(STATE_KEY, JSON.stringify(data));
-            } catch (e) {
-                console.warn("state save error", e);
-            }
-        }
-
-        function updateChapelUI() {
-            if (!chapelInput || !chapelCircle) return;
-            const max = 4;
-            let v = Number(chapelInput.value || 0);
-            if (!Number.isFinite(v)) v = 0;
-            if (v < 0) v = 0;
-            if (v > max) v = max;
-            chapelInput.value = v;
-            const pct = Math.round((v / max) * 100);
-
-            // 중앙 텍스트 업데이트
-            if (chapelPercentCenter) {
-                chapelPercentCenter.textContent = pct + "%";
-            }
-
-            // 원형 그래프 stroke 업데이트
-            const offset = CHAPEL_CIRC * (1 - pct / 100);
-            chapelCircle.style.strokeDasharray = CHAPEL_CIRC;
-            chapelCircle.style.strokeDashoffset = offset;
-        }
-    </script>
-
-    <!-- API 연동: 프로필, 학점 요약, 최근 과목 리스트 -->
-    <script>
-        async function loadProfile() {
-            try {
-                const resp = await fetch("/api/login-status/", {
-                    method: "GET",
-                    credentials: "include"
-                });
-                if (!resp.ok) return;
-
-                const data = await resp.json();
-                if (!data.logged_in) return;
-
-                const p = data.profile || {};
-                const nameEl = document.getElementById("profile-name");
-                const sidEl = document.getElementById("profile-student-id");
-                const yearEl = document.getElementById("profile-year");
-                const majorEl = document.getElementById("profile-major");
-
-                if (nameEl) nameEl.textContent = (p.real_name || "학생") + "님";
-                if (sidEl) sidEl.textContent = p.student_id || "-";
-                if (yearEl) yearEl.textContent = p.current_semester
-                    ? p.current_semester.replace("-", "학년 ") + "학기"
-                    : "-학년";
-                if (majorEl) majorEl.textContent = p.major_department || "";
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        async function loadCreditSummary() {
-            try {
-                const resp = await fetch("/api/curriculum/credit-summary/", {
-                    method: "GET",
-                    credentials: "include",
-                });
-                if (!resp.ok) return;
-
-                const s = await resp.json();
-
-                const requiredTotal = 135;
-                const pct = Math.min(100, Math.round((s.total_credits / requiredTotal) * 100));
-
-                const totalTextEl = document.getElementById("total-progress-text");
-                const totalBarEl = document.getElementById("total-progress-bar");
-                const totalPctEl = document.getElementById("total-progress-percent");
-
-                if (totalTextEl) totalTextEl.textContent = `${s.total_credits} / ${requiredTotal} 점`;
-                if (totalBarEl) totalBarEl.style.width = pct + "%";
-                if (totalPctEl) totalPctEl.textContent = pct + "%";
-
-                // 기본전공 / 심화전공 / 3000단위 이상
-                updateCategory("major-basic", s.MAJOR_BASIC || 0, 36);
-                updateCategory("major-deep", s.MAJOR_DEEP || 0, 36);
-                updateCategory("level300", s.LEVEL300 || 0, 45);
-
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        function updateCategory(prefix, earned, required) {
-            const pct = required > 0
-                ? Math.min(100, Math.round((earned / required) * 100))
-                : 0;
-
-            const textEl = document.getElementById(`${prefix}-text`);
-            const barEl = document.getElementById(`${prefix}-bar`);
-            const pctEl = document.getElementById(`${prefix}-percent`);
-
-            if (textEl) textEl.textContent = `${earned} / ${required}`;
-            if (barEl) barEl.style.width = pct + "%";
-            if (pctEl) pctEl.textContent = pct + "%";
-        }
-
-        function convertCategory(cat) {
-            const map = {
-                "GE_BASIC": "교양기초",
-                "GE_UNIV_REQUIRED": "대학교양필수",
-
-                "GE_UNIV_ELECTIVE_1": "교양선택 1영역",
-                "GE_UNIV_ELECTIVE_2": "교양선택 2영역",
-                "GE_UNIV_ELECTIVE_3": "교양선택 3영역",
-                "GE_UNIV_ELECTIVE_4": "교양선택 4영역",
-                "GE_UNIV_ELECTIVE_5": "교양선택 5영역",
-                "GE_UNIV_ELECTIVE_6": "교양선택 6영역",
-                "GE_UNIV_ELECTIVE_9": "교양선택 9영역",
-
-                "EXPLORATION": "전공탐색",
-                "MAJOR_BASIC": "기본전공",
-                "MAJOR_DEEP": "심화전공",
-                "LEVEL300": "3000단위 이상"
-            };
-            return map[cat] || cat;
-        }
-
-        async function loadCourseList() {
-            try {
-                const resp = await fetch("/api/curriculum/taken-courses/", {
-                    method: "GET",
-                    credentials: "include",
-                });
-                if (!resp.ok) return;
-
-                const courses = await resp.json();
-
-                // id 기준 최신순 정렬 (백엔드에서 id 내려준다고 가정)
-                const recent = courses
-                    .slice()
-                    .sort((a, b) => (b.id || 0) - (a.id || 0))
-                    .slice(0, 3);
-
-                const tbody = document.getElementById("course-list-body");
-                if (!tbody) return;
-                tbody.innerHTML = "";
-
-                recent.forEach(c => {
-                    const tr = document.createElement("tr");
-                    tr.className = "border-b";
-
-                    tr.innerHTML = `
-                        <td class="py-2 pr-4">${c.name}</td>
-                        <td class="py-2 pr-4">${convertCategory(c.category)}</td>
-                        <td class="py-2 pr-4">${c.credits}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    </script>
-
-    <!-- 메인 대시보드 상호작용 (시간표, 트랙, 내비게이션 + state & API 호출) -->
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            // localStorage 상태 로드 + 채플 UI 갱신
-            loadState();
-            updateChapelUI();
-
-            if (chapelInput) {
-                chapelInput.addEventListener("input", () => {
-                    updateChapelUI();
-                    saveState();
-                });
-            }
-            if (memoText) {
-                memoText.addEventListener("input", () => {
-                    saveState();
-                });
-            }
-
-            // 프로필, 학점, 최근 과목 데이터 로딩
-            loadProfile();
-            loadCreditSummary();
-            loadCourseList();
-
-            // 시간표
-            const semesterSelect = document.getElementById('semester-select');
-            const timetableBody = document.getElementById('timetable-body');
-            const DAYS = ['월', '화', '수', '목', '금'];
-            const TIMES = [9, 10, 11, 12, 13, 14];
-
-            const TIMETABLE_DATA = {
-                '2024-1': [
-                    { day: '월', time: 9, title: '자료구조' },
-                    { day: '수', time: 11, title: '확률과통계' },
-                ],
-                '2024-2': [
-                    { day: '화', time: 10, title: '운영체제' },
-                ],
-                '2025-1': []
-            };
-
-            function renderTimetable(semester) {
-                if (!timetableBody) return;
-                const rowsData = TIMETABLE_DATA[semester] || [];
-                timetableBody.innerHTML = '';
-
-                TIMES.forEach(time => {
-                    const tr = document.createElement('tr');
-
-                    const timeTd = document.createElement('td');
-                    timeTd.className = 'h-20 border border-slate-200 text-slate-500 text-xs align-middle';
-                    timeTd.textContent = time;
-                    tr.appendChild(timeTd);
-
-                    DAYS.forEach(day => {
-                        const td = document.createElement('td');
-                        td.className = 'h-20 border border-slate-200 align-middle text-[11px] leading-tight px-2 py-1 break-words';
-                        const cellCourse = rowsData.find(item => item.day === day && item.time === time);
-                        if (cellCourse) {
-                            td.textContent = cellCourse.title;
-                            td.classList.add('bg-blue-50', 'text-slate-700', 'font-medium');
-                        }
-                        tr.appendChild(td);
-                    });
-
-                    if (time >= 13) {
-                        tr.classList.add('filter', 'blur-sm');
-                    }
-
-                    timetableBody.appendChild(tr);
-                });
-            }
-
-            if (semesterSelect && timetableBody) {
-                renderTimetable(semesterSelect.value);
-                semesterSelect.addEventListener('change', () => {
-                    renderTimetable(semesterSelect.value);
-                });
-            }
-
-            // 트랙 추천 과목 하드코딩 데이터
-            const TRACK_COURSES = {
-                'AI빅데이터': [
-                    { category: '전선', code: 'SWE3006', name: 'AI수학', credit: 3 },
-                    { category: '전필', code: 'SWE3016', name: '인공지능', credit: 3 },
-                    { category: '전필', code: 'SWE3017', name: '데이터베이스', credit: 3 },
-                    { category: '전선', code: 'SWE3018', name: '데이터마이닝', credit: 3 },
-                    { category: '전선', code: 'SWE4002', name: '웹서비스응용', credit: 3 },
-                    { category: '전선', code: 'SWE4003', name: '기계학습개론', credit: 3 },
-                    { category: '전선', code: 'SWE4004', name: '빅데이터처리', credit: 3 },
-                    { category: '전선', code: 'SWE4015', name: '자연어처리', credit: 3 },
-                    { category: '전선', code: 'SWE4016', name: '바이오컴퓨팅', credit: 3 },
-                    { category: '전선', code: 'SWE4017', name: '정보검색', credit: 3 },
-                ],
-                'AI미디어': [
-                    { category: '전선', code: 'SWE2005', name: '회로이론', credit: 3 },
-                    { category: '전선', code: 'SWE2011', name: '신호및시스템', credit: 3 },
-                    { category: '전선', code: 'SWE3006', name: 'AI수학', credit: 3 },
-                    { category: '전선', code: 'SWE3011', name: '영상처리', credit: 3 },
-                    { category: '전필', code: 'SWE3016', name: '인공지능', credit: 3 },
-                    { category: '전필', code: 'SWE3019', name: '디지털신호처리', credit: 3 },
-                    { category: '전선', code: 'SWE4003', name: '기계학습개론', credit: 3 },
-                    { category: '전선', code: 'SWE4005', name: '지능형멀티미디어시스템', credit: 3 },
-                    { category: '전선', code: 'SWE4018', name: '스마트미디어통신', credit: 3 },
-                ],
-                'AI계산과학': [
-                    { category: '전선', code: 'SWE2012', name: '선형대수입문', credit: 3 },
-                    { category: '전선', code: 'SWE3005', name: '선형대수활용', credit: 3 },
-                    { category: '전선', code: 'SWE3006', name: 'AI수학', credit: 3 },
-                    { category: '전필', code: 'SWE3016', name: '인공지능', credit: 3 },
-                    { category: '전필', code: 'SWE3020', name: '수치해석과최적화', credit: 3 },
-                    { category: '전선', code: 'SWE3021', name: '그래프이론과활용', credit: 3 },
-                    { category: '전선', code: 'SWE4003', name: '기계학습개론', credit: 3 },
-                    { category: '전선', code: 'SWE4006', name: '수치편미분방정식', credit: 3 },
-                    { category: '전선', code: 'SWE4007', name: '로봇알고리즘', credit: 3 },
-                    { category: '전선', code: 'SWE4019', name: '모델링및시뮬레이션', credit: 3 },
-                    { category: '전선', code: 'SWE4020', name: '산업수학과역문제', credit: 3 },
-                ],
-                '스마트IoT': [
-                    { category: '전선', code: 'SWE3007', name: '마이크로프로세서', credit: 3 },
-                    { category: '전선', code: 'SWE3008', name: '통신시스템', credit: 3 },
-                    { category: '전선', code: 'SWE3012', name: '디지털통신', credit: 3 },
-                    { category: '전필', code: 'SWE3022', name: '임베디드시스템', credit: 3 },
-                    { category: '전필', code: 'SWE3023', name: '컴퓨터네트워크', credit: 3 },
-                    { category: '전선', code: 'SWE3024', name: '정보보안', credit: 3 },
-                    { category: '전선', code: 'SWE4008', name: '임베디드하드웨어설계', credit: 3 },
-                    { category: '전선', code: 'SWE4009', name: '데이터통신', credit: 3 },
-                    { category: '전선', code: 'SWE4021', name: 'IoT응용프로그래밍', credit: 3 },
-                ],
-                '정보보안': [
-                    { category: '전필', code: 'SWE3009', name: '암호학', credit: 3 },
-                    { category: '전선', code: 'SWE3023', name: '컴퓨터네트워크', credit: 3 },
-                    { category: '전필', code: 'SWE3024', name: '정보보안', credit: 3 },
-                    { category: '전선', code: 'SWE4002', name: '웹서비스응용', credit: 3 },
-                    { category: '전선', code: 'SWE4009', name: '데이터통신', credit: 3 },
-                    { category: '전선', code: 'SWE4010', name: '컴퓨터보안', credit: 3 },
-                    { category: '전선', code: 'SWE4022', name: '정보보안응용', credit: 3 },
-                    { category: '전선', code: 'SWE4023', name: '디지털포렌식', credit: 3 },
-                ],
-            };
-
-            const trackDropdownButton = document.getElementById('track-dropdown-button');
-            const trackDropdownLabel = document.getElementById('track-dropdown-label');
-            const trackDropdownMenu = document.getElementById('track-dropdown-menu');
-            const trackOptionButtons = trackDropdownMenu ? Array.from(trackDropdownMenu.querySelectorAll('button[data-track]')) : [];
-            const trackTbody = document.getElementById('track-course-tbody');
-            const trackMoreBtn = document.getElementById('track-more-button');
-
-            let currentTrack = 'AI빅데이터';
-            let trackExpanded = false;
-
-            function renderTrackTable() {
-                if (!trackTbody) return;
-                const list = TRACK_COURSES[currentTrack] || [];
-                trackTbody.innerHTML = '';
-
-                const visibleList = trackExpanded ? list : list.slice(0, 3);
-
-                visibleList.forEach(item => {
-                    const tr = document.createElement('tr');
-                    tr.className = 'border-b last:border-0';
-
-                    const tdCategory = document.createElement('td');
-                    tdCategory.className = 'py-2 pr-2';
-                    tdCategory.textContent = item.category;
-
-                    const tdCode = document.createElement('td');
-                    tdCode.className = 'py-2 pr-2';
-                    tdCode.textContent = item.code;
-
-                    const tdName = document.createElement('td');
-                    tdName.className = 'py-2 pr-2';
-                    tdName.textContent = item.name;
-
-                    const tdCredit = document.createElement('td');
-                    tdCredit.className = 'py-2 pr-2';
-                    tdCredit.textContent = item.credit;
-
-                    tr.appendChild(tdCategory);
-                    tr.appendChild(tdCode);
-                    tr.appendChild(tdName);
-                    tr.appendChild(tdCredit);
-
-                    trackTbody.appendChild(tr);
-                });
-            }
-
-            function setTrack(track) {
-                currentTrack = track;
-                trackExpanded = false;
-                if (trackDropdownLabel) trackDropdownLabel.textContent = track;
-                renderTrackTable();
-                if (trackMoreBtn) trackMoreBtn.textContent = '자세히 보기';
-            }
-
-            function toggleTrackMenu(open) {
-                if (!trackDropdownMenu) return;
-                const isOpen = !trackDropdownMenu.classList.contains('hidden');
-                const willOpen = open !== undefined ? open : !isOpen;
-                if (willOpen) {
-                    trackDropdownMenu.classList.remove('hidden');
-                } else {
-                    trackDropdownMenu.classList.add('hidden');
-                }
-            }
-
-            if (trackDropdownButton && trackDropdownMenu) {
-                trackDropdownButton.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    toggleTrackMenu();
-                });
-            }
-
-            if (trackOptionButtons.length) {
-                trackOptionButtons.forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const track = btn.dataset.track;
-                        setTrack(track);
-                        toggleTrackMenu(false);
-                    });
-                });
-            }
-
-            document.addEventListener('click', (e) => {
-                if (trackDropdownMenu && !trackDropdownMenu.classList.contains('hidden')) {
-                    if (!trackDropdownMenu.contains(e.target) &&
-                        e.target !== trackDropdownButton &&
-                        !trackDropdownButton.contains(e.target)) {
-                        trackDropdownMenu.classList.add('hidden');
-                    }
-                }
-            });
-
-            if (trackTbody) {
-                setTrack(currentTrack);
-            }
-
-            if (trackMoreBtn) {
-                trackMoreBtn.addEventListener('click', () => {
-                    trackExpanded = !trackExpanded;
-                    renderTrackTable();
-                    trackMoreBtn.textContent = trackExpanded ? '접기' : '자세히 보기';
-                });
-            }
-
-            // 각종 이동 버튼
-            const goFromCourseListBtn = document.getElementById('go-calculator-from-course-list');
-            const goFromCreditsBtn = document.getElementById('go-calculator-from-credits');
-            const calculatorUrl = 'calculator.html';
-
-            if (goFromCourseListBtn) {
-                goFromCourseListBtn.addEventListener('click', () => {
-                    window.location.href = calculatorUrl;
-                });
-            }
-            if (goFromCreditsBtn) {
-                goFromCreditsBtn.addEventListener('click', () => {
-                    window.location.href = calculatorUrl;
-                });
-            }
-
-            const timetableMoreBtn = document.getElementById('timetable-more-button');
-            if (timetableMoreBtn) {
-                timetableMoreBtn.addEventListener('click', () => {
-                    window.location.href = 'timetable.html';
-                });
-            }
+      } catch (e) {
+        console.warn("state load error", e);
+      }
+    }
+
+    function saveState() {
+      try {
+        const data = {
+          chapel: chapelInput ? Number(chapelInput.value || 0) : 0,
+          memo: memoText ? memoText.value : ""
+        };
+        localStorage.setItem(STATE_KEY, JSON.stringify(data));
+      } catch (e) {
+        console.warn("state save error", e);
+      }
+    }
+
+    function updateChapelUI() {
+      if (!chapelInput || !chapelBar || !chapelPercent) return;
+      const max = 4;
+      let v = Number(chapelInput.value || 0);
+      if (!Number.isFinite(v)) v = 0;
+      if (v < 0) v = 0;
+      if (v > max) v = max;
+      chapelInput.value = v;
+      const pct = Math.round((v / max) * 100);
+      chapelBar.style.width = pct + "%";
+      chapelPercent.textContent = pct + "%";
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadState();
+      updateChapelUI();
+
+      if (chapelInput) {
+        chapelInput.addEventListener("input", () => {
+          updateChapelUI();
+          saveState();
         });
-    </script>
+      }
+      if (memoText) {
+        memoText.addEventListener("input", () => {
+          saveState();
+        });
+      }
+    });
+  </script>
+
+  <!-- 메인 페이지 – 시간표 축소판 + 학기 드롭다운 -->
+  <script>
+      const MAIN_TT_STORAGE_YEAR = "main_timetable_year";
+      const MAIN_TT_STORAGE_SEM = "main_timetable_semester";
+
+      const mainTtCells = document.querySelectorAll(".main-tt-cell");
+      const mainTtSemesterSelect = document.getElementById("main-timetable-semester-select");
+
+      function clearMainTimetable() {
+        mainTtCells.forEach((td) => {
+          td.innerHTML = "";
+        });
+      }
+
+      function formatSemesterLabel(year, semester) {
+        return `${year}년 ${semester}학기`;
+      }
+
+      async function fetchMainSemesters() {
+        try {
+          const res = await fetch("/api/timetable/semesters/", {
+            method: "GET",
+            credentials: "include",
+          });
+
+          if (!res.ok) {
+            console.error("메인 시간표: 학기 목록 불러오기 실패", res.status, res.statusText);
+            return [];
+          }
+
+          const data = await res.json();
+          if (Array.isArray(data)) return data;
+          if (data && Array.isArray(data.semesters)) return data.semesters;
+          return [];
+        } catch (err) {
+          console.error("메인 시간표: 학기 목록 로딩 중 오류", err);
+          return [];
+        }
+      }
+
+      async function fetchMainTimetable(year, semester) {
+        try {
+          const res = await fetch(`/api/timetable/?year=${year}&semester=${semester}`, {
+            method: "GET",
+            credentials: "include",
+          });
+
+          clearMainTimetable();
+
+          if (res.status === 404) {
+            console.log("메인 시간표: 해당 학기 시간표 없음");
+            return;
+          }
+
+          if (!res.ok) {
+            console.error("메인 시간표: 시간표 불러오기 실패", res.status, res.statusText);
+            return;
+          }
+
+          const data = await res.json();
+          const entries = Array.isArray(data) ? data : (data.timetable || []);
+
+          entries.forEach((item) => {
+            const selector = `.main-tt-cell[data-day="${item.day}"][data-period="${item.period}"]`;
+            const cell = document.querySelector(selector);
+            if (!cell) return;
+
+            const subject = item.subject || "";
+            cell.innerHTML = `<div class="text-[10px] sm:text-xs font-medium truncate">${subject}</div>`;
+          });
+
+          // 드롭다운 값 동기화 + 로컬 저장
+          if (mainTtSemesterSelect) {
+            mainTtSemesterSelect.value = `${year}-${semester}`;
+          }
+          localStorage.setItem(MAIN_TT_STORAGE_YEAR, String(year));
+          localStorage.setItem(MAIN_TT_STORAGE_SEM, String(semester));
+        } catch (err) {
+          console.error("메인 시간표: 시간표 로딩 중 오류", err);
+        }
+      }
+
+      async function initMainTimetable() {
+        const semesters = await fetchMainSemesters();
+        if (!semesters.length) {
+          clearMainTimetable();
+          if (mainTtSemesterSelect) {
+            mainTtSemesterSelect.innerHTML = '<option value="">학기 없음</option>';
+          }
+          return;
+        }
+
+        // 드롭다운 옵션 구성
+        if (mainTtSemesterSelect) {
+          mainTtSemesterSelect.innerHTML = "";
+          semesters.forEach((s) => {
+            const opt = document.createElement("option");
+            opt.value = `${s.year}-${s.semester}`;
+            opt.textContent = s.label || formatSemesterLabel(s.year, s.semester);
+            mainTtSemesterSelect.appendChild(opt);
+          });
+        }
+
+        // 1) localStorage 에 저장된 학기 우선
+        let initial = null;
+        const savedYearStr = localStorage.getItem(MAIN_TT_STORAGE_YEAR);
+        const savedSemStr = localStorage.getItem(MAIN_TT_STORAGE_SEM);
+        const savedYear = savedYearStr ? parseInt(savedYearStr, 10) : NaN;
+        const savedSem = savedSemStr ? parseInt(savedSemStr, 10) : NaN;
+
+        if (!Number.isNaN(savedYear) && !Number.isNaN(savedSem)) {
+          initial =
+            semesters.find(
+              (s) => s.year === savedYear && s.semester === savedSem
+            ) || null;
+        }
+
+        // 2) 없으면 가장 최근 학기 (쿼리셋이 -year, -semester 로 정렬되어 있다고 가정 → 첫 번째)
+        if (!initial) {
+          initial = semesters[0];
+        }
+
+        if (!initial) {
+          clearMainTimetable();
+          return;
+        }
+
+        await fetchMainTimetable(initial.year, initial.semester);
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        initMainTimetable();
+
+        // 드롭다운에서 학기 바꿀 때
+        if (mainTtSemesterSelect) {
+          mainTtSemesterSelect.addEventListener("change", (e) => {
+            const value = e.target.value;
+            if (!value) return;
+            const [y, s] = value.split("-");
+            const year = parseInt(y, 10);
+            const semester = parseInt(s, 10);
+            if (!Number.isNaN(year) && !Number.isNaN(semester)) {
+              fetchMainTimetable(year, semester);
+            }
+          });
+        }
+      });
+  </script>
+
+
+
+
+  <!-- ✅ 로그인 상태 확인 스크립트 (새로 추가) -->
+  <script>
+    async function applyLoginStatus() {
+      const nameEl = document.getElementById("profile-name");
+      const semesterEl = document.getElementById("profile-semester");
+
+      try {
+        const resp = await fetch("http://localhost:8000/api/login-status/", {
+          method: "GET",
+          credentials: "include", // 세션 쿠키 같이 보내기
+        });
+
+        if (!resp.ok) {
+          console.log("로그인 안 된 상태 (status:", resp.status, ")");
+          // 필요하면 여기서 login.html로 리다이렉트도 가능:
+          // window.location.href = "login.html";
+          return;
+        }
+
+        const data = await resp.json();
+        if (!data.logged_in) {
+          console.log("logged_in == false");
+          return;
+        }
+
+        // 이름 / 학번 / 학기 UI 반영
+        if (data.profile) {
+          if (nameEl && data.profile.real_name) {
+            nameEl.textContent = data.profile.real_name + "님";
+          }
+          if (semesterEl && data.profile.student_id) {
+            const sem = data.profile.current_semester || "";
+            semesterEl.textContent = data.profile.student_id + (sem ? " / " + sem : "");
+          }
+        }
+      } catch (e) {
+        console.error("login-status 요청 중 오류:", e);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      applyLoginStatus();
+    });
+  </script>
 </body>
 </html>
