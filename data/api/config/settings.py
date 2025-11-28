@@ -29,14 +29,19 @@ ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split() or []
 # --------------------------------------------------
 
 INSTALLED_APPS = [
+    # Django 기본 앱들
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users.apps.UsersConfig',
+
+    # 프로젝트 앱들
+    'users.apps.UsersConfig',   # ← AppConfig 정상 적용
     'curriculum',
+    'timetable',
+    'footprints',
 ]
 
 
@@ -61,18 +66,18 @@ ROOT_URLCONF = 'config.urls'
 # --------------------------------------------------
 # TEMPLATES
 # --------------------------------------------------
-# HTML을 data/web/html 에서 바로 불러올 수 있도록 DIRS 설정
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             BASE_DIR.parent / 'web' / 'html',   # /data/web/html/
-            BASE_DIR / 'templates',             # 프로젝트 기본 templates 폴더
+            BASE_DIR / 'templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -106,10 +111,10 @@ DATABASES = {
 # --------------------------------------------------
 
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 
@@ -126,10 +131,6 @@ USE_TZ = True
 # --------------------------------------------------
 # STATIC FILES
 # --------------------------------------------------
-# ⭐ data/web 폴더 전체를 static root로 등록
-#   - /data/web/html → HTML 파일
-#   - /data/web/css  → CSS 폴더
-#   전부 그대로 사용 가능
 
 STATIC_URL = '/static/'
 

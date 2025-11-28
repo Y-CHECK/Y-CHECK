@@ -1,0 +1,422 @@
+[
+  {
+    "model": "timetable.course",
+    "pk": 1,
+    "fields": {
+      "year": 2025,
+      "semester": 1,
+      "subject": "데이터구조론",
+      "professor": "김교수",
+      "day": "MON",
+      "period": 2,
+      "classroom": "창조관 101호",
+      "memo": "전공"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 2,
+    "fields": {
+      "year": 2025,
+      "semester": 2,
+      "subject": "알고리즘기초",
+      "professor": "박교수",
+      "day": "TUE",
+      "period": 3,
+      "classroom": "창조관 201호",
+      "memo": "필수"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 3,
+    "fields": {
+      "year": 2025,
+      "semester": 1,
+      "subject": "프로그래밍언어구조론",
+      "professor": "이교수",
+      "day": "WED",
+      "period": 1,
+      "classroom": "미래관 301호",
+      "memo": "전공"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 4,
+    "fields": {
+      "year": 2025,
+      "semester": 2,
+      "subject": "객체지향프로그래밍",
+      "professor": "정교수",
+      "day": "THU",
+      "period": 4,
+      "classroom": "창조관 102호",
+      "memo": "선택"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 5,
+    "fields": {
+      "year": 2025,
+      "semester": 1,
+      "subject": "기초데이터구조",
+      "professor": "김교수",
+      "day": "FRI",
+      "period": 2,
+      "classroom": "창조관 201호",
+      "memo": "전공"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 6,
+    "fields": {
+      "year": 2025,
+      "semester": 2,
+      "subject": "운영체제",
+      "professor": "최교수",
+      "day": "MON",
+      "period": 5,
+      "classroom": "미래관 402호",
+      "memo": "전공필수"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 7,
+    "fields": {
+      "year": 2025,
+      "semester": 1,
+      "subject": "컴퓨터구조",
+      "professor": "문교수",
+      "day": "TUE",
+      "period": 6,
+      "classroom": "창조관 101호",
+      "memo": "전공"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 8,
+    "fields": {
+      "year": 2025,
+      "semester": 2,
+      "subject": "시스템프로그래밍",
+      "professor": "서교수",
+      "day": "WED",
+      "period": 3,
+      "classroom": "미래관 301호",
+      "memo": "선택"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 9,
+    "fields": {
+      "year": 2025,
+      "semester": 1,
+      "subject": "웹프로그래밍",
+      "professor": "박교수",
+      "day": "THU",
+      "period": 1,
+      "classroom": "창조관 201호",
+      "memo": "전공"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 10,
+    "fields": {
+      "year": 2025,
+      "semester": 1,
+      "subject": "선형대수입문",
+      "professor": "이교수",
+      "day": "FRI",
+      "period": 4,
+      "classroom": "창조관 102호",
+      "memo": "필수"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 11,
+    "fields": {
+      "year": 2025,
+      "semester": 2,
+      "subject": "기초확률과통계",
+      "professor": "정교수",
+      "day": "MON",
+      "period": 2,
+      "classroom": "미래관 402호",
+      "memo": "선택"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 12,
+    "fields": {
+      "year": 2025,
+      "semester": 1,
+      "subject": "기초프로그램설계",
+      "professor": "최교수",
+      "day": "TUE",
+      "period": 6,
+      "classroom": "미래관 301호",
+      "memo": "전공"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 13,
+    "fields": {
+      "year": 2025,
+      "semester": 2,
+      "subject": "운영체제",
+      "professor": "문교수",
+      "day": "WED",
+      "period": 3,
+      "classroom": "창조관 101호",
+      "memo": "필수"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 14,
+    "fields": {
+      "year": 2025,
+      "semester": 1,
+      "subject": "그래프이론과활용",
+      "professor": "김교수",
+      "day": "THU",
+      "period": 5,
+      "classroom": "창조관 102호",
+      "memo": "심화"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 15,
+    "fields": {
+      "year": 2025,
+      "semester": 2,
+      "subject": "데이터베이스",
+      "professor": "박교수",
+      "day": "FRI",
+      "period": 7,
+      "classroom": "미래관 402호",
+      "memo": "전공"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 16,
+    "fields": {
+      "year": 2025,
+      "semester": 1,
+      "subject": "인공지능",
+      "professor": "이교수",
+      "day": "MON",
+      "period": 3,
+      "classroom": "창조관 201호",
+      "memo": "선택"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 17,
+    "fields": {
+      "year": 2025,
+      "semester": 2,
+      "subject": "영상처리",
+      "professor": "정교수",
+      "day": "TUE",
+      "period": 4,
+      "classroom": "미래관 301호",
+      "memo": "전공"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 18,
+    "fields": {
+      "year": 2025,
+      "semester": 1,
+      "subject": "정보보안",
+      "professor": "서교수",
+      "day": "WED",
+      "period": 2,
+      "classroom": "창조관 101호",
+      "memo": "필수"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 19,
+    "fields": {
+      "year": 2025,
+      "semester": 2,
+      "subject": "컴퓨터네트워크",
+      "professor": "문교수",
+      "day": "THU",
+      "period": 1,
+      "classroom": "창조관 102호",
+      "memo": "전공필수"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 20,
+    "fields": {
+      "year": 2025,
+      "semester": 1,
+      "subject": "오픈소스SW입문",
+      "professor": "최교수",
+      "day": "FRI",
+      "period": 5,
+      "classroom": "미래관 402호",
+      "memo": "선택"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 21,
+    "fields": {
+      "year": 2025,
+      "semester": 2,
+      "subject": "디지털통신",
+      "professor": "박교수",
+      "day": "MON",
+      "period": 6,
+      "classroom": "창조관 201호",
+      "memo": "전공"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 22,
+    "fields": {
+      "year": 2025,
+      "semester": 1,
+      "subject": "임베디드시스템",
+      "professor": "김교수",
+      "day": "TUE",
+      "period": 2,
+      "classroom": "미래관 301호",
+      "memo": "심화"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 23,
+    "fields": {
+      "year": 2025,
+      "semester": 2,
+      "subject": "모바일프로그래밍",
+      "professor": "서교수",
+      "day": "WED",
+      "period": 4,
+      "classroom": "창조관 101호",
+      "memo": "선택"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 24,
+    "fields": {
+      "year": 2025,
+      "semester": 1,
+      "subject": "AI수학",
+      "professor": "정교수",
+      "day": "THU",
+      "period": 3,
+      "classroom": "미래관 402호",
+      "memo": "전공"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 25,
+    "fields": {
+      "year": 2025,
+      "semester": 2,
+      "subject": "신호및시스템",
+      "professor": "문교수",
+      "day": "FRI",
+      "period": 7,
+      "classroom": "창조관 102호",
+      "memo": "필수"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 26,
+    "fields": {
+      "year": 2025,
+      "semester": 1,
+      "subject": "선형대수활용",
+      "professor": "최교수",
+      "day": "MON",
+      "period": 4,
+      "classroom": "미래관 201호",
+      "memo": "선택"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 27,
+    "fields": {
+      "year": 2025,
+      "semester": 2,
+      "subject": "데이터마이닝",
+      "professor": "김교수",
+      "day": "TUE",
+      "period": 5,
+      "classroom": "미래관 301호",
+      "memo": "심화"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 28,
+    "fields": {
+      "year": 2025,
+      "semester": 1,
+      "subject": "병렬프로그래밍",
+      "professor": "이교수",
+      "day": "WED",
+      "period": 1,
+      "classroom": "창조관 101호",
+      "memo": "전공"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 29,
+    "fields": {
+      "year": 2025,
+      "semester": 2,
+      "subject": "수치해석과최적화",
+      "professor": "박교수",
+      "day": "THU",
+      "period": 6,
+      "classroom": "미래관 402호",
+      "memo": "선택"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 30,
+    "fields": {
+      "year": 2025,
+      "semester": 1,
+      "subject": "암호학",
+      "professor": "서교수",
+      "day": "FRI",
+      "period": 3,
+      "classroom": "창조관 102호",
+      "memo": "필수"
+    }
+  }
+]
