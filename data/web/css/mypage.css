@@ -248,37 +248,6 @@ a {
     transform: translateY(1px);
 }
 
-/* 🔥 로그아웃 버튼 (세컨더리 버튼) */
-.btn-secondary {
-    padding: 8px 16px;
-    border-radius: 10px;
-    border: none;
-    background-color: #dc2626; /* 빨간색 (red-600) */
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    width: 100%;
-    transition: background-color 0.15s ease, transform 0.05s ease;
-}
-
-.btn-secondary:hover {
-    background-color: #b91c1c; /* red-700 */
-}
-
-.btn-secondary:active {
-    transform: translateY(1px);
-}
-
-
-.btn-secondary:hover {
-    background-color: #c9302c;
-}
-
-.btn-secondary:active {
-    transform: translateY(1px);
-}
-
 /* === 푸터 === */
 .site-footer {
     position: fixed;
