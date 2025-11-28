@@ -20,7 +20,6 @@ def get_login_user(request):
     return None
 
 
-
 # =========================================
 #  학기별 시간표 조회 / 생성
 #   GET  /api/timetable/?year=YYYY&semester=S
@@ -32,20 +31,6 @@ class TimetableListCreateAPI(View):
     GET:
       /api/timetable/?year=2025&semester=2
       → 해당 유저의 해당 학기 시간표를 내려줌
-
-    응답 예:
-      {
-        "timetable": [
-          {
-            "day": "MON",
-            "period": 3,
-            "subject": "데이터구조론",
-            "classroom": "공학관101",
-            "memo": "전필"
-          },
-          ...
-        ]
-      }
 
     POST:
       /api/timetable/
@@ -387,7 +372,6 @@ class TimetableShareToggleAPI(View):
                 "is_shared": is_shared,
             }
         )
-
 
 
 def timetable_share_status(request):
