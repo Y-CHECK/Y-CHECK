@@ -284,17 +284,18 @@
                 </div>
             </div>
 
-            <!-- 시간표 (더보기 → timetable.html로 이동) -->
+            <!-- 시간표 -->
             <div class="bg-white rounded-2xl border shadow-sm p-5 min-h-[420px]">
                 <div class="flex items-center justify-between mb-3">
                     <div class="text-sm text-slate-500 font-bold">시간표</div>
+
+                    <!-- 🔥 API로 로딩됨 -->
                     <select id="semester-select"
                             class="text-xs border border-slate-200 rounded-full px-3 py-1 text-slate-700 bg-white">
-                        <option value="2024-1">2024-1</option>
-                        <option value="2024-2">2024-2</option>
-                        <option value="2025-1">2025-1</option>
+                        <option value="">학기 로딩중...</option>
                     </select>
                 </div>
+
                 <div class="relative overflow-x-auto">
                     <table class="w-full text-sm text-center border-collapse table-fixed">
                         <thead>
@@ -307,12 +308,9 @@
                                 <th class="py-2 border border-slate-200">금</th>
                             </tr>
                         </thead>
-                        <tbody id="timetable-body">
-                            <!-- JS로 렌더링 -->
-                        </tbody>
+                        <tbody id="timetable-body"></tbody>
                     </table>
 
-                    <!-- 더보기 버튼 -->
                     <div class="pointer-events-none absolute inset-x-0 bottom-4 flex justify-center">
                         <button id="timetable-more-button"
                                 class="pointer-events-auto px-4 py-1.5 rounded-full border border-slate-200 bg-white/80 text-xs text-slate-700 shadow-sm hover:bg-blue-50">
@@ -321,6 +319,7 @@
                     </div>
                 </div>
             </div>
+
 
             <!-- 졸업 요구사항 메모 (localStorage) -->
             <div class="bg-white rounded-2xl border shadow-sm p-5">
@@ -507,6 +506,9 @@
 
     <!-- 채플/메모 로컬 저장 -->
     <script>
+        /* ------------------------------------
+           초기 로직: localStorage, 프로필, 학점, 최근 과목 리스트
+        ------------------------------------ */
         const STATE_KEY = "ycheck-main-state-v1";
 
         const chapelInput = document.getElementById("chapel-input");
@@ -514,7 +516,7 @@
         const chapelPercentCenter = document.getElementById("chapel-percent-center");
         const memoText = document.getElementById("memo-text");
 
-        const CHAPEL_CIRC = 94.2477796077; // 원 둘레(2πr, r=15)
+        const CHAPEL_CIRC = 94.2477796077;
 
         function loadState() {
             try {
@@ -548,49 +550,40 @@
             if (!chapelInput || !chapelCircle) return;
             const max = 4;
             let v = Number(chapelInput.value || 0);
-            if (!Number.isFinite(v)) v = 0;
             if (v < 0) v = 0;
             if (v > max) v = max;
             chapelInput.value = v;
+
             const pct = Math.round((v / max) * 100);
 
-            // 중앙 텍스트 업데이트
             if (chapelPercentCenter) {
                 chapelPercentCenter.textContent = pct + "%";
             }
 
-            // 원형 그래프 stroke 업데이트
             const offset = CHAPEL_CIRC * (1 - pct / 100);
             chapelCircle.style.strokeDasharray = CHAPEL_CIRC;
             chapelCircle.style.strokeDashoffset = offset;
         }
-    </script>
 
-    <!-- API 연동: 프로필, 학점 요약, 최근 과목 리스트 -->
-    <script>
+
+        /* ------------------------------------
+              프로필 / 학점 요약 / 과목 리스트 API
+        ------------------------------------ */
         async function loadProfile() {
             try {
-                const resp = await fetch("/api/login-status/", {
-                    method: "GET",
-                    credentials: "include"
-                });
+                const resp = await fetch("/api/login-status/", {method: "GET", credentials: "include"});
                 if (!resp.ok) return;
-
                 const data = await resp.json();
                 if (!data.logged_in) return;
 
                 const p = data.profile || {};
-                const nameEl = document.getElementById("profile-name");
-                const sidEl = document.getElementById("profile-student-id");
-                const yearEl = document.getElementById("profile-year");
-                const majorEl = document.getElementById("profile-major");
-
-                if (nameEl) nameEl.textContent = (p.real_name || "학생") + "님";
-                if (sidEl) sidEl.textContent = p.student_id || "-";
-                if (yearEl) yearEl.textContent = p.current_semester
+                document.getElementById("profile-name").textContent = (p.real_name || "학생") + "님";
+                document.getElementById("profile-student-id").textContent = p.student_id || "-";
+                document.getElementById("profile-year").textContent = p.current_semester
                     ? p.current_semester.replace("-", "학년 ") + "학기"
                     : "-학년";
-                if (majorEl) majorEl.textContent = p.major_department || "";
+                document.getElementById("profile-major").textContent = p.major_department || "";
+
             } catch (e) {
                 console.error(e);
             }
@@ -598,26 +591,18 @@
 
         async function loadCreditSummary() {
             try {
-                const resp = await fetch("/api/curriculum/credit-summary/", {
-                    method: "GET",
-                    credentials: "include",
-                });
+                const resp = await fetch("/api/curriculum/credit-summary/", {method: "GET", credentials: "include"});
                 if (!resp.ok) return;
-
                 const s = await resp.json();
 
                 const requiredTotal = 135;
                 const pct = Math.min(100, Math.round((s.total_credits / requiredTotal) * 100));
 
-                const totalTextEl = document.getElementById("total-progress-text");
-                const totalBarEl = document.getElementById("total-progress-bar");
-                const totalPctEl = document.getElementById("total-progress-percent");
+                document.getElementById("total-progress-text").textContent =
+                    `${s.total_credits} / ${requiredTotal} 점`;
+                document.getElementById("total-progress-bar").style.width = pct + "%";
+                document.getElementById("total-progress-percent").textContent = pct + "%";
 
-                if (totalTextEl) totalTextEl.textContent = `${s.total_credits} / ${requiredTotal} 점`;
-                if (totalBarEl) totalBarEl.style.width = pct + "%";
-                if (totalPctEl) totalPctEl.textContent = pct + "%";
-
-                // 기본전공 / 심화전공 / 3000단위 이상
                 updateCategory("major-basic", s.MAJOR_BASIC || 0, 36);
                 updateCategory("major-deep", s.MAJOR_DEEP || 0, 36);
                 updateCategory("level300", s.LEVEL300 || 0, 45);
@@ -628,24 +613,17 @@
         }
 
         function updateCategory(prefix, earned, required) {
-            const pct = required > 0
-                ? Math.min(100, Math.round((earned / required) * 100))
-                : 0;
+            const pct = required > 0 ? Math.min(100, Math.round((earned / required) * 100)) : 0;
 
-            const textEl = document.getElementById(`${prefix}-text`);
-            const barEl = document.getElementById(`${prefix}-bar`);
-            const pctEl = document.getElementById(`${prefix}-percent`);
-
-            if (textEl) textEl.textContent = `${earned} / ${required}`;
-            if (barEl) barEl.style.width = pct + "%";
-            if (pctEl) pctEl.textContent = pct + "%";
+            document.getElementById(`${prefix}-text`).textContent = `${earned} / ${required}`;
+            document.getElementById(`${prefix}-bar`).style.width = pct + "%";
+            document.getElementById(`${prefix}-percent`).textContent = pct + "%";
         }
 
         function convertCategory(cat) {
             const map = {
                 "GE_BASIC": "교양기초",
                 "GE_UNIV_REQUIRED": "대학교양필수",
-
                 "GE_UNIV_ELECTIVE_1": "교양선택 1영역",
                 "GE_UNIV_ELECTIVE_2": "교양선택 2영역",
                 "GE_UNIV_ELECTIVE_3": "교양선택 3영역",
@@ -653,7 +631,6 @@
                 "GE_UNIV_ELECTIVE_5": "교양선택 5영역",
                 "GE_UNIV_ELECTIVE_6": "교양선택 6영역",
                 "GE_UNIV_ELECTIVE_9": "교양선택 9영역",
-
                 "EXPLORATION": "전공탐색",
                 "MAJOR_BASIC": "기본전공",
                 "MAJOR_DEEP": "심화전공",
@@ -671,302 +648,298 @@
                 if (!resp.ok) return;
 
                 const courses = await resp.json();
-
-                // id 기준 최신순 정렬 (백엔드에서 id 내려준다고 가정)
-                const recent = courses
-                    .slice()
-                    .sort((a, b) => (b.id || 0) - (a.id || 0))
-                    .slice(0, 3);
+                const recent = courses.slice().sort((a, b) => (b.id || 0) - (a.id || 0)).slice(0, 3);
 
                 const tbody = document.getElementById("course-list-body");
-                if (!tbody) return;
                 tbody.innerHTML = "";
-
                 recent.forEach(c => {
                     const tr = document.createElement("tr");
                     tr.className = "border-b";
-
                     tr.innerHTML = `
-                        <td class="py-2 pr-4">${c.name}</td>
-                        <td class="py-2 pr-4">${convertCategory(c.category)}</td>
-                        <td class="py-2 pr-4">${c.credits}</td>
-                    `;
+                <td class="py-2 pr-4">${c.name}</td>
+                <td class="py-2 pr-4">${convertCategory(c.category)}</td>
+                <td class="py-2 pr-4">${c.credits}</td>
+            `;
                     tbody.appendChild(tr);
                 });
+
             } catch (e) {
                 console.error(e);
             }
         }
-    </script>
 
-    <!-- 메인 대시보드 상호작용 (시간표, 트랙, 내비게이션 + state & API 호출) -->
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            // localStorage 상태 로드 + 채플 UI 갱신
+
+        /* ------------------------------------
+              시간표 API + 렌더링
+        ------------------------------------ */
+        const DAYS = ["MON", "TUE", "WED", "THU", "FRI"];
+        const PERIODS = [1, 2, 3, 4, 5, 6];
+        const TIME_LABEL = {
+            1: "09:00",
+            2: "10:00",
+            3: "11:00",
+            4: "12:00",
+            5: "13:00",
+            6: "14:00",
+        };
+
+        const semesterSelect = document.getElementById("semester-select");
+        const timetableBody = document.getElementById("timetable-body");
+
+        async function loadMainSemesters() {
+            try {
+                const res = await fetch("/api/timetable/semesters/", {
+                    method: "GET",
+                    credentials: "include",
+                });
+
+                const data = await res.json();
+                const semesters = Array.isArray(data) ? data : data.semesters || [];
+
+                semesterSelect.innerHTML = "";
+                semesters.forEach(s => {
+                    const opt = document.createElement("option");
+                    opt.value = `${s.year}-${s.semester}`;
+                    opt.textContent = `${s.year}-${s.semester}`;
+                    semesterSelect.appendChild(opt);
+                });
+
+                if (semesters.length > 0) {
+                    semesterSelect.value = `${semesters[0].year}-${semesters[0].semester}`;
+                }
+
+            } catch (err) {
+                console.error("학기 불러오기 오류:", err);
+            }
+        }
+
+        function renderMainTimetable(entries) {
+            if (!timetableBody) return;
+            timetableBody.innerHTML = "";
+
+            PERIODS.forEach(period => {
+                const tr = document.createElement("tr");
+
+                const timeTd = document.createElement("td");
+                timeTd.className = "h-20 border border-slate-200 text-slate-500 text-xs align-middle";
+                timeTd.textContent = TIME_LABEL[period];
+                tr.appendChild(timeTd);
+
+                DAYS.forEach(day => {
+                    const td = document.createElement("td");
+                    td.className = "h-20 border border-slate-200 text-[11px] px-2 align-middle";
+
+                    const matched = entries.find(e => e.day === day && e.period === period);
+                    if (matched) {
+                        td.innerHTML = `<div class="font-medium text-slate-700">${matched.subject}</div>`;
+                        td.classList.add("bg-blue-50");
+                    }
+
+                    tr.appendChild(td);
+                });
+
+                timetableBody.appendChild(tr);
+            });
+        }
+
+        async function loadMainTimetable() {
+            const val = semesterSelect.value;
+            if (!val) return renderMainTimetable([]);
+
+            const [year, semester] = val.split("-");
+
+            try {
+                const res = await fetch(`/api/timetable/?year=${year}&semester=${semester}`, {
+                    method: "GET",
+                    credentials: "include",
+                });
+
+                if (res.status === 404) return renderMainTimetable([]);
+
+                const data = await res.json();
+                const entries = Array.isArray(data) ? data : data.timetable || [];
+                renderMainTimetable(entries);
+
+            } catch (err) {
+                console.error("시간표 API 오류:", err);
+            }
+        }
+
+
+        /* ------------------------------------
+              트랙별 과목 추천 (하드코딩)
+        ------------------------------------ */
+        const TRACK_COURSES = {
+            'AI빅데이터': [
+                {category: '전선', code: 'SWE3006', name: 'AI수학', credit: 3},
+                {category: '전필', code: 'SWE3016', name: '인공지능', credit: 3},
+                {category: '전필', code: 'SWE3017', name: '데이터베이스', credit: 3},
+                {category: '전선', code: 'SWE3018', name: '데이터마이닝', credit: 3},
+                {category: '전선', code: 'SWE4002', name: '웹서비스응용', credit: 3},
+                {category: '전선', code: 'SWE4003', name: '기계학습개론', credit: 3},
+                {category: '전선', code: 'SWE4004', name: '빅데이터처리', credit: 3},
+                {category: '전선', code: 'SWE4015', name: '자연어처리', credit: 3},
+                {category: '전선', code: 'SWE4016', name: '바이오컴퓨팅', credit: 3},
+                {category: '전선', code: 'SWE4017', name: '정보검색', credit: 3},
+            ],
+            'AI미디어': [
+                {category: '전선', code: 'SWE2005', name: '회로이론', credit: 3},
+                {category: '전선', code: 'SWE2011', name: '신호및시스템', credit: 3},
+                {category: '전선', code: 'SWE3006', name: 'AI수학', credit: 3},
+                {category: '전선', code: 'SWE3011', name: '영상처리', credit: 3},
+                {category: '전필', code: 'SWE3016', name: '인공지능', credit: 3},
+                {category: '전필', code: 'SWE3019', name: '디지털신호처리', credit: 3},
+                {category: '전선', code: 'SWE4003', name: '기계학습개론', credit: 3},
+                {category: '전선', code: 'SWE4005', name: '지능형멀티미디어시스템', credit: 3},
+                {category: '전선', code: 'SWE4018', name: '스마트미디어통신', credit: 3},
+            ],
+            'AI계산과학': [
+                {category: '전선', code: 'SWE2012', name: '선형대수입문', credit: 3},
+                {category: '전선', code: 'SWE3005', name: '선형대수활용', credit: 3},
+                {category: '전선', code: 'SWE3006', name: 'AI수학', credit: 3},
+                {category: '전필', code: 'SWE3016', name: '인공지능', credit: 3},
+                {category: '전필', code: 'SWE3020', name: '수치해석과최적화', credit: 3},
+                {category: '전선', code: 'SWE3021', name: '그래프이론과활용', credit: 3},
+                {category: '전선', code: 'SWE4003', name: '기계학습개론', credit: 3},
+                {category: '전선', code: 'SWE4006', name: '수치편미분방정식', credit: 3},
+                {category: '전선', code: 'SWE4007', name: '로봇알고리즘', credit: 3},
+                {category: '전선', code: 'SWE4019', name: '모델링및시뮬레이션', credit: 3},
+                {category: '전선', code: 'SWE4020', name: '산업수학과역문제', credit: 3},
+            ],
+            '스마트IoT': [
+                {category: '전선', code: 'SWE3007', name: '마이크로프로세서', credit: 3},
+                {category: '전선', code: 'SWE3008', name: '통신시스템', credit: 3},
+                {category: '전선', code: 'SWE3012', name: '디지털통신', credit: 3},
+                {category: '전필', code: 'SWE3022', name: '임베디드시스템', credit: 3},
+                {category: '전필', code: 'SWE3023', name: '컴퓨터네트워크', credit: 3},
+                {category: '전선', code: 'SWE3024', name: '정보보안', credit: 3},
+                {category: '전선', code: 'SWE4008', name: '임베디드하드웨어설계', credit: 3},
+                {category: '전선', code: 'SWE4009', name: '데이터통신', credit: 3},
+                {category: '전선', code: 'SWE4021', name: 'IoT응용프로그래밍', credit: 3},
+            ],
+            '정보보안': [
+                {category: '전필', code: 'SWE3009', name: '암호학', credit: 3},
+                {category: '전선', code: 'SWE3023', name: '컴퓨터네트워크', credit: 3},
+                {category: '전필', code: 'SWE3024', name: '정보보안', credit: 3},
+                {category: '전선', code: 'SWE4002', name: '웹서비스응용', credit: 3},
+                {category: '전선', code: 'SWE4009', name: '데이터통신', credit: 3},
+                {category: '전선', code: 'SWE4010', name: '컴퓨터보안', credit: 3},
+                {category: '전선', code: 'SWE4022', name: '정보보안응용', credit: 3},
+                {category: '전선', code: 'SWE4023', name: '디지털포렌식', credit: 3},
+            ],
+        };
+
+
+        function initTrackRecommendation() {
+            const trackLabel = document.getElementById("track-dropdown-label");
+            const trackMenu = document.getElementById("track-dropdown-menu");
+            const trackBtn = document.getElementById("track-dropdown-button");
+            const trackMoreBtn = document.getElementById("track-more-button");
+            const trackTbody = document.getElementById("track-course-tbody");
+
+            let currentTrack = "AI빅데이터";
+            let expanded = false;
+
+            function renderTrack() {
+                const list = TRACK_COURSES[currentTrack] || [];
+                const show = expanded ? list : list.slice(0, 3);
+
+                trackTbody.innerHTML = "";
+                show.forEach(c => {
+                    const tr = document.createElement("tr");
+                    tr.className = "border-b";
+
+                    tr.innerHTML = `
+                <td class="py-2 pr-2">${c.category}</td>
+                <td class="py-2 pr-2">${c.code}</td>
+                <td class="py-2 pr-2">${c.name}</td>
+                <td class="py-2 pr-2">${c.credit}</td>
+            `;
+                    trackTbody.appendChild(tr);
+                });
+            }
+
+            trackBtn.addEventListener("click", () => {
+                trackMenu.classList.toggle("hidden");
+            });
+
+            trackMenu.querySelectorAll("button").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    currentTrack = btn.dataset.track;
+                    trackLabel.textContent = currentTrack;
+                    expanded = false;
+                    renderTrack();
+                    trackMenu.classList.add("hidden");
+                });
+            });
+
+            trackMoreBtn.addEventListener("click", () => {
+                expanded = !expanded;
+                renderTrack();
+                trackMoreBtn.textContent = expanded ? "접기" : "자세히 보기";
+            });
+
+            renderTrack();
+        }
+
+
+        /* ------------------------------------
+              페이지 로딩 시점
+        ------------------------------------ */
+        document.addEventListener("DOMContentLoaded", async () => {
+
+            // 로컬 저장 로딩
             loadState();
             updateChapelUI();
 
-            if (chapelInput) {
-                chapelInput.addEventListener("input", () => {
-                    updateChapelUI();
-                    saveState();
-                });
-            }
-            if (memoText) {
-                memoText.addEventListener("input", () => {
-                    saveState();
-                });
-            }
+            chapelInput?.addEventListener("input", () => {
+                updateChapelUI();
+                saveState();
+            });
+            memoText?.addEventListener("input", saveState);
 
-            // 프로필, 학점, 최근 과목 데이터 로딩
+            // API 데이터 로딩
             loadProfile();
             loadCreditSummary();
             loadCourseList();
 
             // 시간표
-            const semesterSelect = document.getElementById('semester-select');
-            const timetableBody = document.getElementById('timetable-body');
-            const DAYS = ['월', '화', '수', '목', '금'];
-            const TIMES = [9, 10, 11, 12, 13, 14];
+            await loadMainSemesters();
+            await loadMainTimetable();
+            semesterSelect?.addEventListener("change", loadMainTimetable);
 
-            const TIMETABLE_DATA = {
-                '2024-1': [
-                    { day: '월', time: 9, title: '자료구조' },
-                    { day: '수', time: 11, title: '확률과통계' },
-                ],
-                '2024-2': [
-                    { day: '화', time: 10, title: '운영체제' },
-                ],
-                '2025-1': []
-            };
-
-            function renderTimetable(semester) {
-                if (!timetableBody) return;
-                const rowsData = TIMETABLE_DATA[semester] || [];
-                timetableBody.innerHTML = '';
-
-                TIMES.forEach(time => {
-                    const tr = document.createElement('tr');
-
-                    const timeTd = document.createElement('td');
-                    timeTd.className = 'h-20 border border-slate-200 text-slate-500 text-xs align-middle';
-                    timeTd.textContent = time;
-                    tr.appendChild(timeTd);
-
-                    DAYS.forEach(day => {
-                        const td = document.createElement('td');
-                        td.className = 'h-20 border border-slate-200 align-middle text-[11px] leading-tight px-2 py-1 break-words';
-                        const cellCourse = rowsData.find(item => item.day === day && item.time === time);
-                        if (cellCourse) {
-                            td.textContent = cellCourse.title;
-                            td.classList.add('bg-blue-50', 'text-slate-700', 'font-medium');
-                        }
-                        tr.appendChild(td);
-                    });
-
-                    if (time >= 13) {
-                        tr.classList.add('filter', 'blur-sm');
-                    }
-
-                    timetableBody.appendChild(tr);
-                });
-            }
-
-            if (semesterSelect && timetableBody) {
-                renderTimetable(semesterSelect.value);
-                semesterSelect.addEventListener('change', () => {
-                    renderTimetable(semesterSelect.value);
-                });
-            }
-
-            // 트랙 추천 과목 하드코딩 데이터
-            const TRACK_COURSES = {
-                'AI빅데이터': [
-                    { category: '전선', code: 'SWE3006', name: 'AI수학', credit: 3 },
-                    { category: '전필', code: 'SWE3016', name: '인공지능', credit: 3 },
-                    { category: '전필', code: 'SWE3017', name: '데이터베이스', credit: 3 },
-                    { category: '전선', code: 'SWE3018', name: '데이터마이닝', credit: 3 },
-                    { category: '전선', code: 'SWE4002', name: '웹서비스응용', credit: 3 },
-                    { category: '전선', code: 'SWE4003', name: '기계학습개론', credit: 3 },
-                    { category: '전선', code: 'SWE4004', name: '빅데이터처리', credit: 3 },
-                    { category: '전선', code: 'SWE4015', name: '자연어처리', credit: 3 },
-                    { category: '전선', code: 'SWE4016', name: '바이오컴퓨팅', credit: 3 },
-                    { category: '전선', code: 'SWE4017', name: '정보검색', credit: 3 },
-                ],
-                'AI미디어': [
-                    { category: '전선', code: 'SWE2005', name: '회로이론', credit: 3 },
-                    { category: '전선', code: 'SWE2011', name: '신호및시스템', credit: 3 },
-                    { category: '전선', code: 'SWE3006', name: 'AI수학', credit: 3 },
-                    { category: '전선', code: 'SWE3011', name: '영상처리', credit: 3 },
-                    { category: '전필', code: 'SWE3016', name: '인공지능', credit: 3 },
-                    { category: '전필', code: 'SWE3019', name: '디지털신호처리', credit: 3 },
-                    { category: '전선', code: 'SWE4003', name: '기계학습개론', credit: 3 },
-                    { category: '전선', code: 'SWE4005', name: '지능형멀티미디어시스템', credit: 3 },
-                    { category: '전선', code: 'SWE4018', name: '스마트미디어통신', credit: 3 },
-                ],
-                'AI계산과학': [
-                    { category: '전선', code: 'SWE2012', name: '선형대수입문', credit: 3 },
-                    { category: '전선', code: 'SWE3005', name: '선형대수활용', credit: 3 },
-                    { category: '전선', code: 'SWE3006', name: 'AI수학', credit: 3 },
-                    { category: '전필', code: 'SWE3016', name: '인공지능', credit: 3 },
-                    { category: '전필', code: 'SWE3020', name: '수치해석과최적화', credit: 3 },
-                    { category: '전선', code: 'SWE3021', name: '그래프이론과활용', credit: 3 },
-                    { category: '전선', code: 'SWE4003', name: '기계학습개론', credit: 3 },
-                    { category: '전선', code: 'SWE4006', name: '수치편미분방정식', credit: 3 },
-                    { category: '전선', code: 'SWE4007', name: '로봇알고리즘', credit: 3 },
-                    { category: '전선', code: 'SWE4019', name: '모델링및시뮬레이션', credit: 3 },
-                    { category: '전선', code: 'SWE4020', name: '산업수학과역문제', credit: 3 },
-                ],
-                '스마트IoT': [
-                    { category: '전선', code: 'SWE3007', name: '마이크로프로세서', credit: 3 },
-                    { category: '전선', code: 'SWE3008', name: '통신시스템', credit: 3 },
-                    { category: '전선', code: 'SWE3012', name: '디지털통신', credit: 3 },
-                    { category: '전필', code: 'SWE3022', name: '임베디드시스템', credit: 3 },
-                    { category: '전필', code: 'SWE3023', name: '컴퓨터네트워크', credit: 3 },
-                    { category: '전선', code: 'SWE3024', name: '정보보안', credit: 3 },
-                    { category: '전선', code: 'SWE4008', name: '임베디드하드웨어설계', credit: 3 },
-                    { category: '전선', code: 'SWE4009', name: '데이터통신', credit: 3 },
-                    { category: '전선', code: 'SWE4021', name: 'IoT응용프로그래밍', credit: 3 },
-                ],
-                '정보보안': [
-                    { category: '전필', code: 'SWE3009', name: '암호학', credit: 3 },
-                    { category: '전선', code: 'SWE3023', name: '컴퓨터네트워크', credit: 3 },
-                    { category: '전필', code: 'SWE3024', name: '정보보안', credit: 3 },
-                    { category: '전선', code: 'SWE4002', name: '웹서비스응용', credit: 3 },
-                    { category: '전선', code: 'SWE4009', name: '데이터통신', credit: 3 },
-                    { category: '전선', code: 'SWE4010', name: '컴퓨터보안', credit: 3 },
-                    { category: '전선', code: 'SWE4022', name: '정보보안응용', credit: 3 },
-                    { category: '전선', code: 'SWE4023', name: '디지털포렌식', credit: 3 },
-                ],
-            };
-
-            const trackDropdownButton = document.getElementById('track-dropdown-button');
-            const trackDropdownLabel = document.getElementById('track-dropdown-label');
-            const trackDropdownMenu = document.getElementById('track-dropdown-menu');
-            const trackOptionButtons = trackDropdownMenu ? Array.from(trackDropdownMenu.querySelectorAll('button[data-track]')) : [];
-            const trackTbody = document.getElementById('track-course-tbody');
-            const trackMoreBtn = document.getElementById('track-more-button');
-
-            let currentTrack = 'AI빅데이터';
-            let trackExpanded = false;
-
-            function renderTrackTable() {
-                if (!trackTbody) return;
-                const list = TRACK_COURSES[currentTrack] || [];
-                trackTbody.innerHTML = '';
-
-                const visibleList = trackExpanded ? list : list.slice(0, 3);
-
-                visibleList.forEach(item => {
-                    const tr = document.createElement('tr');
-                    tr.className = 'border-b last:border-0';
-
-                    const tdCategory = document.createElement('td');
-                    tdCategory.className = 'py-2 pr-2';
-                    tdCategory.textContent = item.category;
-
-                    const tdCode = document.createElement('td');
-                    tdCode.className = 'py-2 pr-2';
-                    tdCode.textContent = item.code;
-
-                    const tdName = document.createElement('td');
-                    tdName.className = 'py-2 pr-2';
-                    tdName.textContent = item.name;
-
-                    const tdCredit = document.createElement('td');
-                    tdCredit.className = 'py-2 pr-2';
-                    tdCredit.textContent = item.credit;
-
-                    tr.appendChild(tdCategory);
-                    tr.appendChild(tdCode);
-                    tr.appendChild(tdName);
-                    tr.appendChild(tdCredit);
-
-                    trackTbody.appendChild(tr);
-                });
-            }
-
-            function setTrack(track) {
-                currentTrack = track;
-                trackExpanded = false;
-                if (trackDropdownLabel) trackDropdownLabel.textContent = track;
-                renderTrackTable();
-                if (trackMoreBtn) trackMoreBtn.textContent = '자세히 보기';
-            }
-
-            function toggleTrackMenu(open) {
-                if (!trackDropdownMenu) return;
-                const isOpen = !trackDropdownMenu.classList.contains('hidden');
-                const willOpen = open !== undefined ? open : !isOpen;
-                if (willOpen) {
-                    trackDropdownMenu.classList.remove('hidden');
-                } else {
-                    trackDropdownMenu.classList.add('hidden');
-                }
-            }
-
-            if (trackDropdownButton && trackDropdownMenu) {
-                trackDropdownButton.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    toggleTrackMenu();
-                });
-            }
-
-            if (trackOptionButtons.length) {
-                trackOptionButtons.forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const track = btn.dataset.track;
-                        setTrack(track);
-                        toggleTrackMenu(false);
-                    });
-                });
-            }
-
-            document.addEventListener('click', (e) => {
-                if (trackDropdownMenu && !trackDropdownMenu.classList.contains('hidden')) {
-                    if (!trackDropdownMenu.contains(e.target) &&
-                        e.target !== trackDropdownButton &&
-                        !trackDropdownButton.contains(e.target)) {
-                        trackDropdownMenu.classList.add('hidden');
-                    }
-                }
-            });
-
-            if (trackTbody) {
-                setTrack(currentTrack);
-            }
-
-            if (trackMoreBtn) {
-                trackMoreBtn.addEventListener('click', () => {
-                    trackExpanded = !trackExpanded;
-                    renderTrackTable();
-                    trackMoreBtn.textContent = trackExpanded ? '접기' : '자세히 보기';
-                });
-            }
-
-            // 각종 이동 버튼
-            const goFromCourseListBtn = document.getElementById('go-calculator-from-course-list');
-            const goFromCreditsBtn = document.getElementById('go-calculator-from-credits');
-            const calculatorUrl = 'calculator.html';
-
-            if (goFromCourseListBtn) {
-                goFromCourseListBtn.addEventListener('click', () => {
-                    window.location.href = calculatorUrl;
-                });
-            }
-            if (goFromCreditsBtn) {
-                goFromCreditsBtn.addEventListener('click', () => {
-                    window.location.href = calculatorUrl;
-                });
-            }
-
-            const timetableMoreBtn = document.getElementById('timetable-more-button');
-            if (timetableMoreBtn) {
-                timetableMoreBtn.addEventListener('click', () => {
-                    window.location.href = 'timetable.html';
-                });
-            }
+            // 트랙 추천 초기화
+            initTrackRecommendation();
         });
+
+            document.addEventListener("DOMContentLoaded", () => {
+            // 1) 분류별 이수 진행도 → 계산기 이동
+            const btnCredits = document.getElementById("go-calculator-from-credits");
+            if (btnCredits) {
+            btnCredits.addEventListener("click", () => {
+            window.location.href = "calculator.html";
+        });
+        }
+
+            // 2) 수강 과목 리스트 → 계산기 이동
+            const btnCourseList = document.getElementById("go-calculator-from-course-list");
+            if (btnCourseList) {
+            btnCourseList.addEventListener("click", () => {
+            window.location.href = "calculator.html";
+        });
+        }
+
+            // 3) 시간표 더보기 → 시간표 페이지 이동
+            const btnTimetableMore = document.getElementById("timetable-more-button");
+            if (btnTimetableMore) {
+            btnTimetableMore.addEventListener("click", () => {
+            window.location.href = "timetable.html";
+        });
+        }
+        });
+
     </script>
+
+
 </body>
 </html>
