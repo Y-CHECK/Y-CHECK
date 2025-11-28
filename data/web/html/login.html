@@ -12,17 +12,17 @@
   <header class="bg-white border-b">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <a href="main.html" class="flex items-center gap-3">
+        <a href="main" class="flex items-center gap-3">
           <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="h-8 w-auto">
         </a>
         <div class="h-4 w-px bg-slate-200"></div>
         <div class="text-sm text-slate-600">연세대학교 졸업요건계산기</div>
       </div>
       <nav class="hidden sm:flex items-center gap-6 text-sm text-slate-600">
-        <a href="calculator.html" class="hover:text-slate-900">계산기</a>
-        <a href="timetable.html" class="hover:text-slate-900">시간표</a>
-        <a href="sunbae.html" class="hover:text-slate-900">선배들의 발자취</a>
-        <a href="mypage.html" class="hover:text-slate-900">마이페이지</a>
+        <a href="calculator" class="hover:text-slate-900">계산기</a>
+        <a href="timetable" class="hover:text-slate-900">시간표</a>
+        <a href="sunbae" class="hover:text-slate-900">선배들의 발자취</a>
+        <a href="mypage" class="hover:text-slate-900">마이페이지</a>
       </nav>
     </div>
   </header>
@@ -69,7 +69,7 @@
         >
           로그인
         </button>
-        <a href="signup.html" class="w-full mt-2 inline-flex justify-center rounded-xl border py-2 text-sm">
+        <a href="register" class="w-full mt-2 inline-flex justify-center rounded-xl border py-2 text-sm">
           회원가입
         </a>
       </form>
@@ -137,7 +137,7 @@
         }
 
         alert("로그인 성공!");
-        window.location.href = "main.html";
+        window.location.href = "main";
       } catch (error) {
         console.error("login error", error);
         alert("서버에 연결할 수 없습니다.");

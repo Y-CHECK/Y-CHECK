@@ -18,19 +18,19 @@
 <header class="bg-white border-b">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
     <div class="flex items-center gap-3">
-      <a href="main.html" class="flex items-center gap-3">
+      <a href="main" class="flex items-center gap-3">
         <img src="../img/ycheck_logo.png" alt="Y_CHECK 로고" class="h-8 w-auto">
       </a>
     </div>
 
     <nav class="hidden sm:flex items-center justify-center flex-1 divide-x divide-slate-300" style="margin-left: 90px;">
-      <a href="calculator.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">계산기</a>
-      <a href="timetable.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold ">시간표</a>
-      <a href="sunbae.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">선배의 발자취</a>
+      <a href="calculator" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">계산기</a>
+      <a href="timetable" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold ">시간표</a>
+      <a href="sunbae" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">선배의 발자취</a>
     </nav>
 
     <div class="hidden sm:block">
-      <a href="mypage.html" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">마이페이지</a>
+      <a href="mypage" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">마이페이지</a>
     </div>
   </div>
 </header>
@@ -410,18 +410,6 @@ function renderProgress(credits, majorPercent) {
           </div>
         `;
     });
-
-    html += `
-      <div>
-        <div class="flex justify-between text-xs mb-1">
-          <span>전공필수</span>
-          <span>${majorPercent}%</span>
-        </div>
-        <div class="h-2 bg-slate-100 rounded-full">
-          <div class="h-full bg-blue-500" style="width:${majorPercent}%"></div>
-        </div>
-      </div>
-    `;
 
     document.getElementById("progressList").innerHTML = html;
 }
