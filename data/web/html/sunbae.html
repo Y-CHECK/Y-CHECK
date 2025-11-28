@@ -1,318 +1,107 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8" />
-    <title>Y-CHECK · 선배들의 발자취</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <title>Y-CHECK · 선배들의 발자취</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-[#f7f9fc] text-slate-900 pb-24">
 
-<!-- 공통 헤더 -->
-<header class="bg-white border-b">
+  <!-- 공통 헤더 -->
+  <header class="bg-white border-b">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-            <a href="main.html" class="flex items-center gap-3">
-                <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="h-8 w-auto">
-            </a>
-            <div class="h-4 w-px bg-slate-200"></div>
-            <div class="text-sm text-slate-600">연세대학교 졸업요건계산기</div>
-        </div>
-        <nav class="hidden sm:flex items-center gap-6 text-sm text-slate-600">
-            <a href="calculator.html" class="hover:text-slate-900">계산기</a>
-            <a href="timetable.html" class="hover:text-slate-900">시간표</a>
-            <a href="sunbae.html" class="hover:text-slate-900 font-semibold">선배들의 발자취</a>
-            <a href="mypage.html" class="hover:text-slate-900">마이페이지</a>
-        </nav>
+      <div class="flex items-center gap-3">
+        <a href="main.html" class="flex items-center gap-3">
+          <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="h-8 w-auto">
+        </a>
+        <div class="h-4 w-px bg-slate-200"></div>
+        <div class="text-sm text-slate-600">연세대학교 졸업요건계산기</div>
+      </div>
+      <nav class="hidden sm:flex items-center gap-6 text-sm text-slate-600">
+        <a href="calculator.html" class="hover:text-slate-900">계산기</a>
+        <a href="timetable.html" class="hover:text-slate-900">시간표</a>
+        <a href="sunbae.html" class="hover:text-slate-900 font-semibold">선배들의 발자취</a>
+        <a href="mypage.html" class="hover:text-slate-900">마이페이지</a>
+      </nav>
     </div>
-</header>
+  </header>
 
-<main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-6">
 
-    <!-- 필터 영역 -->
     <section class="bg-white rounded-2xl border shadow-sm p-6">
-        <h2 class="text-xl font-semibold mb-4">선배 선택/필터</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="space-y-2 md:col-span-2">
-                <div class="text-sm text-slate-600">관심 트랙 선택</div>
-                <div class="flex items-center gap-2 flex-wrap">
-                    <!-- AI / 머신러닝 -->
-                    <button
-                            type="button"
-                            class="px-4 py-2 rounded-xl border text-sm"
-                            data-track="AI"
-                            id="track-ai-btn"
-                    >
-                        AI/머신러닝
-                    </button>
-
-                    <!-- 보안 / 네트워크 -->
-                    <button
-                            type="button"
-                            class="px-4 py-2 rounded-xl border text-sm"
-                            data-track="SECURITY"
-                            id="track-sec-btn"
-                    >
-                        보안/네트워크
-                    </button>
-
-                    <!-- 게임 / 미디어 -->
-                    <button
-                            type="button"
-                            class="px-4 py-2 rounded-xl border text-sm"
-                            data-track="GAME"
-                            id="track-game-btn"
-                    >
-                        게임/미디어
-                    </button>
-
-                    <!-- 임베디드 / 시스템 -->
-                    <button
-                            type="button"
-                            class="px-4 py-2 rounded-xl border text-sm"
-                            data-track="EMBEDDED"
-                            id="track-embedded-btn"
-                    >
-                        임베디드/시스템
-                    </button>
-
-                    <!-- 창업 / 서비스 기획 -->
-                    <button
-                            type="button"
-                            class="px-4 py-2 rounded-xl border text-sm"
-                            data-track="STARTUP"
-                            id="track-startup-btn"
-                    >
-                        창업/서비스 기획
-                    </button>
-
-                    <!-- 기타 -->
-                    <button
-                            type="button"
-                            class="px-4 py-2 rounded-xl border text-sm"
-                            data-track="OTHER"
-                            id="track-other-btn"
-                    >
-                        기타
-                    </button>
-                </div>
-            </div>
-
-            <div>
-                <div class="text-sm text-slate-600 mb-1">선배 학년</div>
-                <select id="gradeSelect" class="w-full rounded-xl border px-3 py-2 text-sm">
-                    <option value="">전체</option>
-                    <option value="2">2학년</option>
-                    <option value="3">3학년</option>
-                    <option value="4">4학년</option>
-                </select>
-            </div>
+      <h2 class="text-xl font-semibold mb-4">선배 선택/필터</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="space-y-2 md:col-span-2">
+          <div class="text-sm text-slate-600">관심 트랙 선택</div>
+          <div class="flex items-center gap-2">
+            <button class="px-4 py-2 rounded-xl border bg-blue-700 text-white text-sm">AI/머신러닝</button>
+            <button class="px-4 py-2 rounded-xl border text-sm">보안</button>
+          </div>
         </div>
+        <div>
+          <div class="text-sm text-slate-600 mb-1">선배 학년</div>
+          <select class="w-full rounded-xl border px-3 py-2 text-sm">
+            <option>3학년</option>
+            <option>4학년</option>
+          </select>
+        </div>
+      </div>
     </section>
 
-    <!-- 선배 이수 기록 카드 영역 -->
     <section class="bg-white rounded-2xl border shadow-sm p-6">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold">선배의 실제 이수 기록</h3>
-            <p class="text-xs text-slate-500" id="sunbaeSummaryText">
-                공유된 시간표를 불러오는 중입니다...
-            </p>
-        </div>
+      <h3 class="text-lg font-semibold mb-4">선배의 실제 이수 기록</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <article class="border rounded-2xl p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <div class="text-base font-semibold">3학년 1학기</div>
+            <span class="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-600">2024 봄</span>
+          </div>
+          <ul class="space-y-2 text-sm">
+            <li class="flex items-center justify-between">
+              <span>데이터구조론</span>
+              <span class="px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 text-xs">전필</span>
+            </li>
+            <li class="flex items-center justify-between">
+              <span>인공지능개론</span>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs">전선</span>
+            </li>
+          </ul>
+        </article>
 
-        <div
-                id="sunbae-records-container"
-                class="grid grid-cols-1 md:grid-cols-2 gap-6"
-        >
-            <!-- JS가 카드(article)를 생성해서 넣어줌 -->
-        </div>
-
-        <!-- 에러/빈 상태 표시 -->
-        <div id="sunbae-empty-state" class="hidden py-8 text-center text-sm text-slate-500">
-            조건에 맞는 선배 시간표가 없습니다.
-        </div>
+        <article class="border rounded-2xl p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <div class="text-base font-semibold">3학년 2학기</div>
+            <span class="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-600">2024 가을</span>
+          </div>
+          <ul class="space-y-2 text-sm">
+            <li class="flex items-center justify-between">
+              <span>운영체제</span>
+              <span class="px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 text-xs">전필</span>
+            </li>
+          </ul>
+        </article>
+      </div>
     </section>
-</main>
+  </main>
 
-<!-- 공통 푸터 -->
-<footer class="fixed bottom-0 inset-x-0 bg-white border-t">
+  <!-- 공통 푸터 -->
+  <footer class="fixed bottom-0 inset-x-0 bg-white border-t">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-start justify-between">
-        <div class="flex items-start gap-4">
-            <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="h-6 w-auto" />
-            <div class="space-y-1 text-sm text-slate-600 leading-relaxed">
-                <div>강원특별자치도 원주시 흥업면 연세대길 1 창조관</div>
-                <div>TEL) 033-123-4567</div>
-                <div>EMAIL: YCHECK@gmail.com</div>
-            </div>
+      <div class="flex items-start gap-4">
+        <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="h-6 w-auto" />
+        <div class="space-y-1 text-sm text-slate-600 leading-relaxed">
+          <div>강원특별자치도 원주시 흥업면 연세대길 1 창조관</div>
+          <div>TEL) 033-123-4567</div>
+          <div>EMAIL: YCHECK@gmail.com</div>
         </div>
-        <div class="flex items-center gap-6 text-sm text-slate-600">
-            <span class="hidden sm:block h-6 w-px bg-slate-200"></span>
-            <span>만든이들</span>
-            <span>문의하기</span>
-        </div>
+      </div>
+      <div class="flex items-center gap-6 text-sm text-slate-600">
+        <span class="hidden sm:block h-6 w-px bg-slate-200"></span>
+        <span>만든이들</span>
+        <span>문의하기</span>
+      </div>
     </div>
-</footer>
-
-<script>
-    // ================================
-    //   선배의 발자취 – 공유된 시간표 불러오기 + 필터
-    //   GET /api/footprints/timetables/?track=AI_ML&grade=3
-    // ================================
-
-    const recordsContainer = document.getElementById("sunbae-records-container");
-    const summaryText = document.getElementById("sunbaeSummaryText");
-    const emptyState = document.getElementById("sunbae-empty-state");
-
-    const gradeSelect = document.getElementById("gradeSelect");
-    const trackButtons = document.querySelectorAll("[data-track]");
-
-    // 🔹 현재 선택된 필터 상태
-    let currentTrack = "AI_ML"; // 기본값: AI/머신러닝
-    let currentGrade = "";      // "" = 전체
-
-    // 과목 유형 뱃지 색상
-    function getCategoryBadge(category) {
-        if (category === "전필") return "bg-rose-100 text-rose-700";
-        if (category === "전선") return "bg-emerald-100 text-emerald-700";
-        return "bg-slate-100 text-slate-600";
-    }
-
-    // 트랙 버튼 스타일 토글
-    function updateTrackButtonStyles() {
-        trackButtons.forEach(btn => {
-            const active = btn.dataset.track === currentTrack;
-            if (active) {
-                btn.classList.remove("bg-white", "text-slate-700");
-                btn.classList.add("bg-blue-700", "text-white", "border-blue-700");
-            } else {
-                btn.classList.remove("bg-blue-700", "text-white", "border-blue-700");
-                btn.classList.add("bg-white", "text-slate-700");
-            }
-        });
-    }
-
-    // 카드 1개 생성
-    function createRecordCard(entry) {
-        const article = document.createElement("article");
-        article.className = "border rounded-2xl p-5 shadow-sm";
-
-        // header
-        const header = document.createElement("div");
-        header.className = "flex items-center justify-between mb-3";
-
-        header.innerHTML = `
-      <div class="text-base font-semibold">${entry.label}</div>
-      <span class="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-600">
-        ${entry.user.display_name || entry.user.username} 선배
-      </span>
-    `;
-        article.appendChild(header);
-
-        // 과목 리스트
-        const ul = document.createElement("ul");
-        ul.className = "space-y-2 text-sm";
-
-        const courses = Array.isArray(entry.courses) ? entry.courses : [];
-
-        if (!courses.length) {
-            ul.innerHTML = `
-        <li class="text-xs text-slate-400">등록된 과목이 없습니다.</li>
-      `;
-        } else {
-            courses.forEach(c => {
-                const li = document.createElement("li");
-                li.className = "flex items-center justify-between";
-
-                li.innerHTML = `
-          <span>${c.subject || "-"}</span>
-          ${
-                    c.memo
-                        ? `<span class="px-2 py-0.5 text-xs rounded-full ${getCategoryBadge(
-                            c.memo
-                        )}">${c.memo}</span>`
-                        : ""
-                }
-        `;
-                ul.appendChild(li);
-            });
-        }
-
-        article.appendChild(ul);
-        return article;
-    }
-
-    // 공유된 시간표 불러오기 (필터 적용)
-    async function loadSharedTimetables() {
-        summaryText.textContent = "공유된 시간표를 불러오는 중입니다...";
-        recordsContainer.innerHTML = "";
-        emptyState.classList.add("hidden");
-
-        const params = new URLSearchParams();
-        if (currentTrack) params.append("track", currentTrack);
-        if (currentGrade) params.append("grade", currentGrade);
-
-        const query = params.toString();
-        const url = query
-            ? `/api/footprints/timetables/?${query}`
-            : `/api/footprints/timetables/`;
-
-        try {
-            const res = await fetch(url, {
-                method: "GET",
-                credentials: "include",
-            });
-
-            if (!res.ok) {
-                summaryText.textContent = "시간표를 불러오는 중 오류가 발생했습니다.";
-                emptyState.classList.remove("hidden");
-                return;
-            }
-
-            const data = await res.json();
-            const results = Array.isArray(data.results) ? data.results : [];
-
-            if (!results.length) {
-                summaryText.textContent = "조건에 맞는 선배 시간표가 없습니다.";
-                emptyState.classList.remove("hidden");
-                return;
-            }
-
-            results.forEach(entry => {
-                const card = createRecordCard(entry);
-                recordsContainer.appendChild(card);
-            });
-
-            summaryText.textContent = `조건에 맞는 선배 시간표 ${results.length}개가 있습니다.`;
-        } catch (err) {
-            console.error(err);
-            summaryText.textContent = "시간표를 불러오는 중 오류가 발생했습니다.";
-            emptyState.classList.remove("hidden");
-        }
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-        // 트랙 버튼 클릭 시
-        trackButtons.forEach(btn => {
-            btn.addEventListener("click", () => {
-                currentTrack = btn.dataset.track; // ex) "AI_ML"
-                updateTrackButtonStyles();
-                loadSharedTimetables();
-            });
-        });
-
-        // 학년 선택 시
-        if (gradeSelect) {
-            gradeSelect.addEventListener("change", (e) => {
-                currentGrade = e.target.value; // "", "2", "3", ...
-                loadSharedTimetables();
-            });
-        }
-
-        // 초기 상태: AI_ML + 전체 학년
-        updateTrackButtonStyles();
-        loadSharedTimetables();
-    });
-</script>
-
-
+  </footer>
 </body>
 </html>
