@@ -29,6 +29,7 @@ ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split() or []
 # --------------------------------------------------
 
 INSTALLED_APPS = [
+    # Django 기본 앱들
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -36,8 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # 프로젝트 앱들
     'users',
     'curriculum',
+    'timetable',     # ✅ 시간표 앱
+    'footprints',    # ✅ 선배 발자취 앱
 ]
 
 
@@ -69,11 +73,12 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             BASE_DIR.parent / 'web' / 'html',   # /data/web/html/
-            BASE_DIR / 'templates',             # 프로젝트 기본 templates 폴더
+            BASE_DIR / 'templates',             # 필요 시 사용할 프로젝트 templates 폴더
         ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -107,10 +112,10 @@ DATABASES = {
 # --------------------------------------------------
 
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 
@@ -128,8 +133,9 @@ USE_TZ = True
 # STATIC FILES
 # --------------------------------------------------
 # ⭐ data/web 폴더 전체를 static root로 등록
-#   - /data/web/html → HTML 파일
-#   - /data/web/css  → CSS 폴더
+#   - /data/web/html → HTML 파일 (TemplateView로 렌더링)
+#   - /data/web/css  → CSS
+#   - /data/web/img  → 이미지
 #   전부 그대로 사용 가능
 
 STATIC_URL = '/static/'
