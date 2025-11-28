@@ -70,13 +70,21 @@
                 </select>
             </div>
 
-            <!-- 이메일 -->
+            <!-- 학과/학부 (새 필드) -->
             <div class="form-group form-group-full">
-                <label class="form-label">이메일</label>
-                <input id="field-email" type="email" class="form-input form-input-disabled" disabled>
+                <label class="form-label">학과/학부</label>
+                <select id="field-major-dept" class="form-input">
+                    <option value="">선택하세요</option>
+                    <option value="SOFTWARE">소프트웨어학부</option>
+                    <option value="DATASCIENCE">데이터사이언스학부</option>
+                    <option value="AI_SEMI">AI반도체학부</option>
+                    <option value="BIOMED">의공학부</option>
+                    <option value="CLINICAL">임상병리학과</option>
+                    <option value="OCC_THERAPY">작업치료학과</option>
+                </select>
             </div>
 
-            <!-- 관심 분야 (단일 선택 라디오 버튼) -->
+            <!-- 관심 분야 -->
             <fieldset class="fieldset form-group-full">
                 <legend class="fieldset-legend">관심 전공/분야</legend>
 
@@ -149,7 +157,7 @@
 </footer>
 
 <script>
-    // 마이페이지 로딩
+    // 마이페이지 불러오기
     async function loadMyPage() {
         try {
             const resp = await fetch("/api/mypage/", {
@@ -166,20 +174,17 @@
             const data = await resp.json();
             const p = data.profile || {};
 
-            document.getElementById("field-username").value  = data.username || "";
-            document.getElementById("field-real-name").value = p.real_name || "";
-            document.getElementById("field-student-id").value = p.student_id || "";
-            document.getElementById("field-email").value = data.email || "";
-            document.getElementById("field-semester").value = p.current_semester || "";
+            document.getElementById("field-username").value       = data.username || "";
+            document.getElementById("field-real-name").value      = p.real_name || "";
+            document.getElementById("field-student-id").value     = p.student_id || "";
+            document.getElementById("field-semester").value       = p.current_semester || "";
+            document.getElementById("field-major-dept").value     = p.major_department || "";
 
-            // 관심 분야 라디오 버튼 매핑
+            // 관심 분야 설정
             const radios = document.querySelectorAll("input[name='interest']");
-            radios.forEach(r => {
-                r.checked = (r.value === p.interest);
-            });
+            radios.forEach(r => r.checked = (r.value === p.interest));
 
             document.getElementById("field-interest-etc").value = p.interest_text || "";
-
             document.getElementById("chk-consent").checked = !!p.data_consent;
 
         } catch (err) {
@@ -196,6 +201,7 @@
             real_name: document.getElementById("field-real-name").value,
             student_id: document.getElementById("field-student-id").value,
             current_semester: document.getElementById("field-semester").value,
+            major_department: document.getElementById("field-major-dept").value,
             interest: interestValue,
             interest_text: document.getElementById("field-interest-etc").value,
             data_consent: document.getElementById("chk-consent").checked,

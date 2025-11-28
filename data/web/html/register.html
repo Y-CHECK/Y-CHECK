@@ -32,80 +32,56 @@
         <h1 class="text-2xl font-bold">회원가입</h1>
         <p class="text-slate-600 text-sm mt-1">기본 정보를 입력해 주세요.</p>
 
-        <!-- ⭐ 여기가 실제로 submit 되는 폼 -->
+        <!-- 회원가입 폼 -->
         <form id="registerForm" class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
             <!-- ID -->
             <div class="sm:col-span-2">
                 <label class="block text-sm text-slate-600 mb-1" for="username">ID</label>
-                <input
-                        id="username"
-                        name="username"
-                        type="text"
-                        required
-                        class="w-full rounded-xl border px-3 py-2"
-                        placeholder="아이디"
-                >
+                <input id="username" name="username" type="text" required
+                       class="w-full rounded-xl border px-3 py-2" placeholder="아이디">
             </div>
 
             <!-- Password -->
             <div class="sm:col-span-2">
                 <label class="block text-sm text-slate-600 mb-1" for="password">Password</label>
-                <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        required
-                        class="w-full rounded-xl border px-3 py-2"
-                        placeholder="비밀번호"
-                >
+                <input id="password" name="password" type="password" required
+                       class="w-full rounded-xl border px-3 py-2" placeholder="비밀번호">
             </div>
 
             <!-- 이름(실명) -->
             <div>
                 <label class="block text-sm text-slate-600 mb-1" for="real_name">이름</label>
-                <input
-                        id="real_name"
-                        name="real_name"
-                        type="text"
-                        required
-                        class="w-full rounded-xl border px-3 py-2"
-                >
+                <input id="real_name" name="real_name" type="text" required
+                       class="w-full rounded-xl border px-3 py-2">
             </div>
 
             <!-- 학번 -->
             <div>
                 <label class="block text-sm text-slate-600 mb-1" for="student_id">학번</label>
-                <input
-                        id="student_id"
-                        name="student_id"
-                        type="text"
-                        required
-                        class="w-full rounded-xl border px-3 py-2"
-                >
+                <input id="student_id" name="student_id" type="text" required
+                       class="w-full rounded-xl border px-3 py-2">
             </div>
 
-            <!-- 이메일 -->
-            <div>
-                <label class="block text-sm text-slate-600 mb-1" for="email">이메일</label>
-                <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        required
-                        class="w-full rounded-xl border px-3 py-2"
-                        placeholder="you@yonsei.ac.kr"
-                >
+            <!-- 학과/학부 (드롭다운) -->
+            <div class="sm:col-span-2">
+                <label class="block text-sm text-slate-600 mb-1" for="major_department">학과/학부</label>
+                <select id="major_department" name="major_department" required
+                        class="w-full rounded-xl border px-3 py-2 text-sm">
+                    <option value="">선택하세요</option>
+                    <option value="SOFTWARE">소프트웨어학부</option>
+                    <option value="DATASCIENCE">데이터사이언스학부</option>
+                    <option value="AI_SEMI">AI반도체학부</option>
+                    <option value="BIOMED">의공학부</option>
+                    <option value="CLINICAL">임상병리학과</option>
+                    <option value="OCC_THERAPY">작업치료학과</option>
+                </select>
             </div>
 
             <!-- 현재 학년/학기 -->
-            <div>
+            <div class="sm:col-span-2">
                 <label class="block text-sm text-slate-600 mb-1" for="current_semester">현재 학년/학기</label>
-                <select
-                        id="current_semester"
-                        name="current_semester"
-                        required
-                        class="w-full rounded-xl border px-3 py-2 text-sm"
-                >
+                <select id="current_semester" name="current_semester" required
+                        class="w-full rounded-xl border px-3 py-2 text-sm">
                     <option value="">선택하세요</option>
                     <option value="1-1">1학년 1학기</option>
                     <option value="1-2">1학년 2학기</option>
@@ -118,7 +94,7 @@
                 </select>
             </div>
 
-            <!-- 관심 전공/분야 (예전 HTML과 맞춰서 radio로 구성) -->
+            <!-- 관심 분야 -->
             <fieldset class="sm:col-span-2 border rounded-xl p-4">
                 <legend class="px-1 text-sm text-slate-600">관심 전공/분야</legend>
                 <div class="grid grid-cols-2 gap-2 text-sm mt-1">
@@ -148,15 +124,12 @@
                     </label>
                 </div>
 
-                <!-- 기타 선택 시만 보이는 입력 -->
+                <!-- 기타 입력창 -->
                 <label id="interestTextLabel" class="block mt-3 text-sm text-slate-600 hidden">
                     기타 관심 분야
-                    <input
-                            type="text"
-                            name="interest_text"
-                            class="mt-1 w-full rounded-xl border px-3 py-2 text-sm"
-                            placeholder="예: HCI, 블록체인 등"
-                    >
+                    <input type="text" name="interest_text"
+                           class="mt-1 w-full rounded-xl border px-3 py-2 text-sm"
+                           placeholder="예: HCI, 블록체인 등">
                 </label>
             </fieldset>
 
@@ -164,8 +137,8 @@
             <div class="sm:col-span-2 flex items-center gap-2 mt-2">
                 <input id="dataConsent" name="data_consent" type="checkbox" class="h-4 w-4">
                 <span class="text-sm text-slate-700">
-            위 정보가 졸업요건/추천 교과 계산에 사용되는 것에 동의합니다.
-          </span>
+                    위 정보가 졸업요건/추천 교과 계산에 사용되는 것에 동의합니다.
+                </span>
             </div>
 
             <!-- 결과 메시지 -->
@@ -173,14 +146,12 @@
 
             <!-- 버튼 -->
             <div class="sm:col-span-2 space-y-2 mt-2">
-                <!-- ⭐ type="submit" 으로 변경 -->
-                <button
-                        type="submit"
-                        class="w-full rounded-xl bg-blue-700 text-white py-2 text-sm font-semibold"
-                >
+                <button type="submit"
+                        class="w-full rounded-xl bg-blue-700 text-white py-2 text-sm font-semibold">
                     계정 생성하기
                 </button>
-                <a href="login.html" class="w-full inline-flex justify-center rounded-xl border py-2 text-sm">
+                <a href="login.html"
+                   class="w-full inline-flex justify-center rounded-xl border py-2 text-sm">
                     이미 계정이 있으신가요? 로그인
                 </a>
             </div>
@@ -211,7 +182,7 @@
     </div>
 </footer>
 
-<!-- ⭐ JS: 예전 registerForm 동작 + /api/register/로 요청 -->
+<!-- JS -->
 <script>
     const form = document.getElementById('registerForm');
     const result = document.getElementById('result');
@@ -219,7 +190,7 @@
     const interestTextLabel = document.getElementById('interestTextLabel');
     const dataConsent = document.getElementById('dataConsent');
 
-    // 기타 선택 시만 입력창 보이기
+    // 기타 선택 시 입력창 표시
     interestRadios.forEach(radio => {
         radio.addEventListener('change', () => {
             if (radio.value === 'OTHER' && radio.checked) {
@@ -231,6 +202,7 @@
         });
     });
 
+    // 제출
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -242,7 +214,6 @@
         const formData = new FormData(form);
 
         try {
-            // ⭐ 여기를 Django API URL과 맞게 사용
             const res = await fetch('/api/register/', {
                 method: 'POST',
                 body: formData,
@@ -252,7 +223,7 @@
             result.textContent = data.message || '응답 받음';
 
             if (res.ok) {
-                // 회원가입 성공 시 이동하고 싶으면 주석 해제
+                // 회원가입 성공 시 이동하려면 아래 주석 해제
                 // location.href = 'login.html';
             }
         } catch (err) {
@@ -261,5 +232,6 @@
         }
     });
 </script>
+
 </body>
 </html>
