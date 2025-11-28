@@ -33,6 +33,7 @@ class Course(models.Model):
     is_required = models.BooleanField(default=False)        # 전필 / 교양필수 여부
     is_major_required = models.BooleanField(default=False)  # 전공필수만 따로 표시
     level = models.PositiveSmallIntegerField(default=1000)  # 1000, 2000, 3000, 4000 단위
+    ge_area = models.CharField(max_length=50, null=True, blank=True)
     note = models.TextField(blank=True)
 
     # 예외 처리용 (기본전공으로 인정 안 되는 과목 등)
