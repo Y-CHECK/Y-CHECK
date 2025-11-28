@@ -2,62 +2,81 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8" />
-    <title>Y-CHECK · 마이페이지</title>
+    <title>Y_CHECK · 마이페이지</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 기존 마이페이지 CSS (원하면 제거 가능) -->
     <link rel="stylesheet" href="../css/mypage.css">
+
+    <style>
+        @media print { .no-print { display: none !important; } }
+    </style>
 </head>
 
-<body>
+<body class="min-h-screen bg-[#f7f9fc] text-slate-900 pb-24">
 
-<header class="site-header">
-    <div class="header-inner">
-        <div class="header-left">
-            <a href="main" class="logo-link">
-                <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="logo-img">
+<!-- -----------------------------------------------------------
+                    헤더 (메인 페이지 그대로)
+----------------------------------------------------------- -->
+<header class="bg-white border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+        <!-- 로고 -->
+        <div class="flex items-center gap-3">
+            <a href="main" class="flex items-center gap-3">
+                <img src="../img/ycheck_logo.png" alt="Y_CHECK 로고" class="h-8 w-auto">
             </a>
         </div>
 
-        <nav class="main-nav">
-            <a href="calculator" class="nav-link">계산기</a>
-            <a href="timetable" class="nav-link">시간표</a>
-            <a href="sunbae" class="nav-link">선배의 발자취</a>
+        <!-- 내비게이션 -->
+        <nav class="hidden sm:flex items-center justify-center flex-1 divide-x divide-slate-300" style="margin-left: 90px;">
+            <a href="calculator" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">계산기</a>
+            <a href="timetable" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">시간표</a>
+            <a href="sunbae" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">선배의 발자취</a>
         </nav>
 
-        <div class="header-right">
-            <a href="mypage" class="nav-link nav-link-strong">마이페이지</a>
+        <!-- 마이페이지 -->
+        <div class="hidden sm:block">
+            <a href="mypage" class="px-6 py-2 text-sm text-slate-600 hover:text-slate-900 font-bold">마이페이지</a>
         </div>
     </div>
 </header>
 
-<main class="main-container">
 
-    <section class="card">
-        <h1 class="page-title">My Page</h1>
+<!-- -----------------------------------------------------------
+                    메인 컨텐츠 (원본 그대로)
+----------------------------------------------------------- -->
+<main class="main-container max-w-5xl mx-auto px-4 sm:px-6 py-10">
 
-        <form class="form-grid">
+    <section class="card bg-white rounded-2xl border shadow-sm p-8">
+        <h1 class="page-title text-2xl font-extrabold mb-8">My Page</h1>
+
+        <form class="form-grid grid grid-cols-1 sm:grid-cols-2 gap-6">
 
             <!-- 이름 -->
             <div class="form-group">
-                <label class="form-label">이름</label>
-                <input id="field-real-name" type="text" class="form-input">
+                <label class="form-label block text-sm mb-1">이름</label>
+                <input id="field-real-name" type="text" class="form-input w-full border rounded-xl px-3 py-2 text-sm">
             </div>
 
             <!-- ID -->
             <div class="form-group">
-                <label class="form-label">ID</label>
-                <input id="field-username" type="text" class="form-input form-input-disabled" disabled>
+                <label class="form-label block text-sm mb-1">ID</label>
+                <input id="field-username" type="text" class="form-input w-full border rounded-xl px-3 py-2 bg-slate-100 text-sm" disabled>
             </div>
 
             <!-- 학번 -->
             <div class="form-group">
-                <label class="form-label">학번</label>
-                <input id="field-student-id" type="text" class="form-input">
+                <label class="form-label block text-sm mb-1">학번</label>
+                <input id="field-student-id" type="text" class="form-input w-full border rounded-xl px-3 py-2 text-sm">
             </div>
 
             <!-- 학년/학기 -->
             <div class="form-group">
-                <label class="form-label">학년/학기</label>
-                <select id="field-semester" class="form-input">
+                <label class="form-label block text-sm mb-1">학년/학기</label>
+                <select id="field-semester" class="form-input w-full border rounded-xl px-3 py-2 text-sm">
                     <option value="">선택하세요</option>
                     <option value="1-1">1학년 1학기</option>
                     <option value="1-2">1학년 2학기</option>
@@ -70,10 +89,10 @@
                 </select>
             </div>
 
-            <!-- 학과/학부 (새 필드) -->
-            <div class="form-group form-group-full">
-                <label class="form-label">학과/학부</label>
-                <select id="field-major-dept" class="form-input">
+            <!-- 학과 -->
+            <div class="form-group form-group-full sm:col-span-2">
+                <label class="form-label block text-sm mb-1">학과/학부</label>
+                <select id="field-major-dept" class="form-input w-full border rounded-xl px-3 py-2 text-sm">
                     <option value="">선택하세요</option>
                     <option value="SOFTWARE">소프트웨어학부</option>
                     <option value="DATASCIENCE">데이터사이언스학부</option>
@@ -85,41 +104,43 @@
             </div>
 
             <!-- 관심 분야 -->
-            <fieldset class="fieldset form-group-full">
-                <legend class="fieldset-legend">관심 전공/분야</legend>
+            <fieldset class="fieldset form-group-full sm:col-span-2 border rounded-2xl p-4">
+                <legend class="fieldset-legend text-sm font-bold">관심 전공/분야</legend>
 
-                <div class="checkbox-grid">
+                <div class="checkbox-grid grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3">
 
-                    <label class="checkbox-item">
-                        <input type="radio" name="interest" value="AI_ML" class="radio-input">
+                    <label class="checkbox-item flex gap-2 text-sm">
+                        <input type="radio" name="interest" value="AI_ML">
                         <span>AI/머신러닝</span>
                     </label>
 
-                    <label class="checkbox-item">
-                        <input type="radio" name="interest" value="SECURITY_NETWORK" class="radio-input">
+                    <label class="checkbox-item flex gap-2 text-sm">
+                        <input type="radio" name="interest" value="SECURITY_NETWORK">
                         <span>보안/네트워크</span>
                     </label>
 
-                    <label class="checkbox-item">
-                        <input type="radio" name="interest" value="GAME_MEDIA" class="radio-input">
+                    <label class="checkbox-item flex gap-2 text-sm">
+                        <input type="radio" name="interest" value="GAME_MEDIA">
                         <span>게임/미디어</span>
                     </label>
 
-                    <label class="checkbox-item">
-                        <input type="radio" name="interest" value="EMBEDDED_SYSTEM" class="radio-input">
+                    <label class="checkbox-item flex gap-2 text-sm">
+                        <input type="radio" name="interest" value="EMBEDDED_SYSTEM">
                         <span>임베디드/시스템</span>
                     </label>
 
-                    <label class="checkbox-item">
-                        <input type="radio" name="interest" value="STARTUP_SERVICE" class="radio-input">
+                    <label class="checkbox-item flex gap-2 text-sm">
+                        <input type="radio" name="interest" value="STARTUP_SERVICE">
                         <span>창업/서비스 기획</span>
                     </label>
 
-                    <label class="checkbox-item checkbox-item-etc">
-                        <input type="radio" name="interest" value="OTHER" class="radio-input">
+                    <!-- 기타 -->
+                    <label class="checkbox-item checkbox-item-etc flex gap-2 text-sm col-span-2">
+                        <input type="radio" name="interest" value="OTHER">
                         <span>기타</span>
-                        <input id="field-interest-etc" type="text"
-                               class="form-input form-input-etc"
+                        <input id="field-interest-etc"
+                               type="text"
+                               class="form-input w-full border rounded-xl px-3 py-2 text-sm"
                                placeholder="예: 로봇, 교육 등">
                     </label>
 
@@ -127,14 +148,16 @@
             </fieldset>
 
             <!-- 데이터 사용 동의 -->
-            <div class="form-group form-group-full form-consent">
-                <input id="chk-consent" type="checkbox" class="checkbox-input">
-                <label for="chk-consent" class="consent-label">데이터 사용 동의</label>
+            <div class="form-group form-group-full form-consent sm:col-span-2 flex items-center gap-2">
+                <input id="chk-consent" type="checkbox">
+                <label for="chk-consent" class="consent-label text-sm">데이터 사용 동의</label>
             </div>
 
             <!-- 버튼 -->
-            <div class="form-group form-group-full form-actions">
-                <button id="btn-save-profile" type="button" class="btn-primary">
+            <div class="form-group form-group-full form-actions sm:col-span-2">
+                <button id="btn-save-profile"
+                        type="button"
+                        class="btn-primary w-full bg-blue-600 text-white text-sm font-semibold py-2 rounded-xl hover:bg-blue-700">
                     정보 수정하기
                 </button>
             </div>
@@ -143,21 +166,188 @@
     </section>
 </main>
 
-<footer class="site-footer">
-    <div class="footer-inner">
-        <div class="footer-left">
-            <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="footer-logo" />
-            <div class="footer-text">
-                <div>강원특별자치도 원주시 흥업면 연세대길 1 창조관</div>
-                <div>TEL) 033-123-4567</div>
-                <div>EMAIL: YCHECK@gmail.com</div>
-            </div>
+
+<!-- -----------------------------------------------------------
+                    푸터 (메인 페이지 그대로)
+----------------------------------------------------------- -->
+<footer class="absolute bottom inset-x-0 bg-white border-t w-full">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-start justify-between">
+        <div class="space-y-0.5 text-sm text-slate-600 leading-tight">
+            <div>Inc: 강원특별자치도 원주시 흥업면 연세대길 1</div>
+            <div>Instagram: @Y_CHECK.YONSEI</div>
+            <div>Email: YCHECK2025@gmail.com</div>
+        </div>
+
+        <div class="flex items-center gap-6 text-sm text-slate-600 leading-tight" style="margin-top: 12px;">
+            <span class="hidden sm:block h-6 w-px bg-slate-200"></span>
+            <a href="#" class="text-xs hover:underline" id="open-makers-modal"><span>만든이들</span></a>
+            <a href="#" class="text-xs hover:underline" id="open-contact-modal"><span>문의하기</span></a>
         </div>
     </div>
 </footer>
 
+
+<!-- -----------------------------------------------------------
+                    만든이들 모달 (메인과 동일)
+----------------------------------------------------------- -->
+<div id="makers-modal-overlay"
+     class="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50 hidden">
+    <div class="bg-white rounded-2xl px-6 py-8 w-full max-w-md shadow-xl relative">
+        <button id="close-makers-modal"
+                class="absolute top-3 right-3 text-slate-500 hover:text-slate-700 text-2xl font-bold">&times;</button>
+
+        <h2 class="text-xl font-bold mb-4 text-center">만든이들</h2>
+
+        <div class="space-y-2 text-sm text-slate-700">
+            <div><strong>PM</strong> – CHOI</div>
+            <div><strong>Back-end</strong> – KIM / MA</div>
+            <div><strong>Front-end</strong> – YU / LEE</div>
+            <hr class="my-2">
+            <div class="text-xs text-slate-500">
+                Y_CHECK 서비스는 위 팀원이 함께 만들었습니다.<br>
+                궁금한 점은 언제든 문의해 주세요!
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- -----------------------------------------------------------
+                    문의하기 모달 (메인과 동일)
+----------------------------------------------------------- -->
+<div id="contact-modal-overlay"
+     class="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50 hidden">
+    <div class="bg-white rounded-2xl px-6 py-8 w-full max-w-md shadow-xl relative">
+
+        <button id="close-contact-modal"
+                class="absolute top-3 right-3 text-slate-500 hover:text-slate-700 text-2xl font-bold">&times;</button>
+
+        <h2 class="text-xl font-bold mb-4 text-center">문의하기</h2>
+
+        <form id="contact-form" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">문의 종류</label>
+                <select id="inquiry-type" class="w-full border rounded-xl px-3 py-2 text-sm">
+                    <option value="버그">버그 제보</option>
+                    <option value="개선">기능/UX 개선</option>
+                    <option value="문의">서비스 문의</option>
+                    <option value="기타">기타</option>
+                </select>
+            </div>
+
+            <div id="custom-type-wrap" class="hidden">
+                <label class="block text-sm font-medium mb-1">세부 종류</label>
+                <input id="custom-type" type="text"
+                       class="w-full border rounded-xl px-3 py-2 text-sm"
+                       placeholder="예: 졸업요건 계산식 관련 문의" />
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1">내용</label>
+                <textarea id="inquiry-content"
+                          class="w-full border rounded-xl px-3 py-2 text-sm h-32 resize-none"
+                          placeholder="문의하실 내용을 작성해 주세요."></textarea>
+            </div>
+
+            <button type="submit"
+                    class="w-full bg-blue-600 text-white text-sm font-semibold py-2 rounded-xl hover:bg-blue-700">
+                보내기
+            </button>
+        </form>
+
+        <div id="contact-success" class="hidden text-center text-sm text-emerald-600 mt-4">
+            문의가 성공적으로 전송되었습니다. 감사합니다!
+        </div>
+
+    </div>
+</div>
+
+
+<!-- -----------------------------------------------------------
+                    모달 스크립트 (메인과 동일)
+----------------------------------------------------------- -->
 <script>
-    // 마이페이지 불러오기
+    /* 만든이들 */
+    const openMakersBtn = document.getElementById('open-makers-modal');
+    const makersModal = document.getElementById('makers-modal-overlay');
+    const closeMakersBtn = document.getElementById('close-makers-modal');
+
+    if (openMakersBtn) {
+        openMakersBtn.addEventListener('click', e => {
+            e.preventDefault();
+            makersModal.classList.remove('hidden');
+        });
+    }
+    if (closeMakersBtn) {
+        closeMakersBtn.addEventListener('click', () => {
+            makersModal.classList.add('hidden');
+        });
+    }
+    makersModal?.addEventListener('click', e => {
+        if (e.target === makersModal) makersModal.classList.add('hidden');
+    });
+    document.addEventListener('keydown', e => {
+        if (!makersModal.classList.contains('hidden') && e.key === "Escape")
+            makersModal.classList.add('hidden');
+    });
+
+    /* 문의하기 */
+    const openContactBtn = document.getElementById('open-contact-modal');
+    const contactModal = document.getElementById('contact-modal-overlay');
+    const closeContactBtn = document.getElementById('close-contact-modal');
+
+    openContactBtn?.addEventListener('click', e => {
+        e.preventDefault();
+        contactModal.classList.remove('hidden');
+    });
+    closeContactBtn?.addEventListener('click', () => {
+        contactModal.classList.add('hidden');
+    });
+    contactModal?.addEventListener('click', e => {
+        if (e.target === contactModal) contactModal.classList.add('hidden');
+    });
+
+    document.addEventListener('keydown', e => {
+        if (!contactModal.classList.contains('hidden') && e.key === "Escape")
+            contactModal.classList.add('hidden');
+    });
+
+    const inquiryType = document.getElementById('inquiry-type');
+    const customTypeWrap = document.getElementById('custom-type-wrap');
+    const customTypeInput = document.getElementById('custom-type');
+
+    inquiryType?.addEventListener('change', function () {
+        if (this.value === '기타') {
+            customTypeWrap.classList.remove('hidden');
+            customTypeInput.setAttribute('required', 'required');
+        } else {
+            customTypeWrap.classList.add('hidden');
+            customTypeInput.removeAttribute('required');
+        }
+    });
+
+    const contactForm = document.getElementById('contact-form');
+    const contactSuccess = document.getElementById('contact-success');
+
+    contactForm?.addEventListener('submit', e => {
+        e.preventDefault();
+        contactForm.classList.add('hidden');
+        contactSuccess.classList.remove('hidden');
+        setTimeout(() => {
+            contactModal.classList.add('hidden');
+            contactForm.reset();
+            contactForm.classList.remove('hidden');
+            customTypeWrap.classList.add('hidden');
+            contactSuccess.classList.add('hidden');
+        }, 1800);
+    });
+</script>
+
+
+<!-- -----------------------------------------------------------
+                    마이페이지 스크립트 (원본 유지)
+----------------------------------------------------------- -->
+<script>
     async function loadMyPage() {
         try {
             const resp = await fetch("/api/mypage/", {
@@ -174,13 +364,13 @@
             const data = await resp.json();
             const p = data.profile || {};
 
-            document.getElementById("field-username").value       = data.username || "";
-            document.getElementById("field-real-name").value      = p.real_name || "";
-            document.getElementById("field-student-id").value     = p.student_id || "";
-            document.getElementById("field-semester").value       = p.current_semester || "";
-            document.getElementById("field-major-dept").value     = p.major_department || "";
+            document.getElementById("field-username").value   = data.username || "";
+            document.getElementById("field-real-name").value  = p.real_name || "";
+            document.getElementById("field-student-id").value = p.student_id || "";
+            document.getElementById("field-semester").value   = p.current_semester || "";
+            document.getElementById("field-major-dept").value = p.major_department || "";
 
-            // 관심 분야 설정
+            // 관심 분야
             const radios = document.querySelectorAll("input[name='interest']");
             radios.forEach(r => r.checked = (r.value === p.interest));
 
@@ -192,7 +382,6 @@
         }
     }
 
-    // 정보 저장
     async function saveMyPage() {
         const selectedRadio = document.querySelector("input[name='interest']:checked");
         const interestValue = selectedRadio ? selectedRadio.value : "";
@@ -235,6 +424,7 @@
         document.getElementById("btn-save-profile").addEventListener("click", saveMyPage);
     });
 </script>
+
 
 </body>
 </html>
