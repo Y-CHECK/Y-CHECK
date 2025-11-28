@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-[#f7f9fc] text-slate-900 pb-24">
+<body class="min-h-screen bg-[#f7f9fc] text-slate-900 flex flex-col">
 
 <!-- 공통 헤더 -->
 <header class="bg-white border-b">
@@ -33,7 +33,7 @@
     </div>
 </header>
 
-<main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+<main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
     <!-- 메인 시간표 -->
     <section class="lg:col-span-9 bg-white rounded-2xl border shadow-sm p-6">
         <div class="flex items-center justify-between mb-4">
@@ -156,12 +156,8 @@
         <div class="bg-white rounded-2xl border shadow-sm p-5">
             <div class="text-lg font-semibold mb-2">담은 수업</div>
             <div class="h-px bg-slate-200 mb-3"></div>
-            <ul class="space-y-2 text-sm">
-                <li class="flex items-center justify-between">
-                    <span class="font-medium">데이터구조론</span>
-                    <span class="text-slate-500">월3, 수4</span>
-                </li>
-                <!-- TODO: 나중에 실제 담은 수업 데이터로 교체 가능 -->
+            <ul class="space-y-2 text-sm" id="selectedCoursesList">
+                <!-- 처음엔 비워둠. 나중에 필요하면 JS로 채우기 -->
             </ul>
         </div>
 
@@ -188,13 +184,13 @@
 </main>
 
 <!-- ==== 공통 푸터 + 모달 + 스크립트 ==== -->
-<footer class="absolute bottom-0 inset-x-0 bg-white border-t w-full">
+<footer class="bg-white border-t w-full">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-start justify-between">
         <div class="flex items-start gap-4">
             <div class="space-y-0.5 text-sm text-slate-600 leading-tight">
                 <div>Inc: 강원특별자치도 원주시 흥업면 연세대길 1</div>
-                <div>Tel: 033-123-4567</div>
-                <div>Email: YCHECK@gmail.com</div>
+                <div>Instagram: @Y_CHECK.YONSEI</div>
+                <div>Email: YCHECK2025@gmail.com</div>
             </div>
         </div>
         <div class="flex items-center gap-6 text-sm text-slate-600 leading-tight" style="margin-top: 12px;">
@@ -211,12 +207,14 @@
     <div class="bg-white rounded-2xl px-6 py-8 w-full max-w-md shadow-xl relative">
         <button id="close-makers-modal"
                 class="absolute top-3 right-3 text-slate-500 hover:text-slate-700 text-2xl font-bold"
-                aria-label="닫기">&times;</button>
+                aria-label="닫기">
+            &times;
+        </button>
         <h2 class="text-xl font-bold mb-4 text-center">만든이들</h2>
         <div class="space-y-2 text-sm text-slate-700">
-            <div><strong>홍길동</strong> – 프론트엔드 개발, UI/UX 디자인</div>
-            <div><strong>김영희</strong> – 백엔드 개발, DB 설계</div>
-            <div><strong>박철수</strong> – 기획, 문서화, QA</div>
+            <div><strong>PM</strong> – CHOI</div>
+            <div><strong>Back-end</strong> – KIM / MA</div>
+            <div><strong>Front-end</strong> – YU / LEE</div>
             <hr class="my-2">
             <div class="text-xs text-slate-500">
                 Y_CHECK 서비스는 위 팀원이 함께 만들었습니다.<br>
@@ -225,6 +223,8 @@
         </div>
     </div>
 </div>
+
+
 
 <!-- 문의하기 모달 -->
 <div id="contact-modal-overlay"
@@ -888,7 +888,6 @@
         initSemesterSelect();
     });
 </script>
-
 
 </body>
 </html>
