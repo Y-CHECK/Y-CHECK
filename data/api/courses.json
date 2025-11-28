@@ -209,31 +209,67 @@
     { "code": "YHU1004", "type": "교선", "name": "환경보전과기업경영", "credits": 3 }
   ],
 
-  "트랙전필": {
+  "트랙": {
     "ai_bigdata": [
-      {"code": "SWE3006", "name": "AI수학", "credits": 3},
-      {"code": "SWE3017", "name": "데이터베이스", "credits": 3}
+      { "code": "SWE3006", "type": "전선", "name": "AI수학", "credits": 3 },
+      { "code": "SWE3016", "type": "전필", "name": "인공지능", "credits": 3 },
+      { "code": "SWE3017", "type": "전필", "name": "데이터베이스", "credits": 3 },
+      { "code": "SWE3018", "type": "전선", "name": "데이터마이닝", "credits": 3 },
+      { "code": "SWE4002", "type": "전선", "name": "웹서비스응용", "credits": 3 },
+      { "code": "SWE4003", "type": "전선", "name": "기계학습개론", "credits": 3 },
+      { "code": "SWE4004", "type": "전선", "name": "빅데이터처리", "credits": 3 },
+      { "code": "SWE4015", "type": "전선", "name": "자연어처리", "credits": 3 },
+      { "code": "SWE4016", "type": "전선", "name": "바이오컴퓨팅", "credits": 3 },
+      { "code": "SWE4017", "type": "전선", "name": "정보검색", "credits": 3 }
     ],
+
     "ai_media": [
-      {"code": "SWE2005", "name": "회로이론", "credits": 3},
-      {"code": "SWE2011", "name": "신호및시스템", "credits": 3},
-      {"code": "SWE3006", "name": "AI수학", "credits": 3},
-      {"code": "SWE3011", "name": "영상처리", "credits": 3}
+      { "code": "SWE2005", "type": "전선", "name": "회로이론", "credits": 3 },
+      { "code": "SWE2011", "type": "전선", "name": "신호및시스템", "credits": 3 },
+      { "code": "SWE3006", "type": "전선", "name": "AI수학", "credits": 3 },
+      { "code": "SWE3011", "type": "전선", "name": "영상처리", "credits": 3 },
+      { "code": "SWE3016", "type": "전필", "name": "인공지능", "credits": 3 },
+      { "code": "SWE3019", "type": "전필", "name": "디지털신호처리", "credits": 3 },
+      { "code": "SWE4003", "type": "전선", "name": "기계학습개론", "credits": 3 },
+      { "code": "SWE4005", "type": "전선", "name": "지능형멀티미디어시스템", "credits": 3 },
+      { "code": "SWE4018", "type": "전선", "name": "스마트미디어통신", "credits": 3 }
     ],
+
     "ai_science": [
-      {"code": "SWE2012", "name": "선형대수입문", "credits": 3},
-      {"code": "SWE3005", "name": "선형대수활용", "credits": 3},
-      {"code": "SWE3006", "name": "AI수학", "credits": 3},
-      {"code": "SWE3020", "name": "수치해석최적화", "credits": 3}
+      { "code": "SWE2012", "type": "전선", "name": "선형대수입문", "credits": 3 },
+      { "code": "SWE3005", "type": "전선", "name": "선형대수활용", "credits": 3 },
+      { "code": "SWE3006", "type": "전선", "name": "AI수학", "credits": 3 },
+      { "code": "SWE3016", "type": "전필", "name": "인공지능", "credits": 3 },
+      { "code": "SWE3020", "type": "전필", "name": "수치해석과최적화", "credits": 3 },
+      { "code": "SWE3021", "type": "전선", "name": "그래프이론과활용", "credits": 3 },
+      { "code": "SWE4003", "type": "전선", "name": "기계학습개론", "credits": 3 },
+      { "code": "SWE4006", "type": "전선", "name": "수치해석분석법", "credits": 3 },
+      { "code": "SWE4007", "type": "전선", "name": "로봇공학", "credits": 3 },
+      { "code": "SWE4019", "type": "전선", "name": "모델링및시물레이션", "credits": 3 },
+      { "code": "SWE4020", "type": "전선", "name": "산업수학과응용문제", "credits": 3 }
     ],
+
     "smart_iot": [
-      {"code": "SWE3007", "name": "마이크로프로세서", "credits": 3},
-      {"code": "SWE3012", "name": "디지털통신", "credits": 3},
-      {"code": "SWE3022", "name": "임베디드시스템", "credits": 3}
+      { "code": "SWE3007", "type": "전선", "name": "마이크로프로세서", "credits": 3 },
+      { "code": "SWE3008", "type": "전선", "name": "통신시스템", "credits": 3 },
+      { "code": "SWE3012", "type": "전선", "name": "디지털통신", "credits": 3 },
+      { "code": "SWE3022", "type": "전필", "name": "임베디드시스템", "credits": 3 },
+      { "code": "SWE3023", "type": "전필", "name": "컴퓨터네트워크", "credits": 3 },
+      { "code": "SWE3024", "type": "전선", "name": "정보보안", "credits": 3 },
+      { "code": "SWE4008", "type": "전선", "name": "임베디드HW설계", "credits": 3 },
+      { "code": "SWE4009", "type": "전선", "name": "데이터통신", "credits": 3 },
+      { "code": "SWE4021", "type": "전선", "name": "IoT응용프로그래밍", "credits": 3 }
     ],
+
     "security": [
-      {"code": "SWE3009", "name": "암호학", "credits": 3},
-      {"code": "SWE3024", "name": "정보보안", "credits": 3}
+      { "code": "SWE3009", "type": "전필", "name": "암호학", "credits": 3 },
+      { "code": "SWE3023", "type": "전선", "name": "컴퓨터네트워크", "credits": 3 },
+      { "code": "SWE3024", "type": "전필", "name": "정보보안", "credits": 3 },
+      { "code": "SWE4002", "type": "전선", "name": "웹서비스응용", "credits": 3 },
+      { "code": "SWE4009", "type": "전선", "name": "데이터통신", "credits": 3 },
+      { "code": "SWE4010", "type": "전선", "name": "컴퓨터보안", "credits": 3 },
+      { "code": "SWE4022", "type": "전선", "name": "정보보안응용", "credits": 3 },
+      { "code": "SWE4023", "type": "전선", "name": "디지털포렌식", "credits": 3 }
     ]
   }
 }
