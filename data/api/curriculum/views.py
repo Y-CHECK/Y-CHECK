@@ -68,28 +68,32 @@ def get_credit_summary(request):
     user = request.user
     completed = TakenCourse.objects.filter(user=user).select_related("course")
 
-    summary = {
-        "total_credits": 0,
-        "GE_BASIC": 0,
-        "GE_UNIV_REQUIRED": 0,
-        "GE_UNIV_ELECTIVE": 0,
-        "EXPLORATION": 0,
-        "MAJOR_BASIC": 0,
-        "MAJOR_DEEP": 0,
-        "level300": 0,
-    }
+    total = 0
+    major_basic = 0
+    major_deep = 0
+    level300 = 0
 
     for item in completed:
         course = item.course
-        summary["total_credits"] += course.credits
 
-        if course.category in summary:
-            summary[course.category] += course.credits
+        total += course.credits
 
-        if course.level >= 300:
-            summary["level300"] += course.credits
+        if course.category == "MAJOR_BASIC":
+            major_basic += course.credits
 
-    return JsonResponse(summary, json_dumps_params={"ensure_ascii": False})
+        if course.category == "MAJOR_DEEP":
+            major_deep += course.credits
+
+        # ⭐ 3000단위 계산 (정확)
+        if course.level >= 3000:
+            level300 += course.credits
+
+    return JsonResponse({
+        "total_credits": total,
+        "MAJOR_BASIC": major_basic,
+        "MAJOR_DEEP": major_deep,
+        "LEVEL300": level300,   # ← 반드시 대문자
+    }, json_dumps_params={"ensure_ascii": False})
 
 
 # =======================================
