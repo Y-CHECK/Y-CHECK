@@ -1,508 +1,144 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8" />
-    <title>Y-CHECK · 계산기</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <style>
-        /* 드롭다운 스크롤 강제 */
-        select {
-            max-height: 300px !important;
-            overflow-y: auto !important;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Y-CHECK · 계산기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
 <body class="min-h-screen bg-[#f7f9fc] text-slate-900 pb-24">
 
-<!-- HEADER -->
-<header class="bg-white border-b">
+  <!-- 공통 헤더 -->
+  <header class="bg-white border-b">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-            <img src="../img/ycheck_logo.png" class="h-8">
-            <div class="h-4 w-px bg-slate-200"></div>
-            <div class="text-sm text-slate-600">연세대학교 졸업요건계산기</div>
-        </div>
-        <nav class="hidden sm:flex items-center gap-6 text-sm text-slate-600">
-            <a href="calculator.html" class="hover:text-slate-900 font-semibold">계산기</a>
-        </nav>
+      <div class="flex items-center gap-3">
+        <a href="main.html" class="flex items-center gap-3">
+          <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="h-8 w-auto">
+        </a>
+        <div class="h-4 w-px bg-slate-200"></div>
+        <div class="text-sm text-slate-600">연세대학교 졸업요건계산기</div>
+      </div>
+      <nav class="hidden sm:flex items-center gap-6 text-sm text-slate-600">
+        <a href="calculator.html" class="hover:text-slate-900 font-semibold">계산기</a>
+        <a href="timetable.html" class="hover:text-slate-900">시간표</a>
+        <a href="sunbae.html" class="hover:text-slate-900">선배들의 발자취</a>
+        <a href="mypage.html" class="hover:text-slate-900">마이페이지</a>
+      </nav>
     </div>
-</header>
+  </header>
 
-<!-- MAIN -->
-<main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-    <!-- LEFT -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- 왼쪽: 내 정보 / 옵션 -->
     <section class="lg:col-span-4 space-y-4">
-        <div class="bg-white rounded-2xl border shadow-sm p-5">
+      <div class="bg-white rounded-2xl border shadow-sm p-5">
+        <h2 class="text-lg font-semibold mb-4 border-b pb-2">내 정보</h2>
 
-            <h2 class="text-lg font-semibold mb-4 border-b pb-2">내 정보</h2>
-
-            <label class="block text-sm text-slate-600 mb-1">입학년도</label>
-            <select id="entryYear" class="w-full rounded-xl border px-3 py-2 text-sm mb-3">
-                <option value="2022">2022 학번</option>
-            </select>
-
-            <label class="block text-sm text-slate-600 mb-1">전공</label>
-            <select id="major" class="w-full rounded-xl border px-3 py-2 text-sm mb-3">
-                <option>소프트웨어학부</option>
-            </select>
-
-            <!-- 트랙 선택 -->
-            <div class="mb-3">
-                <div class="text-sm text-slate-600 mb-1">트랙</div>
-                <label class="mr-4 text-sm"><input type="radio" name="track" value="none" checked> 미정</label>
-                <label class="mr-4 text-sm"><input type="radio" name="track" value="AI_BIGDATA"> AI·빅데이터</label>
-                <label class="mr-4 text-sm"><input type="radio" name="track" value="AI_MEDIA"> AI미디어</label>
-                <label class="mr-4 text-sm"><input type="radio" name="track" value="AI_SCIENCE"> AI계산과학</label>
-                <label class="mr-4 text-sm"><input type="radio" name="track" value="SMART_IOT"> 스마트IoT</label>
-                <label class="mr-4 text-sm"><input type="radio" name="track" value="SECURITY"> 정보보안</label>
-            </div>
-
-            <!-- 필터 -->
-            <div class="border rounded-xl p-3 mb-3">
-                <div class="font-semibold text-sm mb-2">과목 필터</div>
-
-                <select id="filterCategory" class="w-full rounded-xl border px-3 py-2 text-sm mb-2">
-                    <option value="ALL">전체보기</option>
-                    <option value="1000">1000단위</option>
-                    <option value="2000">2000단위</option>
-                    <option value="3000">3000단위</option>
-                    <option value="4000">4000단위</option>
-
-                    <option value="GE_BASIC">교양기초</option>
-                    <option value="GE_UNIV_REQUIRED">대학교양필수</option>
-
-                    <!-- 영역 필터 복구 완료 -->
-                    <option value="GE_UNIV_ELECTIVE_1">1영역</option>
-                    <option value="GE_UNIV_ELECTIVE_2">2영역</option>
-                    <option value="GE_UNIV_ELECTIVE_3">3영역</option>
-                    <option value="GE_UNIV_ELECTIVE_4">4영역</option>
-                    <option value="GE_UNIV_ELECTIVE_5">5영역</option>
-                    <option value="GE_UNIV_ELECTIVE_6">6영역</option>
-                    <option value="GE_UNIV_ELECTIVE_9">9영역</option>
-
-                    <option value="EXPLORATION">전공탐색</option>
-                    <option value="MAJOR_BASIC">기본전공</option>
-                    <option value="MAJOR_DEEP">심화전공</option>
-                </select>
-
-                <input id="searchInput" placeholder="과목명/코드 검색"
-                       class="w-full rounded-xl border px-3 py-2 text-sm mb-2">
-
-                <button onclick="applyFilter()"
-                        class="w-full bg-slate-700 text-white py-2 rounded-xl text-sm font-semibold">
-                    필터 적용
-                </button>
-            </div>
-
-            <!-- 과목 목록 -->
-            <div class="border rounded-xl p-3">
-                <div class="text-sm font-semibold mb-2">이수 과목 선택</div>
-                <div id="courseList"
-                     class="space-y-1 text-sm text-slate-700 h-[480px] overflow-y-auto pr-2">
-                </div>
-            </div>
-
-            <button onclick="calculate()"
-                    class="w-full mt-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-semibold">
-                졸업요건 계산하기
-            </button>
-
+        <div class="mb-3">
+          <label class="block text-sm text-slate-600 mb-1">입학년도</label>
+          <select class="w-full rounded-xl border px-3 py-2 text-sm">
+            <option>2022 학번</option>
+            <option>2023 학번</option>
+            <option>2024 학번</option>
+          </select>
         </div>
+
+        <div class="mb-3">
+          <label class="block text-sm text-slate-600 mb-1">전공</label>
+          <select class="w-full rounded-xl border px-3 py-2 text-sm">
+            <option>소프트웨어학부</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <div class="text-sm text-slate-600 mb-1">트랙</div>
+          <label class="mr-4 text-sm"><input type="radio" name="track" class="mr-1" checked /> 미정</label>
+          <label class="text-sm"><input type="radio" name="track" class="mr-1" /> AI</label>
+        </div>
+
+        <div class="mt-4 border rounded-xl p-3">
+          <div class="text-sm font-semibold mb-2">이수 과목 선택</div>
+          <label class="block text-sm mb-1">
+            <input type="checkbox" class="mr-2" /> SWE - 데이터구조론
+          </label>
+          <label class="block text-sm">
+            <input type="checkbox" class="mr-2" /> SWE - 알고리즘
+          </label>
+        </div>
+      </div>
     </section>
 
-    <!-- RIGHT -->
+    <!-- 오른쪽: 요약 카드 / 진행률 / 전공과목목록 -->
     <section class="lg:col-span-8 space-y-4">
-
-        <!-- 요약 카드 -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-white rounded-2xl border shadow-sm p-5 text-center">
-                <div class="text-sm text-slate-500">누적 이수 학점</div>
-                <div id="summaryTotalCredits" class="mt-2 text-3xl font-bold text-blue-600">0</div>
-            </div>
-            <div class="bg-white rounded-2xl border shadow-sm p-5 text-center">
-                <div class="text-sm text-slate-500">필요 학점</div>
-                <div id="summaryRequiredCredits" class="mt-2 text-3xl font-bold text-slate-800">135</div>
-            </div>
-            <div class="bg-white rounded-2xl border shadow-sm p-5 text-center">
-                <div class="text-sm text-slate-500">졸업 가능 여부</div>
-                <div id="summaryCanGraduate" class="mt-2 text-3xl font-bold text-rose-500">-</div>
-            </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white rounded-2xl border shadow-sm p-5 text-center">
+          <div class="text-sm text-slate-500">누적 이수</div>
+          <div class="mt-2 text-3xl font-bold text-blue-600">25</div>
         </div>
-
-        <!-- 진행률 -->
-        <div class="bg-white rounded-2xl border shadow-sm p-5">
-            <h3 class="text-sm text-slate-500 mb-3">졸업요건 영역별 진행률</h3>
-            <div id="progressList" class="space-y-4"></div>
+        <div class="bg-white rounded-2xl border shadow-sm p-5 text-center">
+          <div class="text-sm text-slate-500">필요 학점</div>
+          <div class="mt-2 text-3xl font-bold text-slate-800">135</div>
         </div>
-
-        <!-- 대학교양 영역 -->
-        <div id="areaStatusCard" class="bg-white rounded-2xl border shadow-sm p-5">
-            <h3 class="text-sm text-slate-500 mb-3">대학교양 선택 영역 이수 현황</h3>
-            <div id="areaStatusContent" class="text-sm"></div>
+        <div class="bg-white rounded-2xl border shadow-sm p-5 text-center">
+          <div class="text-sm text-slate-500">졸업 가능 여부</div>
+          <div class="mt-2 text-3xl font-bold text-rose-500">불가</div>
         </div>
+      </div>
 
-        <!-- 영역별 이수 과목 표 -->
-        <div id="areaTables" class="space-y-6"></div>
-
-    </section>
-</main>
-
-<!-- ================================
-     JS
-================================= -->
-<script>
-    let allCourses = [];
-    let currentFiltered = [];
-    let selectedCourses = new Set();
-
-    const STORAGE_KEY = "ycheck_selected_courses";
-    const RESULT_STORAGE_KEY = "ycheck_calc_result";
-
-    /* ---------------------------------------
-       1) 데이터 불러오기
-    ----------------------------------------*/
-    function loadSelectedFromStorage() {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            try {
-                selectedCourses = new Set(JSON.parse(saved));
-            } catch (e) {
-                console.error("저장된 과목 불러오기 실패", e);
-            }
-        }
-    }
-
-    function loadResultFromStorage() {
-        const saved = localStorage.getItem(RESULT_STORAGE_KEY);
-        if (!saved) return;
-
-        try {
-            const result = JSON.parse(saved);
-
-            // 요약 반영
-            document.getElementById("summaryTotalCredits").innerText = result.totalCredits;
-            document.getElementById("summaryRequiredCredits").innerText = result.required;
-            document.getElementById("summaryCanGraduate").innerText =
-                result.canGraduate ? "가능" : "불가";
-
-            // 상세 렌더링
-            renderProgress(result.credits, result.majorPercent);
-            renderAreaStatus(result.selectedList);
-            renderAreaTables(result.selectedList);
-
-        } catch (e) {
-            console.error("결과 복원 실패", e);
-        }
-    }
-
-    function saveResultToStorage(data, totalCredits, credits) {
-        const selectedList = allCourses.filter(c => selectedCourses.has(c.code));
-
-        const result = {
-            selectedList,
-            totalCredits,
-            required: data.summary.required_total_credits,
-            canGraduate: data.summary.can_graduate,
-            credits,
-            majorPercent: data.major_required.percentage,
-        };
-
-        localStorage.setItem(RESULT_STORAGE_KEY, JSON.stringify(result));
-    }
-
-    /* ---------------------------------------
-       2) 초기 로딩
-    ----------------------------------------*/
-    async function loadCourses() {
-        loadSelectedFromStorage();
-
-        const res = await fetch("http://localhost:8000/api/curriculum/courses/");
-        allCourses = await res.json();
-        currentFiltered = [...allCourses];
-
-        renderCourseList();
-        loadResultFromStorage();  // ★ 계산 결과 복원!
-    }
-
-    /* ---------------------------------------
-       3) 과목 체크박스 렌더링
-    ----------------------------------------*/
-    function renderCourseList() {
-        const list = document.getElementById("courseList");
-        list.innerHTML = "";
-
-        currentFiltered.forEach(c => {
-            list.innerHTML += `
-              <label class="block">
-                <input type="checkbox"
-                  class="mr-2 course-checkbox"
-                  value="${c.code}"
-                  ${selectedCourses.has(c.code) ? "checked" : ""}>
-                ${c.code} - ${c.name} (${c.credits}학점)
-              </label>
-            `;
-        });
-
-        document.querySelectorAll(".course-checkbox").forEach(cb => {
-            cb.addEventListener("change", () => {
-                if (cb.checked) selectedCourses.add(cb.value);
-                else selectedCourses.delete(cb.value);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify([...selectedCourses]));
-            });
-        });
-    }
-
-    /* ---------------------------------------
-       4) 필터 적용
-    ----------------------------------------*/
-    function applyFilter() {
-        const filter = document.getElementById("filterCategory").value;
-        const search = document.getElementById("searchInput").value.trim().toLowerCase();
-
-        currentFiltered = allCourses.filter(c => {
-            let ok = true;
-
-            if (["1000","2000","3000","4000"].includes(filter)) {
-                ok = String(c.level).startsWith(filter);
-            }
-            else if (filter !== "ALL") {
-                ok = c.category === filter;
-            }
-
-            if (search) {
-                ok = ok && (c.code + c.name).toLowerCase().includes(search);
-            }
-
-            return ok;
-        });
-
-        renderCourseList();
-    }
-
-    /* ---------------------------------------
-       5) 계산하기
-    ----------------------------------------*/
-    async function calculate() {
-        const selectedList = allCourses.filter(c => selectedCourses.has(c.code));
-
-        let totalCredits = 0;
-        const credits = {
-            GE_BASIC: 0,
-            GE_UNIV_REQUIRED: 0,
-            EXPLORATION: 0,
-            MAJOR_BASIC: 0,
-            MAJOR_DEEP: 0,
-            LEVEL300: 0
-        };
-
-        selectedList.forEach(c => {
-            totalCredits += c.credits;
-
-            if (credits[c.category] !== undefined)
-                credits[c.category] += c.credits;
-
-            if (c.level >= 3000)
-                credits["LEVEL300"] += c.credits;
-        });
-
-        const payload = {
-            entry_year: 2022,
-            major: "소프트웨어학부",
-            track: document.querySelector("input[name='track']:checked").value,
-            total_credits: totalCredits,
-            completed_courses: [...selectedCourses],
-            credits: {
-                liberal_basic: credits.GE_BASIC,
-                univ_required: credits.GE_UNIV_REQUIRED,
-                exploration: credits.EXPLORATION,
-                major_basic: credits.MAJOR_BASIC,
-                deep_major: credits.MAJOR_DEEP,
-                level300: credits.LEVEL300,
-                track: 15
-            },
-            flags: {
-                second_major_done: true,
-                language_cert: true,
-                it_cert: true,
-                industry_cert: false
-            }
-        };
-
-        const res = await fetch("http://localhost:8000/api/curriculum/calculate/", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(payload)
-        });
-
-        const data = await res.json();
-
-        document.getElementById("summaryTotalCredits").innerText = totalCredits;
-        document.getElementById("summaryRequiredCredits").innerText = data.summary.required_total_credits;
-        document.getElementById("summaryCanGraduate").innerText =
-            data.summary.can_graduate ? "가능" : "불가";
-
-        renderProgress(credits, data.major_required.percentage);
-        renderAreaStatus(selectedList);
-        renderAreaTables(selectedList);
-
-        // ★ 계산 결과 저장 (새로고침 복원)
-        saveResultToStorage(data, totalCredits, credits);
-    }
-
-    /* ---------------------------------------
-       6) 아래 3개 렌더 함수는 기존 그대로 유지
-    ----------------------------------------*/
-
-    function renderProgress(credits, majorPercent) {
-        const NEEDED = {
-            GE_BASIC: 22,
-            GE_UNIV_REQUIRED: 5,
-            EXPLORATION: 21,
-            MAJOR_BASIC: 36,
-            MAJOR_DEEP: 36,
-            LEVEL300: 45
-        };
-
-        const NAMES = {
-            GE_BASIC: "교양기초",
-            GE_UNIV_REQUIRED: "대학교양필수",
-            EXPLORATION: "전공탐색",
-            MAJOR_BASIC: "기본전공",
-            MAJOR_DEEP: "심화전공",
-            LEVEL300: "3000단위 이상"
-        };
-
-        let html = "";
-
-        Object.keys(NEEDED).forEach(k => {
-            const now = credits[k];
-            const min = NEEDED[k];
-            const pct = Math.min(100, Math.round((now / min) * 100));
-
-            html += `
-              <div>
-                <div class="flex justify-between text-xs mb-1">
-                  <span>${NAMES[k]}</span>
-                  <span>${pct}% (${now}/${min})</span>
-                </div>
-                <div class="h-2 bg-slate-100 rounded-full">
-                  <div class="h-full bg-blue-500" style="width:${pct}%"></div>
-                </div>
-              </div>
-            `;
-        });
-
-        html += `
-          <div>
-            <div class="flex justify-between text-xs mb-1">
-              <span>전공필수</span>
-              <span>${majorPercent}%</span>
-            </div>
-            <div class="h-2 bg-slate-100 rounded-full">
-              <div class="h-full bg-blue-500" style="width:${majorPercent}%"></div>
-            </div>
+      <div class="bg-white rounded-2xl border shadow-sm p-5">
+        <div class="text-sm text-slate-500 mb-3">세부 진행률</div>
+        <div class="mb-3">
+          <div class="flex justify-between text-xs mb-1">
+            <span>전공필수</span>
+            <span>20%</span>
           </div>
-        `;
+          <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-blue-500" style="width:20%"></div>
+          </div>
+        </div>
+        <!-- 필요하면 다른 진행률도 추가 -->
+      </div>
 
-        document.getElementById("progressList").innerHTML = html;
-    }
+      <div class="bg-white rounded-2xl border shadow-sm p-5">
+        <div class="text-sm text-slate-500 mb-2">전공과목 목록</div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="border-b text-slate-500">
+                <th class="py-2">교과목명</th>
+                <th class="py-2">구분</th>
+                <th class="py-2">단위수</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b">
+                <td class="py-2 text-center">SWE 2001 데이터구조론</td>
+                <td class="py-2 text-center">전공필수</td>
+                <td class="py-2 text-center">3</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
 
-    function renderAreaStatus(selectedList) {
-        const areaSet = new Set();
-
-        selectedList.forEach(c => {
-            if (c.ge_area) areaSet.add(c.ge_area);
-        });
-
-        const now = areaSet.size;
-        const required = 5;
-
-        let html = `
-            <div class="flex justify-between mb-2">
-              <span>이수한 영역 수</span>
-              <span class="${now >= required ? "text-green-600" : "text-rose-600"} font-semibold">
-                ${now}개 / ${required}개
-              </span>
-            </div>
-
-            <div class="flex flex-wrap gap-2 mt-2">
-        `;
-
-        [...areaSet].forEach(area => {
-            html += `
-              <span class="px-3 py-1 text-xs rounded-full bg-blue-50 border border-blue-200 text-blue-700">
-                ${area}
-              </span>
-            `;
-        });
-
-        html += `</div>`;
-        document.getElementById("areaStatusContent").innerHTML = html;
-    }
-
-    function renderAreaTables(selectedList) {
-        const details = {
-            GE_BASIC: [],
-            GE_UNIV_REQUIRED: [],
-            EXPLORATION: [],
-            MAJOR_BASIC: [],
-            MAJOR_DEEP: [],
-            LEVEL300: []
-        };
-
-        selectedList.forEach(c => {
-            if (details[c.category]) details[c.category].push(c);
-            if (c.level >= 3000) details["LEVEL300"].push(c);
-        });
-
-        const LABELS = {
-            GE_BASIC: "교양기초 이수 현황",
-            GE_UNIV_REQUIRED: "대학교양 필수 이수 현황",
-            EXPLORATION: "전공탐색 이수 현황",
-            MAJOR_BASIC: "기본전공 이수 현황",
-            MAJOR_DEEP: "심화전공 이수 현황",
-            LEVEL300: "3000단위 이상 이수 현황"
-        };
-
-        const container = document.getElementById("areaTables");
-        container.innerHTML = "";
-
-        Object.keys(details).forEach(key => {
-            const rows = details[key].map(c => `
-                <tr class="border-b">
-                    <td class="py-2 text-center">${c.code}</td>
-                    <td class="py-2 text-center">${c.name}</td>
-                    <td class="py-2 text-center">${c.credits}</td>
-                </tr>
-            `).join("");
-
-            container.innerHTML += `
-                <div class="bg-white rounded-2xl border shadow-sm p-5">
-                    <div class="text-sm text-slate-500 mb-2">${LABELS[key]}</div>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full text-sm">
-                            <thead>
-                                <tr class="border-b text-slate-500">
-                                    <th class="py-2">코드</th>
-                                    <th class="py-2">과목명</th>
-                                    <th class="py-2">학점</th>
-                                </tr>
-                            </thead>
-                            <tbody>${rows}</tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-        });
-    }
-
-    window.onload = loadCourses;
-</script>
-
-
+  <!-- 공통 푸터 -->
+  <footer class="fixed bottom-0 inset-x-0 bg-white border-t">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-start justify-between">
+      <div class="flex items-start gap-4">
+        <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="h-6 w-auto" />
+        <div class="space-y-1 text-sm text-slate-600 leading-relaxed">
+          <div>강원특별자치도 원주시 흥업면 연세대길 1 창조관</div>
+          <div>TEL) 033-123-4567</div>
+          <div>EMAIL: YCHECK@gmail.com</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-6 text-sm text-slate-600">
+        <span class="hidden sm:block h-6 w-px bg-slate-200"></span>
+        <span>만든이들</span>
+        <span>문의하기</span>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
