@@ -276,101 +276,113 @@
   </div>
 </div>
 
-      <!-- 시간표 (세로 길이 줄임) -->
-      <div class="bg-white rounded-2xl border shadow-sm p-5 min-h-[420px]">
-        <div class="text-sm text-slate-500 mb-3">시간표</div>
-        <div class="overflow-x-auto">
-          <table class="min-w-full text-sm text-center border-collapse">
-            <thead>
-              <tr class="text-slate-600">
-                <th class="w-16 py-2 border border-slate-200"></th>
-                <th class="py-2 border border-slate-200">월</th>
-                <th class="py-2 border border-slate-200">화</th>
-                <th class="py-2 border border-slate-200">수</th>
-                <th class="py-2 border border-slate-200">목</th>
-                <th class="py-2 border border-slate-200">금</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- 9 ~ 5시 -->
-              <tr>
-                <td class="py-2 border border-slate-200 text-slate-500">9</td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-              </tr>
-              <tr>
-                <td class="py-2 border border-slate-200 text-slate-500">10</td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-              </tr>
-              <tr>
-                <td class="py-2 border border-slate-200 text-slate-500">11</td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-              </tr>
-              <tr>
-                <td class="py-2 border border-slate-200 text-slate-500">12</td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-              </tr>
-              <tr>
-                <td class="py-2 border border-slate-200 text-slate-500">1</td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-              </tr>
-              <tr>
-                <td class="py-2 border border-slate-200 text-slate-500">2</td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-              </tr>
-              <tr>
-                <td class="py-2 border border-slate-200 text-slate-500">3</td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-              </tr>
-              <tr>
-                <td class="py-2 border border-slate-200 text-slate-500">4</td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-              </tr>
-              <tr>
-                <td class="py-2 border border-slate-200 text-slate-500">5</td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-                <td class="h-10 border border-slate-200"></td>
-              </tr>
-            </tbody>
-          </table>
+        <!-- 시간표 (세로 길이 줄임) -->
+        <div class="bg-white rounded-2xl border shadow-sm p-5 min-h-[420px]">
+            <div class="flex items-center justify-between mb-1">
+                <div class="text-sm text-slate-500">시간표</div>
+                <!-- 🔽 메인 시간표용 학기 선택 드롭다운 -->
+                <select
+                        id="main-timetable-semester-select"
+                        class="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white"
+                >
+                    <option value="">학기 선택</option>
+                </select>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm text-center border-collapse">
+                    <thead>
+                    <tr class="text-slate-600">
+                        <th class="w-16 py-2 border border-slate-200"></th>
+                        <th class="py-2 border border-slate-200">월</th>
+                        <th class="py-2 border border-slate-200">화</th>
+                        <th class="py-2 border border-slate-200">수</th>
+                        <th class="py-2 border border-slate-200">목</th>
+                        <th class="py-2 border border-slate-200">금</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- 아래 row 들은 "표시는 9~5시"지만, period 는 1~9로 매핑 -->
+                    <tr>
+                        <td class="py-2 border border-slate-200 text-slate-500">9</td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="MON" data-period="1"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="TUE" data-period="1"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="WED" data-period="1"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="THU" data-period="1"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="FRI" data-period="1"></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 border border-slate-200 text-slate-500">10</td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="MON" data-period="2"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="TUE" data-period="2"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="WED" data-period="2"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="THU" data-period="2"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="FRI" data-period="2"></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 border border-slate-200 text-slate-500">11</td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="MON" data-period="3"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="TUE" data-period="3"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="WED" data-period="3"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="THU" data-period="3"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="FRI" data-period="3"></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 border border-slate-200 text-slate-500">12</td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="MON" data-period="4"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="TUE" data-period="4"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="WED" data-period="4"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="THU" data-period="4"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="FRI" data-period="4"></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 border border-slate-200 text-slate-500">1</td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="MON" data-period="5"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="TUE" data-period="5"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="WED" data-period="5"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="THU" data-period="5"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="FRI" data-period="5"></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 border border-slate-200 text-slate-500">2</td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="MON" data-period="6"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="TUE" data-period="6"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="WED" data-period="6"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="THU" data-period="6"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="FRI" data-period="6"></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 border border-slate-200 text-slate-500">3</td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="MON" data-period="7"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="TUE" data-period="7"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="WED" data-period="7"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="THU" data-period="7"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="FRI" data-period="7"></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 border border-slate-200 text-slate-500">4</td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="MON" data-period="8"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="TUE" data-period="8"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="WED" data-period="8"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="THU" data-period="8"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="FRI" data-period="8"></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 border border-slate-200 text-slate-500">5</td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="MON" data-period="9"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="TUE" data-period="9"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="WED" data-period="9"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="THU" data-period="9"></td>
+                        <td class="h-10 border border-slate-200 main-tt-cell" data-day="FRI" data-period="9"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-      </div>
 
-      <!-- 채플 카운트 -->
+
+
+
+        <!-- 채플 카운트 -->
       <div class="bg-white rounded-2xl border shadow-sm p-5">
         <div class="text-sm text-slate-500 mb-3">채플 카운트</div>
         <div class="flex items-center gap-2">
@@ -494,6 +506,158 @@
       }
     });
   </script>
+
+  <!-- 메인 페이지 – 시간표 축소판 + 학기 드롭다운 -->
+  <script>
+      const MAIN_TT_STORAGE_YEAR = "main_timetable_year";
+      const MAIN_TT_STORAGE_SEM = "main_timetable_semester";
+
+      const mainTtCells = document.querySelectorAll(".main-tt-cell");
+      const mainTtSemesterSelect = document.getElementById("main-timetable-semester-select");
+
+      function clearMainTimetable() {
+        mainTtCells.forEach((td) => {
+          td.innerHTML = "";
+        });
+      }
+
+      function formatSemesterLabel(year, semester) {
+        return `${year}년 ${semester}학기`;
+      }
+
+      async function fetchMainSemesters() {
+        try {
+          const res = await fetch("/api/timetable/semesters/", {
+            method: "GET",
+            credentials: "include",
+          });
+
+          if (!res.ok) {
+            console.error("메인 시간표: 학기 목록 불러오기 실패", res.status, res.statusText);
+            return [];
+          }
+
+          const data = await res.json();
+          if (Array.isArray(data)) return data;
+          if (data && Array.isArray(data.semesters)) return data.semesters;
+          return [];
+        } catch (err) {
+          console.error("메인 시간표: 학기 목록 로딩 중 오류", err);
+          return [];
+        }
+      }
+
+      async function fetchMainTimetable(year, semester) {
+        try {
+          const res = await fetch(`/api/timetable/?year=${year}&semester=${semester}`, {
+            method: "GET",
+            credentials: "include",
+          });
+
+          clearMainTimetable();
+
+          if (res.status === 404) {
+            console.log("메인 시간표: 해당 학기 시간표 없음");
+            return;
+          }
+
+          if (!res.ok) {
+            console.error("메인 시간표: 시간표 불러오기 실패", res.status, res.statusText);
+            return;
+          }
+
+          const data = await res.json();
+          const entries = Array.isArray(data) ? data : (data.timetable || []);
+
+          entries.forEach((item) => {
+            const selector = `.main-tt-cell[data-day="${item.day}"][data-period="${item.period}"]`;
+            const cell = document.querySelector(selector);
+            if (!cell) return;
+
+            const subject = item.subject || "";
+            cell.innerHTML = `<div class="text-[10px] sm:text-xs font-medium truncate">${subject}</div>`;
+          });
+
+          // 드롭다운 값 동기화 + 로컬 저장
+          if (mainTtSemesterSelect) {
+            mainTtSemesterSelect.value = `${year}-${semester}`;
+          }
+          localStorage.setItem(MAIN_TT_STORAGE_YEAR, String(year));
+          localStorage.setItem(MAIN_TT_STORAGE_SEM, String(semester));
+        } catch (err) {
+          console.error("메인 시간표: 시간표 로딩 중 오류", err);
+        }
+      }
+
+      async function initMainTimetable() {
+        const semesters = await fetchMainSemesters();
+        if (!semesters.length) {
+          clearMainTimetable();
+          if (mainTtSemesterSelect) {
+            mainTtSemesterSelect.innerHTML = '<option value="">학기 없음</option>';
+          }
+          return;
+        }
+
+        // 드롭다운 옵션 구성
+        if (mainTtSemesterSelect) {
+          mainTtSemesterSelect.innerHTML = "";
+          semesters.forEach((s) => {
+            const opt = document.createElement("option");
+            opt.value = `${s.year}-${s.semester}`;
+            opt.textContent = s.label || formatSemesterLabel(s.year, s.semester);
+            mainTtSemesterSelect.appendChild(opt);
+          });
+        }
+
+        // 1) localStorage 에 저장된 학기 우선
+        let initial = null;
+        const savedYearStr = localStorage.getItem(MAIN_TT_STORAGE_YEAR);
+        const savedSemStr = localStorage.getItem(MAIN_TT_STORAGE_SEM);
+        const savedYear = savedYearStr ? parseInt(savedYearStr, 10) : NaN;
+        const savedSem = savedSemStr ? parseInt(savedSemStr, 10) : NaN;
+
+        if (!Number.isNaN(savedYear) && !Number.isNaN(savedSem)) {
+          initial =
+            semesters.find(
+              (s) => s.year === savedYear && s.semester === savedSem
+            ) || null;
+        }
+
+        // 2) 없으면 가장 최근 학기 (쿼리셋이 -year, -semester 로 정렬되어 있다고 가정 → 첫 번째)
+        if (!initial) {
+          initial = semesters[0];
+        }
+
+        if (!initial) {
+          clearMainTimetable();
+          return;
+        }
+
+        await fetchMainTimetable(initial.year, initial.semester);
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        initMainTimetable();
+
+        // 드롭다운에서 학기 바꿀 때
+        if (mainTtSemesterSelect) {
+          mainTtSemesterSelect.addEventListener("change", (e) => {
+            const value = e.target.value;
+            if (!value) return;
+            const [y, s] = value.split("-");
+            const year = parseInt(y, 10);
+            const semester = parseInt(s, 10);
+            if (!Number.isNaN(year) && !Number.isNaN(semester)) {
+              fetchMainTimetable(year, semester);
+            }
+          });
+        }
+      });
+  </script>
+
+
+
 
   <!-- ✅ 로그인 상태 확인 스크립트 (새로 추가) -->
   <script>
