@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        /* 드롭다운 스크롤 강제 */
         select {
             max-height: 300px !important;
             overflow-y: auto !important;
@@ -71,11 +70,8 @@
                     <option value="2000">2000단위</option>
                     <option value="3000">3000단위</option>
                     <option value="4000">4000단위</option>
-
                     <option value="GE_BASIC">교양기초</option>
                     <option value="GE_UNIV_REQUIRED">대학교양필수</option>
-
-                    <!-- 영역 필터 복구 완료 -->
                     <option value="GE_UNIV_ELECTIVE_1">1영역</option>
                     <option value="GE_UNIV_ELECTIVE_2">2영역</option>
                     <option value="GE_UNIV_ELECTIVE_3">3영역</option>
@@ -83,7 +79,6 @@
                     <option value="GE_UNIV_ELECTIVE_5">5영역</option>
                     <option value="GE_UNIV_ELECTIVE_6">6영역</option>
                     <option value="GE_UNIV_ELECTIVE_9">9영역</option>
-
                     <option value="EXPLORATION">전공탐색</option>
                     <option value="MAJOR_BASIC">기본전공</option>
                     <option value="MAJOR_DEEP">심화전공</option>
@@ -98,12 +93,10 @@
                 </button>
             </div>
 
-            <!-- 과목 목록 -->
+            <!-- 과목 리스트 -->
             <div class="border rounded-xl p-3">
                 <div class="text-sm font-semibold mb-2">이수 과목 선택</div>
-                <div id="courseList"
-                     class="space-y-1 text-sm text-slate-700 h-[480px] overflow-y-auto pr-2">
-                </div>
+                <div id="courseList" class="space-y-1 text-sm text-slate-700 h-[480px] overflow-y-auto pr-2"></div>
             </div>
 
             <button onclick="calculate()"
@@ -117,7 +110,7 @@
     <!-- RIGHT -->
     <section class="lg:col-span-8 space-y-4">
 
-        <!-- 요약 카드 -->
+        <!-- 요약 -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="bg-white rounded-2xl border shadow-sm p-5 text-center">
                 <div class="text-sm text-slate-500">누적 이수 학점</div>
@@ -139,7 +132,7 @@
             <div id="progressList" class="space-y-4"></div>
         </div>
 
-        <!-- 대학교양 영역 -->
+        <!-- 대학교양 영역 수 -->
         <div id="areaStatusCard" class="bg-white rounded-2xl border shadow-sm p-5">
             <h3 class="text-sm text-slate-500 mb-3">대학교양 선택 영역 이수 현황</h3>
             <div id="areaStatusContent" class="text-sm"></div>
@@ -286,72 +279,88 @@
     /* ---------------------------------------
        5) 계산하기
     ----------------------------------------*/
-    async function calculate() {
-        const selectedList = allCourses.filter(c => selectedCourses.has(c.code));
+async function calculate() {
+    const selectedList = allCourses.filter(c => selectedCourses.has(c.code));
 
-        let totalCredits = 0;
-        const credits = {
-            GE_BASIC: 0,
-            GE_UNIV_REQUIRED: 0,
-            EXPLORATION: 0,
-            MAJOR_BASIC: 0,
-            MAJOR_DEEP: 0,
-            LEVEL300: 0
-        };
+    let totalCredits = 0;
+    const credits = {
+        GE_BASIC: 0,
+        GE_UNIV_REQUIRED: 0,
+        EXPLORATION: 0,
+        MAJOR_BASIC: 0,
+        MAJOR_DEEP: 0,
+        LEVEL300: 0
+    };
 
-        selectedList.forEach(c => {
-            totalCredits += c.credits;
+    selectedList.forEach(c => {
+        totalCredits += c.credits;
 
-            if (credits[c.category] !== undefined)
-                credits[c.category] += c.credits;
+        if (credits[c.category] !== undefined)
+            credits[c.category] += c.credits;
 
-            if (c.level >= 3000)
-                credits["LEVEL300"] += c.credits;
-        });
+        if (c.level >= 3000)
+            credits["LEVEL300"] += c.credits;
+    });
 
-        const payload = {
-            entry_year: 2022,
-            major: "소프트웨어학부",
-            track: document.querySelector("input[name='track']:checked").value,
-            total_credits: totalCredits,
-            completed_courses: [...selectedCourses],
-            credits: {
-                liberal_basic: credits.GE_BASIC,
-                univ_required: credits.GE_UNIV_REQUIRED,
-                exploration: credits.EXPLORATION,
-                major_basic: credits.MAJOR_BASIC,
-                deep_major: credits.MAJOR_DEEP,
-                level300: credits.LEVEL300,
-                track: 15
-            },
-            flags: {
-                second_major_done: true,
-                language_cert: true,
-                it_cert: true,
-                industry_cert: false
-            }
-        };
+    const payload = {
+        entry_year: 2022,
+        major: "소프트웨어학부",
+        track: document.querySelector("input[name='track']:checked").value,
+        total_credits: totalCredits,
+        completed_courses: [...selectedCourses],
+        credits: {
+            liberal_basic: credits.GE_BASIC,
+            univ_required: credits.GE_UNIV_REQUIRED,
+            exploration: credits.EXPLORATION,
+            major_basic: credits.MAJOR_BASIC,
+            deep_major: credits.MAJOR_DEEP,
+            level300: credits.LEVEL300,
+        },
+        flags: {
+            second_major_done: true,
+            language_cert: true,
+            it_cert: true,
+            industry_cert: false
+        }
+    };
 
-        const res = await fetch("http://localhost:8000/api/curriculum/calculate/", {
+    // ⭐⭐⭐⭐⭐ 여기 추가! DB에 저장하는 부분 ⭐⭐⭐⭐⭐
+    await saveTakenCoursesToDB([...selectedCourses]);
+
+    const res = await fetch("/api/curriculum/calculate/", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(payload),
+        credentials: "include"
+    });
+
+    const data = await res.json();
+
+    document.getElementById("summaryTotalCredits").innerText = totalCredits;
+    document.getElementById("summaryRequiredCredits").innerText = data.summary.required_total_credits;
+    document.getElementById("summaryCanGraduate").innerText =
+        data.summary.can_graduate ? "가능" : "불가";
+
+    renderProgress(credits, data.major_required.percentage);
+    renderAreaStatus(selectedList);
+    renderAreaTables(selectedList);
+
+    saveResultToStorage(data, totalCredits, credits);
+}
+
+async function saveTakenCoursesToDB(courseCodes) {
+    try {
+        await fetch("/api/curriculum/taken-courses/save/", {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(payload)
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ completed_courses: courseCodes })
         });
-
-        const data = await res.json();
-
-        document.getElementById("summaryTotalCredits").innerText = totalCredits;
-        document.getElementById("summaryRequiredCredits").innerText = data.summary.required_total_credits;
-        document.getElementById("summaryCanGraduate").innerText =
-            data.summary.can_graduate ? "가능" : "불가";
-
-        renderProgress(credits, data.major_required.percentage);
-        renderAreaStatus(selectedList);
-        renderAreaTables(selectedList);
-
-        // ★ 계산 결과 저장 (새로고침 복원)
-        saveResultToStorage(data, totalCredits, credits);
+        console.log("DB 저장 완료");
+    } catch (e) {
+        console.error("DB 저장 실패", e);
     }
+}
 
     /* ---------------------------------------
        6) 아래 3개 렌더 함수는 기존 그대로 유지
