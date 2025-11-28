@@ -411,18 +411,6 @@ function renderProgress(credits, majorPercent) {
         `;
     });
 
-    html += `
-      <div>
-        <div class="flex justify-between text-xs mb-1">
-          <span>전공필수</span>
-          <span>${majorPercent}%</span>
-        </div>
-        <div class="h-2 bg-slate-100 rounded-full">
-          <div class="h-full bg-blue-500" style="width:${majorPercent}%"></div>
-        </div>
-      </div>
-    `;
-
     document.getElementById("progressList").innerHTML = html;
 }
 
