@@ -12,6 +12,7 @@ urlpatterns = [
     # 기존 백엔드 기능 유지
     # --------------------------
     path('admin/', admin.site.urls),
+
     path('api/curriculum/', include('curriculum.urls')),
     path('', include('users.urls')),   # 로그인, 회원가입 등 그대로 유지
 
@@ -38,4 +39,7 @@ urlpatterns = [
 
     # 졸업요건 계산기
     path('calculator/', TemplateView.as_view(template_name="calculator.html"), name="calculator"),
+
+    path("api/timetable/", include("timetable.urls")),
+    path("api/footprints/", include("footprints.urls")),
 ]

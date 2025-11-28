@@ -34,16 +34,13 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
-
-    'users',
-    'curriculum',
+    'django.contrib.staticfiles'
+  
+    'users',        # 기존 앱
+    'curriculum',   # 졸업요건/교과과정 앱
+    'timetable',    # 🔥 시간표 앱 추가 (이거 없으면 makemigrations 실패)
 ]
 
-
-# --------------------------------------------------
-# MIDDLEWARE
-# --------------------------------------------------
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
