@@ -53,7 +53,7 @@ docker compose exec api python manage.py loaddata /app/timetable_courses.json
 
 ```
 # 네트워크 구상도
-<img width="1168" height="321" alt="Image" src="https://github.com/user-attachments/assets/85ab194d-7676-4179-88b8-4ef345e3e967" />
+<img width="1168" height="321" alt="Image" src="https://github.com/user-attachments/assets/7c7f295e-43d8-4146-8c56-a0d6d7984da6" />
 ---
 
 
