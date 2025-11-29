@@ -1,3 +1,4 @@
+# footprints/views.py
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 
@@ -13,8 +14,8 @@ def shared_timetables(request):
     쿼리 파라미터:
       - track: 관심 트랙 (예: "AI", "AI_ML", "SECURITY" ...)
       - grade: 학년 (예: "2", "3", "4")
-      - major_required_only: "true" 이면 전공 필수만 보기
-      - major_elective_only: "true" 이면 전공 선택만 보기
+      - major_required_only: "true" 면 전공 필수 그룹만
+      - major_elective_only: "true" 면 전공 선택 그룹만
 
     응답 예:
     {
@@ -29,7 +30,7 @@ def shared_timetables(request):
           "year": 2025,
           "semester": 1,
           "courses": [
-            {"subject": "데이터구조론", "memo": "전필"},
+            {"subject": "데이터구조론", "memo": "전공"},
             ...
           ]
         },
@@ -53,22 +54,23 @@ def shared_timetables(request):
         .order_by("user_id", "year", "semester", "day", "period")
     )
 
-    # -------------------------------
-    #  전필 / 전선 필터
-    #   - 둘 다 false → 필터 없음 (전체)
-    #   - 둘 다 true  → 필터 없음 (전체)
-    #   - 한쪽만 true → 해당되는 것만
-    #   - memo 에 "전필", "전선" 이 들어가 있다고 가정
-    # -------------------------------
+    # 🔹 전필/전선 매핑 규칙 (Timetable.memo 기준)
+    #   - 전공 필수 그룹: "전공필수", "필수"
+    #   - 전공 선택 그룹: "선택", "전공", "심화"
+    required_memos = ["전공필수", "필수"]
+    elective_memos = ["선택", "전공", "심화"]
+
+    #   - 둘 다 false → 전체
+    #   - 둘 다 true  → 전체(필터 X)
+    #   - 한쪽만 true → 해당 그룹만
     if major_required_only and not major_elective_only:
-        # 전공 필수만 보기
-        qs = qs.filter(memo__icontains="전필")
+        qs = qs.filter(memo__in=required_memos)
     elif major_elective_only and not major_required_only:
-        # 전공 선택만 보기
-        qs = qs.filter(memo__icontains="전선")
+        qs = qs.filter(memo__in=elective_memos)
 
     # -------------------------------
     #  관심 트랙 필터
+    #   - UserProfile.interest 에 저장된 '라벨'과 매칭
     # -------------------------------
     TRACK_LABEL_MAP = {
         # 버튼: 실제 DB에 저장된 코드
@@ -97,7 +99,7 @@ def shared_timetables(request):
 
     # -------------------------------
     #  학년 필터
-    #   - UserProfile.current_semester: "3-1", "3-2" 형식
+    #   - UserProfile.current_semester 가 "3-1", "3-2" 이런 형식이라고 가정
     #   - grade="3" → "3-" 로 시작하는 값만
     # -------------------------------
     if grade_param:
@@ -138,7 +140,6 @@ def shared_timetables(request):
         grouped[key]["courses"].append(
             {
                 "subject": tt.subject,
-                "classroom": tt.classroom,
                 "memo": tt.memo,
             }
         )
