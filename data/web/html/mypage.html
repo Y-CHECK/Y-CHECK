@@ -154,13 +154,23 @@
             </div>
 
             <!-- 버튼 -->
-            <div class="form-group form-group-full form-actions sm:col-span-2">
+            <!-- 버튼 -->
+            <div class="form-group form-group-full form-actions sm:col-span-2 space-y-3">
+                <!-- 정보 수정하기 -->
                 <button id="btn-save-profile"
                         type="button"
                         class="btn-primary w-full bg-blue-600 text-white text-sm font-semibold py-2 rounded-xl hover:bg-blue-700">
                     정보 수정하기
                 </button>
+
+                <!-- 로그아웃 버튼 -->
+                <button id="btn-logout"
+                        type="button"
+                        class="w-full border border-red-500 text-red-600 text-sm font-semibold py-2 rounded-xl hover:bg-red-50">
+                    로그아웃
+                </button>
             </div>
+
 
         </form>
     </section>
@@ -370,7 +380,6 @@
             document.getElementById("field-semester").value   = p.current_semester || "";
             document.getElementById("field-major-dept").value = p.major_department || "";
 
-            // 관심 분야
             const radios = document.querySelectorAll("input[name='interest']");
             radios.forEach(r => r.checked = (r.value === p.interest));
 
@@ -419,9 +428,37 @@
         }
     }
 
+    // ⭐ 로그아웃 함수 추가
+    async function logoutMyPage() {
+        if (!confirm("정말 로그아웃 하시겠습니까?")) return;
+
+        try {
+            const resp = await fetch("/api/mypage/", {
+                method: "POST",
+                credentials: "include",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ action: "logout" }),
+            });
+
+            const data = await resp.json();
+
+            if (!resp.ok || !data.success) {
+                alert("로그아웃에 실패했습니다.");
+                return;
+            }
+
+            alert("로그아웃 되었습니다.");
+            window.location.href = "login";   // 로그인 페이지로 이동
+
+        } catch (err) {
+            alert("서버 연결 실패");
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         loadMyPage();
         document.getElementById("btn-save-profile").addEventListener("click", saveMyPage);
+        document.getElementById("btn-logout").addEventListener("click", logoutMyPage); // ⭐ 추가
     });
 </script>
 

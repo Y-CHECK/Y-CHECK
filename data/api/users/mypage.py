@@ -1,6 +1,7 @@
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import logout   # ⭐ 추가
 from .models import UserProfile
 
 
@@ -38,21 +39,30 @@ def mypage_api(request):
             }
         )
 
+    # --- GET: 내 정보 조회 ---
     if request.method == "GET":
         return build_profile_response()
 
+    # --- POST: 프로필 수정 / 로그아웃 ---
     if request.method == "POST":
+        # 1) JSON 파싱
         try:
-            data = json.loads(request.body.decode())
+            data = json.loads(request.body.decode() or "{}")
         except Exception:
             return JsonResponse({"success": False, "message": "Invalid JSON"}, status=400)
 
+        # 2) 로그아웃 요청 처리
+        #    프론트에서 { "action": "logout" } 형태로 보내면 됨
+        if data.get("action") == "logout":
+            logout(request)  # 세션 삭제
+            return JsonResponse({"success": True, "message": "Logged out"})
+
+        # 3) 그 외에는 프로필 업데이트
         try:
             profile = user.userprofile
         except UserProfile.DoesNotExist:
             profile = UserProfile(user=user)
 
-        # 업데이트 가능한 값들
         if "real_name" in data:
             profile.real_name = data["real_name"]
 
