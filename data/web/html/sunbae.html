@@ -8,7 +8,7 @@
 </head>
 <body class="min-h-screen bg-[#f7f9fc] text-slate-900 flex flex-col">
 
-<!-- 공통 헤더 (디자인: 아래 코드 기준) -->
+<!-- 공통 헤더 -->
 <header class="bg-white border-b">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         <!-- 로고 -->
@@ -16,9 +16,6 @@
             <a href="main" class="flex items-center gap-3">
                 <img src="../img/ycheck_logo.png" alt="Y-CHECK 로고" class="h-8 w-auto">
             </a>
-            <!-- 🔥 이 부분 전체 삭제됨 -->
-            <!-- <div class="hidden sm:block h-4 w-px bg-slate-200"></div>
-            <div class="hidden sm:block text-xs text-slate-500">연세대학교 졸업요건계산기</div> -->
         </div>
 
         <!-- 네비게이션 -->
@@ -37,9 +34,9 @@
 
 
 <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-1">
-    <!-- 왼쪽(필터) / 오른쪽(이수 기록) 레이아웃: 디자인은 아래 코드 기준 -->
+    <!-- 왼쪽(필터) / 오른쪽(이수 기록) 레이아웃 -->
     <section class="grid grid-cols-1 lg:grid-cols-[0.9fr_2.1fr] gap-6">
-        <!-- 왼쪽 박스: 선배 선택 / 필터 (백엔드 필터와 연결) -->
+        <!-- 왼쪽 박스: 선배 선택 / 필터 -->
         <div class="bg-white rounded-2xl border shadow-sm p-6 min-h-[620px] flex flex-col">
             <h2 class="text-xl font-semibold mb-4">선배 선택/필터</h2>
 
@@ -48,38 +45,32 @@
                 <div class="text-sm text-slate-600 mb-2">관심 트랙 선택</div>
                 <div class="flex flex-col gap-2 text-sm">
                     <label class="inline-flex items-center gap-2">
-                        <!-- 백엔드: track=AI -->
                         <input type="radio" name="track" value="AI" class="h-4 w-4" id="track-ai-radio">
                         <span>AI/머신러닝</span>
                     </label>
                     <label class="inline-flex items-center gap-2">
-                        <!-- 백엔드: track=SECURITY -->
                         <input type="radio" name="track" value="SECURITY" class="h-4 w-4" id="track-sec-radio">
                         <span>보안/네트워크</span>
                     </label>
                     <label class="inline-flex items-center gap-2">
-                        <!-- 백엔드: track=GAME -->
                         <input type="radio" name="track" value="GAME" class="h-4 w-4" id="track-game-radio">
                         <span>게임/미디어</span>
                     </label>
                     <label class="inline-flex items-center gap-2">
-                        <!-- 백엔드: track=EMBEDDED -->
                         <input type="radio" name="track" value="EMBEDDED" class="h-4 w-4" id="track-embedded-radio">
                         <span>임베디드/시스템</span>
                     </label>
                     <label class="inline-flex items-center gap-2">
-                        <!-- 백엔드: track=STARTUP -->
                         <input type="radio" name="track" value="STARTUP" class="h-4 w-4" id="track-startup-radio">
                         <span>창업/서비스 기획</span>
                     </label>
                     <label class="inline-flex items-center gap-2">
-                        <!-- 백엔드: track=OTHER -->
                         <input type="radio" name="track" value="OTHER" id="track-other-radio" class="h-4 w-4">
                         <span>기타 (직접 입력)</span>
                     </label>
                 </div>
 
-                <!-- 기타 트랙 직접 입력 (백엔드 파라미터에는 영향 X, UX 전용) -->
+                <!-- 기타 트랙 직접 입력 -->
                 <div id="track-other-wrap" class="mt-3 hidden">
                     <label class="block text-xs text-slate-500 mb-1">기타 관심 트랙</label>
                     <input
@@ -91,7 +82,7 @@
                 </div>
             </div>
 
-            <!-- 선배 학년 + 전필/전선 필터 (학년은 백엔드 grade 필터와 연결) -->
+            <!-- 선배 학년 + 전공 과목 유형 필터 -->
             <div class="space-y-4 flex-1">
                 <div>
                     <div class="text-sm text-slate-600 mb-1">선배 학년</div>
@@ -104,32 +95,26 @@
                 </div>
 
                 <div>
-                    <div class="text-sm text-slate-600 mb-1">전공 과목 유형 필터 (UI만, 아직 백엔드 미연동)</div>
-                    <div class="flex flex-wrap items-center gap-4 text-sm">
+                    <div class="text-sm text-slate-600 mb-1">전공 과목 유형 필터</div>
+                    <div class="flex flex-col gap-2 text-sm">
                         <label class="inline-flex items-center gap-2">
-                            <input type="radio" name="major-filter" value="major-required" class="h-4 w-4">
+                            <input type="checkbox" id="filter-major-all" class="h-4 w-4">
+                            <span>전체 보기</span>
+                        </label>
+                        <label class="inline-flex items-center gap-2">
+                            <input type="checkbox" id="filter-major-required" class="h-4 w-4">
                             <span>전공필수만 보기</span>
                         </label>
                         <label class="inline-flex items-center gap-2">
-                            <input type="radio" name="major-filter" value="major-elective" class="h-4 w-4">
+                            <input type="checkbox" id="filter-major-elective" class="h-4 w-4">
                             <span>전공선택만 보기</span>
                         </label>
                     </div>
                 </div>
-
-                <!-- 적용하기 버튼 -->
-                <div class="pt-2">
-                    <button
-                            type="button"
-                            id="apply-filter-btn"
-                            class="w-full rounded-xl bg-blue-600 text-white py-2 text-sm font-semibold">
-                        적용하기
-                    </button>
-                </div>
             </div>
         </div>
 
-        <!-- 오른쪽 박스: 선배의 실제 이수 기록 (디자인+백엔드 데이터 결합) -->
+        <!-- 오른쪽 박스: 선배의 실제 이수 기록 -->
         <div class="bg-white rounded-2xl border shadow-sm p-6 min-h-[620px] flex flex-col">
             <div class="flex items-center justify-between mb-2">
                 <h3 class="text-lg font-semibold">선배의 실제 이수 기록</h3>
@@ -139,7 +124,7 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1">
-                <!-- 선배 목록 (백엔드에서 받아온 시간표 리스트) -->
+                <!-- 선배 목록 -->
                 <div class="lg:col-span-1 flex flex-col">
                     <div class="text-sm text-slate-600 mb-2">선배 목록</div>
                     <div class="space-y-3 max-h-[420px] overflow-y-auto pr-1" id="senior-list">
@@ -166,7 +151,7 @@
                         조건에 맞는 시간표를 선택하면 과목 목록이 표시됩니다.
                     </div>
 
-                    <!-- 이수 과목 리스트: 상자 안에서 스크롤 -->
+                    <!-- 이수 과목 리스트 -->
                     <div id="records-scroll" class="mt-3 flex-1 overflow-y-auto space-y-4 pr-2">
                         <!-- 항상 보이는 요약 영역 -->
                         <div>
@@ -176,7 +161,7 @@
                             </div>
                         </div>
 
-                        <!-- 토글로 여닫는 추가 영역 (현재는 확장용 / 필요시 사용) -->
+                        <!-- 추가 영역 (확장용) -->
                         <div>
                             <div id="detail-body" class="space-y-3 text-sm hidden"></div>
                         </div>
@@ -187,7 +172,7 @@
     </section>
 </main>
 
-<!-- 푸터: 화면 아래에 고정되지 않고, 내용 끝에 위치 (디자인: 아래 코드 기준) -->
+<!-- 푸터 -->
 <footer class="bg-white border-t w-full">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-start justify-between">
         <div class="flex items-start gap-4">
@@ -227,8 +212,6 @@
         </div>
     </div>
 </div>
-
-
 
 <!-- 문의하기 모달 -->
 <div id="contact-modal-overlay"
@@ -275,82 +258,82 @@
 </div>
 
 <script>
-    /* ====== 공통 모달 스크립트 (디자인 코드 그대로) ====== */
+    /* ====== 공통 모달 스크립트 ====== */
     const openMakersBtn = document.getElementById('open-makers-modal');
     const makersModal = document.getElementById('makers-modal-overlay');
     const closeMakersBtn = document.getElementById('close-makers-modal');
     if (openMakersBtn && makersModal && closeMakersBtn) {
-      openMakersBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        makersModal.classList.remove('hidden');
-      });
-      closeMakersBtn.addEventListener('click', function() {
-        makersModal.classList.add('hidden');
-      });
-      makersModal.addEventListener('click', function(e) {
-        if (e.target === makersModal) {
-          makersModal.classList.add('hidden');
-        }
-      });
-      document.addEventListener('keydown', function(e) {
-        if (!makersModal.classList.contains('hidden') && e.key === 'Escape') {
-          makersModal.classList.add('hidden');
-        }
-      });
+        openMakersBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            makersModal.classList.remove('hidden');
+        });
+        closeMakersBtn.addEventListener('click', function() {
+            makersModal.classList.add('hidden');
+        });
+        makersModal.addEventListener('click', function(e) {
+            if (e.target === makersModal) {
+                makersModal.classList.add('hidden');
+            }
+        });
+        document.addEventListener('keydown', function(e) {
+            if (!makersModal.classList.contains('hidden') && e.key === 'Escape') {
+                makersModal.classList.add('hidden');
+            }
+        });
     }
 
     const openContactBtn = document.getElementById('open-contact-modal');
     const contactModal = document.getElementById('contact-modal-overlay');
     const closeContactBtn = document.getElementById('close-contact-modal');
     if (openContactBtn && contactModal && closeContactBtn) {
-      openContactBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        contactModal.classList.remove('hidden');
-      });
-      closeContactBtn.addEventListener('click', function() {
-        contactModal.classList.add('hidden');
-      });
-      contactModal.addEventListener('click', function(e) {
-        if (e.target === contactModal) {
-          contactModal.classList.add('hidden');
-        }
-      });
-
-      const inquiryType = document.getElementById('inquiry-type');
-      const customTypeWrap = document.getElementById('custom-type-wrap');
-      const customTypeInput = document.getElementById('custom-type');
-      if (inquiryType && customTypeWrap && customTypeInput) {
-        inquiryType.addEventListener('change', function () {
-          if (this.value === '기타') {
-            customTypeWrap.classList.remove('hidden');
-            customTypeInput.setAttribute('required', 'required');
-          } else {
-            customTypeWrap.classList.add('hidden');
-            customTypeInput.value = '';
-            customTypeInput.removeAttribute('required');
-          }
+        openContactBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            contactModal.classList.remove('hidden');
         });
-      }
-
-      const contactForm = document.getElementById('contact-form');
-      const contactSuccess = document.getElementById('contact-success');
-      if (contactForm && contactSuccess) {
-        contactForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          contactForm.classList.add('hidden');
-          contactSuccess.classList.remove('hidden');
-          setTimeout(() => {
+        closeContactBtn.addEventListener('click', function() {
             contactModal.classList.add('hidden');
-            contactForm.reset();
-            contactForm.classList.remove('hidden');
-            customTypeWrap.classList.add('hidden');
-            contactSuccess.classList.add('hidden');
-          }, 1800);
         });
-      }
+        contactModal.addEventListener('click', function(e) {
+            if (e.target === contactModal) {
+                contactModal.classList.add('hidden');
+            }
+        });
+
+        const inquiryType = document.getElementById('inquiry-type');
+        const customTypeWrap = document.getElementById('custom-type-wrap');
+        const customTypeInput = document.getElementById('custom-type');
+        if (inquiryType && customTypeWrap && customTypeInput) {
+            inquiryType.addEventListener('change', function () {
+                if (this.value === '기타') {
+                    customTypeWrap.classList.remove('hidden');
+                    customTypeInput.setAttribute('required', 'required');
+                } else {
+                    customTypeWrap.classList.add('hidden');
+                    customTypeInput.value = '';
+                    customTypeInput.removeAttribute('required');
+                }
+            });
+        }
+
+        const contactForm = document.getElementById('contact-form');
+        const contactSuccess = document.getElementById('contact-success');
+        if (contactForm && contactSuccess) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                contactForm.classList.add('hidden');
+                contactSuccess.classList.remove('hidden');
+                setTimeout(() => {
+                    contactModal.classList.add('hidden');
+                    contactForm.reset();
+                    contactForm.classList.remove('hidden');
+                    customTypeWrap.classList.add('hidden');
+                    contactSuccess.classList.add('hidden');
+                }, 1800);
+            });
+        }
     }
 
-    /* ====== 관심 트랙 기타 입력 (디자인 코드 그대로, + 필터 연동) ====== */
+    /* ====== 관심 트랙 기타 입력 ====== */
     const trackRadios = document.querySelectorAll('input[name="track"]');
     const trackOtherWrap = document.getElementById('track-other-wrap');
     const trackOtherInput = document.getElementById('track-other-input');
@@ -365,10 +348,14 @@
     const detailSummary = document.getElementById("detail-summary");
     const summaryBody = document.getElementById("summary-body");
     const detailBody = document.getElementById("detail-body");
-    const toggleDetailBtn = document.getElementById("toggle-detail");
+    const toggleDetailBtn = document.getElementById("toggle-detail"); // 없으면 그냥 null
 
     const gradeSelectEl = document.getElementById("gradeSelect");
-    const applyFilterBtn = document.getElementById("apply-filter-btn");
+
+    // 전공 필터 체크박스
+    const majorAllEl = document.getElementById("filter-major-all");
+    const majorRequiredEl = document.getElementById("filter-major-required");
+    const majorElectiveEl = document.getElementById("filter-major-elective");
 
     let allRecords = [];   // 백엔드에서 받아온 전체 시간표 리스트
     let currentTrack = ""; // ""면 전체
@@ -377,257 +364,299 @@
 
     // 과목 유형 뱃지 색상 (전필/전선/기타)
     function getCategoryBadge(category) {
-      if (category === "전필") return "bg-rose-100 text-rose-700";
-      if (category === "전선") return "bg-emerald-100 text-emerald-700";
-      return "bg-slate-100 text-slate-600";
+        if (category === "전필") return "bg-rose-100 text-rose-700";
+        if (category === "전선") return "bg-emerald-100 text-emerald-700";
+        return "bg-slate-100 text-slate-600";
     }
 
     // 선배 목록 렌더링
     function renderSeniorList() {
-      seniorList.innerHTML = "";
-      emptyState.classList.add("hidden");
+        seniorList.innerHTML = "";
+        emptyState.classList.add("hidden");
 
-      if (!allRecords.length) {
-        emptyState.classList.remove("hidden");
-        detailName.textContent = "공유된 시간표";
-        detailMeta.textContent = "조건에 맞는 선배 시간표가 없습니다.";
-        detailSummary.textContent = "";
-        summaryBody.innerHTML = "";
-        selectedIndex = -1;
-        return;
-      }
+        if (!allRecords.length) {
+            emptyState.classList.remove("hidden");
+            detailName.textContent = "공유된 시간표";
+            detailMeta.textContent = "조건에 맞는 선배 시간표가 없습니다.";
+            detailSummary.textContent = "";
+            summaryBody.innerHTML = "";
+            selectedIndex = -1;
+            return;
+        }
 
-      allRecords.forEach((entry, idx) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className =
-          "w-full text-left border rounded-xl px-3 py-2 text-sm hover:border-blue-500 hover:bg-blue-50";
-        btn.dataset.index = idx.toString();
-        btn.innerHTML = `
+        allRecords.forEach((entry, idx) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className =
+                "w-full text-left border rounded-xl px-3 py-2 text-sm hover:border-blue-500 hover:bg-blue-50";
+            btn.dataset.index = idx.toString();
+            btn.innerHTML = `
           <div class="font-semibold text-slate-800">${entry.label || "공유 시간표"}</div>
           <div class="text-xs text-slate-500">
             ${(entry.user && (entry.user.display_name || entry.user.username)) || "선배"}
           </div>
         `;
-        btn.addEventListener("click", () => {
-          setActiveSenior(idx);
-          renderSelectedRecord(idx);
+            btn.addEventListener("click", () => {
+                setActiveSenior(idx);
+                renderSelectedRecord(idx);
+            });
+            seniorList.appendChild(btn);
         });
-        seniorList.appendChild(btn);
-      });
 
-      // 첫 번째 항목 자동 선택
-      setActiveSenior(0);
-      renderSelectedRecord(0);
+        // 첫 번째 항목 자동 선택
+        setActiveSenior(0);
+        renderSelectedRecord(0);
     }
 
     // 선택된 선배 버튼 스타일 처리
     function setActiveSenior(index) {
-      selectedIndex = index;
-      const buttons = seniorList.querySelectorAll("button[data-index]");
-      buttons.forEach((b, i) => {
-        b.classList.remove(
-          "border-blue-500",
-          "ring-2",
-          "ring-blue-400",
-          "bg-blue-50"
-        );
-        if (i === index) {
-          b.classList.add(
-            "border-blue-500",
-            "ring-2",
-            "ring-blue-400",
-            "bg-blue-50"
-          );
-        }
-      });
+        selectedIndex = index;
+        const buttons = seniorList.querySelectorAll("button[data-index]");
+        buttons.forEach((b, i) => {
+            b.classList.remove(
+                "border-blue-500",
+                "ring-2",
+                "ring-blue-400",
+                "bg-blue-50"
+            );
+            if (i === index) {
+                b.classList.add(
+                    "border-blue-500",
+                    "ring-2",
+                    "ring-blue-400",
+                    "bg-blue-50"
+                );
+            }
+        });
 
-      // 상세 영역 접기 초기화
-      if (detailBody) {
-        detailBody.classList.add("hidden");
-      }
-      if (toggleDetailBtn) {
-        toggleDetailBtn.textContent = "자세한 이수 기록 보기";
-      }
+        // 상세 영역 접기 초기화
+        if (detailBody) {
+            detailBody.classList.add("hidden");
+        }
+        if (toggleDetailBtn) {
+            toggleDetailBtn.textContent = "자세한 이수 기록 보기";
+        }
     }
 
     // 선택된 시간표 상세 렌더링
     function renderSelectedRecord(index) {
-      const entry = allRecords[index];
-      if (!entry) return;
+        const entry = allRecords[index];
+        if (!entry) return;
 
-      const userName =
-        (entry.user && (entry.user.display_name || entry.user.username)) ||
-        "선배";
+        const userName =
+            (entry.user && (entry.user.display_name || entry.user.username)) ||
+            "선배";
 
-      detailName.textContent = entry.label || "공유된 시간표";
-      detailMeta.textContent = `${userName}의 공유 시간표`;
+        detailName.textContent = entry.label || "공유된 시간표";
+        detailMeta.textContent = `${userName}의 공유 시간표`;
 
-      const courses = Array.isArray(entry.courses) ? entry.courses : [];
-      if (!courses.length) {
-        detailSummary.textContent = "등록된 과목이 없습니다.";
-        summaryBody.innerHTML = `<p class="text-xs text-slate-400">등록된 과목이 없습니다.</p>`;
-        return;
-      }
+        const courses = Array.isArray(entry.courses) ? entry.courses : [];
+        if (!courses.length) {
+            detailSummary.textContent = "등록된 과목이 없습니다.";
+            summaryBody.innerHTML = `<p class="text-xs text-slate-400">등록된 과목이 없습니다.</p>`;
+            return;
+        }
 
-      detailSummary.textContent = `총 ${courses.length}개 과목이 등록되어 있습니다.`;
+        detailSummary.textContent = `총 ${courses.length}개 과목이 등록되어 있습니다.`;
 
-      summaryBody.innerHTML = "";
-      const card = document.createElement("article");
-      card.className = "border rounded-2xl p-4 bg-white shadow-sm text-sm";
-      card.innerHTML = `
+        summaryBody.innerHTML = "";
+        const card = document.createElement("article");
+        card.className = "border rounded-2xl p-4 bg-white shadow-sm text-sm";
+        card.innerHTML = `
         <ul class="space-y-1">
           ${courses
             .map(
-              (c) => `
+                (c) => `
             <li class="flex items-center justify-between">
               <span>${c.subject || "-"}</span>
               ${
-                c.memo
-                  ? `<span class="px-2 py-0.5 rounded-full ${getCategoryBadge(
-                      c.memo
-                    )} text-xs">${c.memo}</span>`
-                  : ""
-              }
+                    c.memo
+                        ? `<span class="px-2 py-0.5 rounded-full ${getCategoryBadge(
+                            c.memo
+                        )} text-xs">${c.memo}</span>`
+                        : ""
+                }
             </li>
           `
             )
             .join("")}
         </ul>
       `;
-      summaryBody.appendChild(card);
+        summaryBody.appendChild(card);
     }
 
     // 공유된 시간표 불러오기 (백엔드 호출)
     async function loadSharedTimetables() {
-      if (summaryText) {
-        summaryText.textContent = "공유된 시간표를 불러오는 중입니다...";
-      }
-      allRecords = [];
-      seniorList.innerHTML = "";
-      emptyState.classList.add("hidden");
-      summaryBody.innerHTML = "";
-      detailName.textContent = "공유된 시간표";
-      detailMeta.textContent = "선배의 실제 이수 기록을 선택해 주세요.";
-      detailSummary.textContent = "조건에 맞는 시간표를 선택하면 과목 목록이 표시됩니다.";
-
-      const params = new URLSearchParams();
-      if (currentTrack) params.append("track", currentTrack);
-      if (currentGrade) params.append("grade", currentGrade);
-
-      const query = params.toString();
-      const url = query
-        ? `/api/footprints/timetables/?${query}`
-        : `/api/footprints/timetables/`;
-
-      try {
-        const res = await fetch(url, {
-          method: "GET",
-          credentials: "include",
-        });
-
-        if (!res.ok) {
-          if (summaryText) {
-            summaryText.textContent = "시간표를 불러오는 중 오류가 발생했습니다.";
-          }
-          emptyState.classList.remove("hidden");
-          return;
-        }
-
-        const data = await res.json();
-        const results = Array.isArray(data.results) ? data.results : [];
-
-        allRecords = results;
-
-        if (!allRecords.length) {
-          if (summaryText) {
-            summaryText.textContent = "조건에 맞는 선배 시간표가 없습니다.";
-          }
-          emptyState.classList.remove("hidden");
-          return;
-        }
-
-        renderSeniorList();
-
         if (summaryText) {
-          summaryText.textContent = `조건에 맞는 선배 시간표 ${allRecords.length}개가 있습니다.`;
+            summaryText.textContent = "공유된 시간표를 불러오는 중입니다...";
         }
-      } catch (err) {
-        console.error(err);
-        if (summaryText) {
-          summaryText.textContent = "시간표를 불러오는 중 오류가 발생했습니다.";
+        allRecords = [];
+        seniorList.innerHTML = "";
+        emptyState.classList.add("hidden");
+        summaryBody.innerHTML = "";
+        detailName.textContent = "공유된 시간표";
+        detailMeta.textContent = "선배의 실제 이수 기록을 선택해 주세요.";
+        detailSummary.textContent = "조건에 맞는 시간표를 선택하면 과목 목록이 표시됩니다.";
+
+        const params = new URLSearchParams();
+        if (currentTrack) params.append("track", currentTrack);
+        if (currentGrade) params.append("grade", currentGrade);
+
+        // 전공 필터 체크박스 → 쿼리 파라미터
+        const allChecked = majorAllEl && majorAllEl.checked;
+        const reqChecked = majorRequiredEl && majorRequiredEl.checked;
+        const elecChecked = majorElectiveEl && majorElectiveEl.checked;
+
+        if (!allChecked) {
+            // 전체 보기 체크 안 한 경우에만 세부 필터 적용
+            if (reqChecked && !elecChecked) {
+                params.append("major_required_only", "true");
+            } else if (elecChecked && !reqChecked) {
+                params.append("major_elective_only", "true");
+            } else if (reqChecked && elecChecked) {
+                // 둘 다 체크 → 백엔드에서 전체처럼 동작 (둘 다 true면 필터 안 거는 로직)
+                params.append("major_required_only", "true");
+                params.append("major_elective_only", "true");
+            }
         }
-        emptyState.classList.remove("hidden");
-      }
+        // allChecked === true 이면 major_* 파라미터 안 보냄 → 전체 보기
+
+        const query = params.toString();
+        const url = query
+            ? `/api/footprints/timetables/?${query}`
+            : `/api/footprints/timetables/`;
+
+        try {
+            const res = await fetch(url, {
+                method: "GET",
+                credentials: "include",
+            });
+
+            if (!res.ok) {
+                if (summaryText) {
+                    summaryText.textContent = "시간표를 불러오는 중 오류가 발생했습니다.";
+                }
+                emptyState.classList.remove("hidden");
+                return;
+            }
+
+            const data = await res.json();
+            const results = Array.isArray(data.results) ? data.results : [];
+
+            allRecords = results;
+
+            if (!allRecords.length) {
+                if (summaryText) {
+                    summaryText.textContent = "조건에 맞는 선배 시간표가 없습니다.";
+                }
+                emptyState.classList.remove("hidden");
+                return;
+            }
+
+            renderSeniorList();
+
+            if (summaryText) {
+                summaryText.textContent = `조건에 맞는 선배 시간표 ${allRecords.length}개가 있습니다.`;
+            }
+        } catch (err) {
+            console.error(err);
+            if (summaryText) {
+                summaryText.textContent = "시간표를 불러오는 중 오류가 발생했습니다.";
+            }
+            emptyState.classList.remove("hidden");
+        }
     }
 
     // 트랙 라디오 + 기타 입력 + 백엔드 필터 연동
     if (trackRadios && trackOtherWrap && trackOtherInput) {
-      trackRadios.forEach(radio => {
-        radio.addEventListener('change', () => {
-          if (radio.value === 'OTHER' && radio.checked) {
-            trackOtherWrap.classList.remove('hidden');
-          } else if (radio.checked) {
-            trackOtherWrap.classList.add('hidden');
-            trackOtherInput.value = '';
-          }
+        trackRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (radio.value === 'OTHER' && radio.checked) {
+                    trackOtherWrap.classList.remove('hidden');
+                } else if (radio.checked) {
+                    trackOtherWrap.classList.add('hidden');
+                    trackOtherInput.value = '';
+                }
 
-          if (radio.checked) {
-            currentTrack = radio.value;
-            loadSharedTimetables();
-          }
+                if (radio.checked) {
+                    currentTrack = radio.value;
+                    loadSharedTimetables();
+                }
+            });
         });
-      });
     }
 
-    // 학년 선택 시 백엔드 필터 연동
+    // 학년 선택 시 필터 연동
     if (gradeSelectEl) {
-      gradeSelectEl.addEventListener("change", (e) => {
-        currentGrade = e.target.value;
-        loadSharedTimetables();
-      });
+        gradeSelectEl.addEventListener("change", (e) => {
+            currentGrade = e.target.value;
+            loadSharedTimetables();
+        });
     }
 
-    // 적용하기 버튼 클릭 시 (안전하게 한 번 더 로드)
-    if (applyFilterBtn) {
-      applyFilterBtn.addEventListener("click", () => {
-        const checked = document.querySelector('input[name="track"]:checked');
-        if (checked) currentTrack = checked.value;
-        currentGrade = gradeSelectEl ? gradeSelectEl.value : "";
-        loadSharedTimetables();
-      });
+    // 전공 필터 체크박스 이벤트
+    if (majorAllEl) {
+        majorAllEl.addEventListener("change", () => {
+            if (majorAllEl.checked) {
+                if (majorRequiredEl) majorRequiredEl.checked = false;
+                if (majorElectiveEl) majorElectiveEl.checked = false;
+            }
+            loadSharedTimetables();
+        });
     }
 
-    // 상세 토글 버튼 (현재는 확장 영역이 비어있지만 UI 유지)
+    if (majorRequiredEl) {
+        majorRequiredEl.addEventListener("change", () => {
+            if (majorRequiredEl.checked && majorAllEl) {
+                majorAllEl.checked = false;
+            }
+            loadSharedTimetables();
+        });
+    }
+
+    if (majorElectiveEl) {
+        majorElectiveEl.addEventListener("change", () => {
+            if (majorElectiveEl.checked && majorAllEl) {
+                majorAllEl.checked = false;
+            }
+            loadSharedTimetables();
+        });
+    }
+
+    // 상세 토글 버튼 (있으면 동작, 없으면 무시)
     if (toggleDetailBtn && detailBody) {
-      toggleDetailBtn.addEventListener("click", () => {
-        const isHidden = detailBody.classList.contains("hidden");
-        if (isHidden) {
-          detailBody.classList.remove("hidden");
-          toggleDetailBtn.textContent = "자세한 이수 기록 숨기기";
-        } else {
-          detailBody.classList.add("hidden");
-          toggleDetailBtn.textContent = "자세한 이수 기록 보기";
-        }
-      });
+        toggleDetailBtn.addEventListener("click", () => {
+            const isHidden = detailBody.classList.contains("hidden");
+            if (isHidden) {
+                detailBody.classList.remove("hidden");
+                toggleDetailBtn.textContent = "자세한 이수 기록 숨기기";
+            } else {
+                detailBody.classList.add("hidden");
+                toggleDetailBtn.textContent = "자세한 이수 기록 보기";
+            }
+        });
     }
 
-    // 초기 상태 설정: 기본 트랙 선택 + 시간표 로드
+    // 초기 상태 설정
     (function initFiltersAndLoad() {
-      // 기본 트랙: 아무 것도 선택 안 되어 있으면 AI로
-      let defaultTrackRadio = document.querySelector('input[name="track"]:checked');
-      if (!defaultTrackRadio) {
-        const aiRadio = document.getElementById("track-ai-radio");
-        if (aiRadio) {
-          aiRadio.checked = true;
-          defaultTrackRadio = aiRadio;
+        // 기본 트랙: 아무 것도 선택 안 되어 있으면 AI로
+        let defaultTrackRadio = document.querySelector('input[name="track"]:checked');
+        if (!defaultTrackRadio) {
+            const aiRadio = document.getElementById("track-ai-radio");
+            if (aiRadio) {
+                aiRadio.checked = true;
+                defaultTrackRadio = aiRadio;
+            }
         }
-      }
-      currentTrack = defaultTrackRadio ? defaultTrackRadio.value : "";
+        currentTrack = defaultTrackRadio ? defaultTrackRadio.value : "";
+        currentGrade = gradeSelectEl ? gradeSelectEl.value : "";
 
-      currentGrade = gradeSelectEl ? gradeSelectEl.value : "";
+        // 기본: 전체 보기 체크
+        if (majorAllEl) {
+            majorAllEl.checked = true;
+        }
 
-      loadSharedTimetables();
+        loadSharedTimetables();
     })();
 </script>
 </body>
