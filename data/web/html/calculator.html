@@ -129,10 +129,10 @@
         <div class="text-sm text-slate-500">필요 학점</div>
         <div id="summaryRequiredCredits" class="mt-2 text-3xl font-bold text-slate-800">135</div>
       </div>
-      <div class="bg-white rounded-2xl border shadow-sm p-5 text-center">
-        <div class="text-sm text-slate-500">졸업 가능 여부</div>
-        <div id="summaryCanGraduate" class="mt-2 text-3xl font-bold text-rose-500">-</div>
-      </div>
+        <div class="bg-white rounded-2xl border shadow-sm p-5 text-center">
+            <div class="text-sm text-slate-500">졸업 가능 여부</div>
+            <div id="summaryCanGraduate" class="mt-2 text-3xl font-bold">-</div>
+        </div>
     </div>
 
     <!-- PROGRESS -->
@@ -184,6 +184,21 @@ let selectedCourses = new Set();
 const STORAGE_KEY = "ycheck_selected_courses";
 const RESULT_STORAGE_KEY = "ycheck_calc_result";
 
+function updateGraduateStatus(canGraduate) {
+    const el = document.getElementById("summaryCanGraduate");
+    if (!el) return;
+
+    if (canGraduate) {
+        el.innerText = "가능";
+        el.classList.remove("text-rose-500");
+        el.classList.add("text-green-600");
+    } else {
+        el.innerText = "불가";
+        el.classList.remove("text-green-600");
+        el.classList.add("text-rose-500");
+    }
+}
+
 /* -------- Load selected -------- */
 function loadSelectedFromStorage() {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -204,8 +219,7 @@ function loadResultFromStorage() {
 
         document.getElementById("summaryTotalCredits").innerText = result.totalCredits;
         document.getElementById("summaryRequiredCredits").innerText = result.required;
-        document.getElementById("summaryCanGraduate").innerText =
-          result.canGraduate ? "가능" : "불가";
+        updateGraduateStatus(result.canGraduate);
 
         renderProgress(result.credits, result.majorPercent);
         renderAreaStatus(result.selectedList);
@@ -345,8 +359,8 @@ async function calculate() {
     /* Summary */
     document.getElementById("summaryTotalCredits").innerText = totalCredits;
     document.getElementById("summaryRequiredCredits").innerText = data.summary.required_total_credits;
-    document.getElementById("summaryCanGraduate").innerText =
-      data.summary.can_graduate ? "가능" : "불가";
+    updateGraduateStatus(data.summary.can_graduate);
+
 
     renderProgress(credits, data.major_required.percentage);
     renderAreaStatus(selectedList);
