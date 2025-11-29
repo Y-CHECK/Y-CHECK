@@ -10,7 +10,7 @@
       "day": "MON",
       "period": 2,
       "classroom": "창조관 101호",
-      "memo": "전공"
+      "memo": "필수"
     }
   },
   {
@@ -38,7 +38,7 @@
       "day": "WED",
       "period": 1,
       "classroom": "미래관 301호",
-      "memo": "전공"
+      "memo": "필수"
     }
   },
   {
@@ -66,7 +66,7 @@
       "day": "FRI",
       "period": 2,
       "classroom": "창조관 201호",
-      "memo": "전공"
+      "memo": "필수"
     }
   },
   {
@@ -80,7 +80,7 @@
       "day": "MON",
       "period": 5,
       "classroom": "미래관 402호",
-      "memo": "전공필수"
+      "memo": "필수"
     }
   },
   {
@@ -94,7 +94,7 @@
       "day": "TUE",
       "period": 6,
       "classroom": "창조관 101호",
-      "memo": "전공"
+      "memo": "필수"
     }
   },
   {
@@ -122,7 +122,7 @@
       "day": "THU",
       "period": 1,
       "classroom": "창조관 201호",
-      "memo": "전공"
+      "memo": "필수"
     }
   },
   {
@@ -164,7 +164,7 @@
       "day": "TUE",
       "period": 6,
       "classroom": "미래관 301호",
-      "memo": "전공"
+      "memo": "필수"
     }
   },
   {
@@ -192,7 +192,7 @@
       "day": "THU",
       "period": 5,
       "classroom": "창조관 102호",
-      "memo": "심화"
+      "memo": "선택"
     }
   },
   {
@@ -206,7 +206,7 @@
       "day": "FRI",
       "period": 7,
       "classroom": "미래관 402호",
-      "memo": "전공"
+      "memo": "필수"
     }
   },
   {
@@ -234,7 +234,7 @@
       "day": "TUE",
       "period": 4,
       "classroom": "미래관 301호",
-      "memo": "전공"
+      "memo": "필수"
     }
   },
   {
@@ -262,7 +262,7 @@
       "day": "THU",
       "period": 1,
       "classroom": "창조관 102호",
-      "memo": "전공필수"
+      "memo": "필수"
     }
   },
   {
@@ -290,7 +290,7 @@
       "day": "MON",
       "period": 6,
       "classroom": "창조관 201호",
-      "memo": "전공"
+      "memo": "필수"
     }
   },
   {
@@ -304,7 +304,7 @@
       "day": "TUE",
       "period": 2,
       "classroom": "미래관 301호",
-      "memo": "심화"
+      "memo": "선택"
     }
   },
   {
@@ -332,7 +332,7 @@
       "day": "THU",
       "period": 3,
       "classroom": "미래관 402호",
-      "memo": "전공"
+      "memo": "필수"
     }
   },
   {
@@ -374,7 +374,7 @@
       "day": "TUE",
       "period": 5,
       "classroom": "미래관 301호",
-      "memo": "심화"
+      "memo": "선택"
     }
   },
   {
@@ -388,7 +388,7 @@
       "day": "WED",
       "period": 1,
       "classroom": "창조관 101호",
-      "memo": "전공"
+      "memo": "필수"
     }
   },
   {
@@ -417,6 +417,90 @@
       "period": 3,
       "classroom": "창조관 102호",
       "memo": "필수"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 31,
+    "fields": {
+      "year": 2025,
+      "semester": 1,
+      "subject": "글쓰기",
+      "professor": "인문교수",
+      "day": "MON",
+      "period": 1,
+      "classroom": "진리관 101호",
+      "memo": "교양"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 32,
+    "fields": {
+      "year": 2025,
+      "semester": 1,
+      "subject": "교양영어(I)",
+      "professor": "영어교수",
+      "day": "WED",
+      "period": 2,
+      "classroom": "진리관 102호",
+      "memo": "교양"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 33,
+    "fields": {
+      "year": 2025,
+      "semester": 1,
+      "subject": "리더십개발",
+      "professor": "사회교수",
+      "day": "FRI",
+      "period": 3,
+      "classroom": "진리관 103호",
+      "memo": "교양"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 34,
+    "fields": {
+      "year": 2025,
+      "semester": 2,
+      "subject": "서양음악의이해",
+      "professor": "음악교수",
+      "day": "TUE",
+      "period": 1,
+      "classroom": "예술관 201호",
+      "memo": "교양"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 35,
+    "fields": {
+      "year": 2025,
+      "semester": 2,
+      "subject": "현대사회와심리학",
+      "professor": "심리교수",
+      "day": "THU",
+      "period": 2,
+      "classroom": "사회관 202호",
+      "memo": "교양"
+    }
+  },
+  {
+    "model": "timetable.course",
+    "pk": 36,
+    "fields": {
+      "year": 2025,
+      "semester": 2,
+      "subject": "환경오염과인간",
+      "professor": "환경교수",
+      "day": "MON",
+      "period": 4,
+      "classroom": "과학관 301호",
+      "memo": "교양"
     }
   }
 ]
