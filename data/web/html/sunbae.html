@@ -362,11 +362,57 @@
     let currentGrade = ""; // ""면 전체
     let selectedIndex = -1;
 
-    // 과목 유형 뱃지 색상 (전필/전선/기타)
+    // 과목 유형 뱃지 색상 (필수 / 선택 / 교양)
     function getCategoryBadge(category) {
-        if (category === "전필") return "bg-rose-100 text-rose-700";
-        if (category === "전선") return "bg-emerald-100 text-emerald-700";
+        if (category === "필수") return "bg-rose-100 text-rose-700";
+        if (category === "선택") return "bg-emerald-100 text-emerald-700";
+        if (category === "교양") return "bg-slate-100 text-slate-600";
         return "bg-slate-100 text-slate-600";
+    }
+
+    // 체크박스 상태에 따라 courses 필터링
+    function filterCoursesByMajorType(courses) {
+        if (!Array.isArray(courses)) return [];
+
+        const allChecked  = majorAllEl && majorAllEl.checked;
+        const reqChecked  = majorRequiredEl && majorRequiredEl.checked;
+        const elecChecked = majorElectiveEl && majorElectiveEl.checked;
+
+        // 체크박스 엘리먼트가 없으면 그대로
+        if (!majorAllEl && !majorRequiredEl && !majorElectiveEl) {
+            return courses;
+        }
+
+        // 아무것도 체크 안 돼 있으면 전체
+        if (!allChecked && !reqChecked && !elecChecked) {
+            return courses;
+        }
+
+        // 전체 보기 체크 → 전체
+        if (allChecked) {
+            return courses;
+        }
+
+        // 필터 케이스
+        return courses.filter(c => {
+            const memo = (c.memo || "").trim();
+
+            // 전공필수만
+            if (reqChecked && !elecChecked) {
+                return memo === "필수";
+            }
+            // 전공선택만
+            if (elecChecked && !reqChecked) {
+                return memo === "선택";
+            }
+            // 둘 다 체크 → 전공(필수+선택)만, 교양은 제외
+            if (reqChecked && elecChecked) {
+                return memo === "필수" || memo === "선택";
+            }
+
+            // 예비: 이외 상황은 그냥 전체
+            return true;
+        });
     }
 
     // 선배 목록 렌더링
@@ -438,7 +484,7 @@
         }
     }
 
-    // 선택된 시간표 상세 렌더링
+    // 선택된 시간표 상세 렌더링 (필터 적용)
     function renderSelectedRecord(index) {
         const entry = allRecords[index];
         if (!entry) return;
@@ -450,14 +496,22 @@
         detailName.textContent = entry.label || "공유된 시간표";
         detailMeta.textContent = `${userName}의 공유 시간표`;
 
-        const courses = Array.isArray(entry.courses) ? entry.courses : [];
-        if (!courses.length) {
+        const allCourses = Array.isArray(entry.courses) ? entry.courses : [];
+        const courses = filterCoursesByMajorType(allCourses);
+
+        if (!allCourses.length) {
             detailSummary.textContent = "등록된 과목이 없습니다.";
             summaryBody.innerHTML = `<p class="text-xs text-slate-400">등록된 과목이 없습니다.</p>`;
             return;
         }
 
-        detailSummary.textContent = `총 ${courses.length}개 과목이 등록되어 있습니다.`;
+        if (!courses.length) {
+            detailSummary.textContent = "현재 필터 조건에 맞는 과목이 없습니다.";
+            summaryBody.innerHTML = `<p class="text-xs text-slate-400">필터 조건에 맞는 과목이 없습니다.</p>`;
+            return;
+        }
+
+        detailSummary.textContent = `총 ${courses.length}개 과목이 필터 조건에 맞습니다.`;
 
         summaryBody.innerHTML = "";
         const card = document.createElement("article");
@@ -485,7 +539,14 @@
         summaryBody.appendChild(card);
     }
 
-    // 공유된 시간표 불러오기 (백엔드 호출)
+    // 현재 선택된 시간표만 다시 렌더 (체크박스 변경 시 사용)
+    function rerenderCurrentRecord() {
+        if (selectedIndex >= 0) {
+            renderSelectedRecord(selectedIndex);
+        }
+    }
+
+    // 공유된 시간표 불러오기 (백엔드 호출: 트랙/학년만 필터)
     async function loadSharedTimetables() {
         if (summaryText) {
             summaryText.textContent = "공유된 시간표를 불러오는 중입니다...";
@@ -501,25 +562,6 @@
         const params = new URLSearchParams();
         if (currentTrack) params.append("track", currentTrack);
         if (currentGrade) params.append("grade", currentGrade);
-
-        // 전공 필터 체크박스 → 쿼리 파라미터
-        const allChecked = majorAllEl && majorAllEl.checked;
-        const reqChecked = majorRequiredEl && majorRequiredEl.checked;
-        const elecChecked = majorElectiveEl && majorElectiveEl.checked;
-
-        if (!allChecked) {
-            // 전체 보기 체크 안 한 경우에만 세부 필터 적용
-            if (reqChecked && !elecChecked) {
-                params.append("major_required_only", "true");
-            } else if (elecChecked && !reqChecked) {
-                params.append("major_elective_only", "true");
-            } else if (reqChecked && elecChecked) {
-                // 둘 다 체크 → 백엔드에서 전체처럼 동작 (둘 다 true면 필터 안 거는 로직)
-                params.append("major_required_only", "true");
-                params.append("major_elective_only", "true");
-            }
-        }
-        // allChecked === true 이면 major_* 파라미터 안 보냄 → 전체 보기
 
         const query = params.toString();
         const url = query
@@ -594,14 +636,14 @@
         });
     }
 
-    // 전공 필터 체크박스 이벤트
+    // 전공 필터 체크박스 이벤트 (프론트에서만 필터링)
     if (majorAllEl) {
         majorAllEl.addEventListener("change", () => {
             if (majorAllEl.checked) {
                 if (majorRequiredEl) majorRequiredEl.checked = false;
                 if (majorElectiveEl) majorElectiveEl.checked = false;
             }
-            loadSharedTimetables();
+            rerenderCurrentRecord();
         });
     }
 
@@ -610,7 +652,7 @@
             if (majorRequiredEl.checked && majorAllEl) {
                 majorAllEl.checked = false;
             }
-            loadSharedTimetables();
+            rerenderCurrentRecord();
         });
     }
 
@@ -619,7 +661,7 @@
             if (majorElectiveEl.checked && majorAllEl) {
                 majorAllEl.checked = false;
             }
-            loadSharedTimetables();
+            rerenderCurrentRecord();
         });
     }
 

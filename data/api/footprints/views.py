@@ -1,8 +1,24 @@
-# footprints/views.py
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 
 from timetable.models import Timetable
+
+
+def _normalize_memo(raw_memo: str) -> str:
+    """
+    시간표에 저장된 memo 값을 프론트에서 쓰기 좋게 정리한다.
+
+    지금은 fixture(timetable_courses.json)에서 이미
+    '필수' / '선택' / '교양' 으로 통일해서 넣으므로
+
+      - 앞뒤 공백만 제거해서 그대로 돌려준다.
+
+    (혹시 나중에 DB에 '전필', '전선' 같은 값이 섞여 들어오면
+     여기서만 매핑 추가해 주면 됨.)
+    """
+    if not raw_memo:
+        return ""
+    return raw_memo.strip()
 
 
 @require_GET
@@ -14,8 +30,6 @@ def shared_timetables(request):
     쿼리 파라미터:
       - track: 관심 트랙 (예: "AI", "AI_ML", "SECURITY" ...)
       - grade: 학년 (예: "2", "3", "4")
-      - major_required_only: "true" 면 전공 필수 그룹만
-      - major_elective_only: "true" 면 전공 선택 그룹만
 
     응답 예:
     {
@@ -30,7 +44,8 @@ def shared_timetables(request):
           "year": 2025,
           "semester": 1,
           "courses": [
-            {"subject": "데이터구조론", "memo": "전공"},
+            {"subject": "데이터구조론", "memo": "필수"},
+            {"subject": "글쓰기", "memo": "교양"},
             ...
           ]
         },
@@ -42,10 +57,6 @@ def shared_timetables(request):
     track_param = request.GET.get("track")   # 예: "AI", "AI_ML"
     grade_param = request.GET.get("grade")   # 예: "3"
 
-    # 🔹 전공 필수 / 전공 선택 필터 파라미터
-    major_required_only = request.GET.get("major_required_only") == "true"
-    major_elective_only = request.GET.get("major_elective_only") == "true"
-
     # 기본 쿼리셋: 공유 ON
     qs = (
         Timetable.objects
@@ -54,23 +65,8 @@ def shared_timetables(request):
         .order_by("user_id", "year", "semester", "day", "period")
     )
 
-    # 🔹 전필/전선 매핑 규칙 (Timetable.memo 기준)
-    #   - 전공 필수 그룹: "전공필수", "필수"
-    #   - 전공 선택 그룹: "선택", "전공", "심화"
-    required_memos = ["전공필수", "필수"]
-    elective_memos = ["선택", "전공", "심화"]
-
-    #   - 둘 다 false → 전체
-    #   - 둘 다 true  → 전체(필터 X)
-    #   - 한쪽만 true → 해당 그룹만
-    if major_required_only and not major_elective_only:
-        qs = qs.filter(memo__in=required_memos)
-    elif major_elective_only and not major_required_only:
-        qs = qs.filter(memo__in=elective_memos)
-
     # -------------------------------
     #  관심 트랙 필터
-    #   - UserProfile.interest 에 저장된 '라벨'과 매칭
     # -------------------------------
     TRACK_LABEL_MAP = {
         # 버튼: 실제 DB에 저장된 코드
@@ -93,14 +89,13 @@ def shared_timetables(request):
     }
 
     if track_param:
-        # 매핑에 없으면 그냥 그대로 사용
         interest_code = TRACK_LABEL_MAP.get(track_param, track_param)
         qs = qs.filter(user__userprofile__interest=interest_code)
 
     # -------------------------------
     #  학년 필터
-    #   - UserProfile.current_semester 가 "3-1", "3-2" 이런 형식이라고 가정
-    #   - grade="3" → "3-" 로 시작하는 값만
+    #   - UserProfile.current_semester: "3-1", "3-2" 형식
+    #   - grade="3" → "3-" 로 시작
     # -------------------------------
     if grade_param:
         qs = qs.filter(
@@ -108,7 +103,7 @@ def shared_timetables(request):
         )
 
     # -------------------------------
-    #  user + year + semester 단위로 그룹핑해서 카드 만들기
+    #  user + year + semester 단위로 그룹핑
     # -------------------------------
     grouped = {}  # key: (user_id, year, semester) → dict
 
@@ -119,7 +114,6 @@ def shared_timetables(request):
             user = tt.user
             profile = getattr(user, "userprofile", None)
 
-            # display_name: 프로필 실명 있으면 그거, 없으면 username
             if profile and getattr(profile, "real_name", None):
                 display_name = profile.real_name
             else:
@@ -140,7 +134,7 @@ def shared_timetables(request):
         grouped[key]["courses"].append(
             {
                 "subject": tt.subject,
-                "memo": tt.memo,
+                "memo": _normalize_memo(tt.memo),
             }
         )
 
